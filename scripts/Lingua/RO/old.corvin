@@ -1,0 +1,380 @@
+#!/usr/bin/ruby
+
+# AUTHOR: Daniel "Trizen" Șuteu
+# LICENSE: GPLv3
+
+# Această funcție sterge diacritcile românești dintr-un string dat
+func sterge_diacritice(s) {
+    s.tr('ăâșțî','aasti');
+}
+
+# Numere  => text
+var DIGITS = Dict.new;
+DIGITS['0'..'19'] = %w(
+  zero unu doi trei patru cinci șase șapte opt nouă zece
+  unsprezece
+  doisprezece
+  treisprezece
+  paisprezece
+  cincisprezece
+  șaisprezece
+  șaptesprezece
+  optsprezece
+  nouăsprezece
+);
+
+# Text => numbers
+var WORDS = Dict.new;
+WORDS[DIGITS.valori.mapeaza {|v|sterge_diacritice(v)}] = DIGITS.chei.mapeaza{.ca_numar};
+WORDS[%w(o un doua sai)] = [1, 1, 2, 6];
+
+# Colocvial
+WORDS[%w(unspe doispe treispe paispe cinspe cinsprezece saispe saptespe saptuspe optspe nouaspe)] =
+    [11, 12, 13, 14, 15, 15, 16, 17, 17, 18, 19];
+
+# Această listă conține numere mai mari de 99
+# Vezi: http://ro.wikipedia.org/wiki/Sistem_zecimal#Denumiri_ale_numerelor
+var BIGNUMS = (
+            [
+                [ 10**2,        'suta',         'sute', adev],
+                [ 10**3,         'mie',          'mii', adev],
+                [ 10**6,      'milion',     'milioane', fals],
+                [ 10**9,     'miliard',     'miliarde', fals],
+                [10**12,      'bilion',     'bilioane', fals],
+                [10**15,     'biliard',     'biliarde', fals],
+                [10**18,     'trilion',    'trilioane', fals],
+                [10**21,    'triliard',    'triliarde', fals],
+                [10**24,  'cvadrilion', 'cvadrilioane', fals],
+                [10**27, 'cvadriliard', 'cvadriliarde', fals],
+                [Mate.inf,  'inifinit',      'infinit', fals],
+            ]
+             -> mapeaza { |v|
+                 (var h = Dict.new)[%w(num sg pl fem)] = (v) => h;
+            }
+);
+
+# This hash is a reversed version of the above array and it's used to convert text into numbers
+static BIGWORDS = Dict.new;
+BIGNUMS.each { |x|
+    BIGWORDS[x[:sg],x[:pl]] = [x[:num],x[:num]];
+};
+
+# Change 'suta' to 'sută'
+BIGNUMS[0][:sg] = 'sută';
+
+# This functions removes irrelevant characters from a text
+func normalizeaza_textul(s) {
+
+    # Lowercase and remove the diacritics
+    var text = sterge_diacritice(s.lc);
+
+    # Replace irrelevant characters with a space
+    return text.tr('a-z', ' ', 'c');
+}
+
+# This function adds together a list of numbers
+func uneste_numerele(nums) {
+
+    var num = 0;
+    cat_timp (nums.lungime > 0) {
+        var i = nums.sterge_primul;
+
+        # When the current number is lower than the next number
+        daca ((nums.lungime > 0) si (i < nums[0])) {
+            var n = nums.sterge_primul;
+
+            # Factor (e.g.: 400 -> 4)
+            var f = intreg(i / 10**(i.log10.intreg));
+
+            # When the next number is not really next to the current number
+            # e.g.: $i == 400 and $n == 5000 # should produce 405_000 not 45_000
+            var mod = (n.lungime % 3);
+            daca (mod != 0) {
+                f *= 10**(3 - mod);
+            }
+
+            # Join the numbers and continue
+            num += (10**(n.log10.int) * f + n);
+            sari;
+        }
+
+        num += i;
+    }
+
+    return num;
+}
+
+clasa nou(diacritice            = adev,
+          numar_invalid         = nul,
+          semn_negativ          = 'minus',
+          punct_decimal         = 'virgulă',
+          separator             = '',
+          infinit               = 'infinit',
+          nu_e_numar            = 'NaN') {
+
+    # This function converts a Romanian
+    # text-number into a mathematical number.
+    metoda in_cifre(text) {
+
+        # When text is not a string
+        text.is_a(String) sau return;
+
+        # If a thousand separator is defined, remove it from text
+        daca ((separator != '') si (separator.lungime > 1)) {
+            text.gsub!(separator, ' ');
+        }
+
+        # Split the text into words
+        var words = normalizeaza_textul(text).words;
+
+        var dec_point = normalizeaza_textul(punct_decimal);
+        var neg_sign  = normalizeaza_textul(semn_negativ);
+
+        var nums = [];    # numbers
+        var decs = [];    # decimal numbers
+
+        var neg  = fals;    # bool -- true when the number is negative
+        var adec = fals;    # bool -- true after the decimal point
+
+        var amount = 0;  # int -- current number
+        var factor = 1;  # int -- multiplication factor
+
+        daca (words.lungime > 0) {
+
+            # Check for negative numbers
+            daca (words[0] == neg_sign) {
+                neg = true;
+                words.sterge_primul;
+            }
+
+            # Check for infinity and NaN
+            daca (words.lungime == 1) {
+
+                # Infinity
+                var inf = normalizeaza_textul(infinit);
+                daca (words[0] == inf) {
+                    return(neg ? Mate.inf.neg : Mate.inf);
+                }
+
+                # Not a number
+                var nan = normalizeaza_textul(nu_e_numar);
+                daca (words[0] == nan) {
+                    return Numar.nen;       # nu-e-numar
+                }
+            }
+        }
+
+        # Iterate over the @words
+        bucla {
+            words.lungime > 0 || stop;
+
+            daca (WORDS.contine(words[0])) {
+                factor = 1;
+            }
+            altdaca (words[0].se_termina_cu('zeci')) {
+                words[0].inlatura!('zeci');
+                factor = 10;
+            }
+
+            daca (factor > 0) {
+                amount = words.sterge_primul;
+            }
+            altdaca (BIGWORDS.contine(words[0])) {
+                factor = BIGWORDS[words.sterge_primul];
+            }
+
+            daca (factor < 0) {
+                words.sterge_primul;
+                sari;
+            }
+
+            # Take and multiply the current number
+            var num;
+            daca (WORDS.contine(amount)) {
+                num = (WORDS[amount] * factor);
+            }
+            altfel {
+                sari;
+            }
+
+            # Check for some word-joining tokens
+            daca (words.lungime > 0) {
+                daca (words[0] == 'si') {    # e.g.: patruzeci si doi
+                    words.sterge_primul;
+                    num += WORDS[words.sterge_primul];
+                }
+
+                daca (words.lungime > 0) {
+                    loop {
+                        daca (words[0] == 'de') {    # e.g.: o suta de mii
+                            words.sterge_primul;
+                        }
+
+                        daca (BIGWORDS.contine(words[0])) {
+                            num *= BIGWORDS[words.sterge_primul];
+                        }
+
+                        toate {words.lungime > 0; words[0] == 'de'} sau stop;
+                    };
+                }
+            }
+
+            # If we are after the decimal point, store the
+            # numbers in @decs, otherwise store them in @nums.
+            daca (adec) {
+                decs.adauga(num)
+            }
+            altfel {
+                nums.adauga(num);
+            }
+
+            # Check for the decimal point
+            daca ((words.lungime > 0) si (words[0] == dec_point)) {
+                adec = adev;
+                words.sterge_primul;
+            }
+        }
+
+        # Return undef when no number has been converted
+        nums.lungime > 0 || return;
+
+        # Add all the numbers together (if any)
+        var num = uneste_numerele(nums).ca_text;
+
+        # If the number contains decimals,
+        # add them at the end of the number
+        daca (decs.lungime > 0) {
+
+            # Special case -- check for leading zeros
+            var zeros = '';
+            cat_timp ((decs.lungime > 0) si (decs[0] == 0)) {
+                zeros += decs.sterge_primul.ca_text;
+            }
+
+            num += ('.' + zeros + uneste_numerele(decs).ca_text);
+        }
+
+        num = num.ca_numar;
+        daca (neg) {
+            num = num.negat
+        }
+
+        return num;
+    }
+
+    metoda _number_to_ro(number) {
+
+        var words = [];
+        daca (DIGITS.contine(number)) {
+            words.adauga(DIGITS[number]);
+        }
+        altdaca (number.to_num! -> nu_e_numar) {
+            return [nu_e_numar];
+        }
+        altdaca (number.e_negativ) {
+            words.adauga(semn_negativ);
+            words += __METODA__(self, number.absolut);
+        }
+        altdaca (!number.e_intreg) {
+
+            words += __METODA__(self, number.int);
+            words.adauga(punct_decimal);
+
+            number -= number.intreg;
+
+            cat_timp (number != number.intreg) {
+                number *= 10;
+                daca (number < 1) {
+                    words.adauga(DIGITS[0]);
+                }
+            }
+
+            words += __METODA__(self, number.intreg);
+        }
+        altdaca (number >= BIGNUMS[0][:num]) {
+            sir(0, BIGNUMS.sfarsit-1).fiecare { |i|
+                var j = BIGNUMS.sfarsit-i;
+
+                daca (toate { number >= BIGNUMS[j-1][:num]; number < BIGNUMS[j][:num]}) {
+                    var cat = intreg(number / BIGNUMS[j-1]['num']);
+                    number -= (BIGNUMS[j-1][:num] * intreg(number / BIGNUMS[j-1][:num]));
+
+                    var of = [];
+                    daca (DIGITS.contine(cat)) {
+                        of = [DIGITS[cat]];
+                    }
+                    altfel {
+                        var w = (__METODA__(self, cat) + ['de']);
+                        daca ((w.lungime > 2) si (w[-2] == DIGITS[2])) {
+                            w[-2] = 'două';
+                        };
+                        of = w;
+                    }
+
+                    daca ((cat >= 100) si (cat < 1000)) {
+                        var rest = (cat - 100*intreg(cat / 100));
+                        daca (toate {of.lungime > 0; rest != 0; DIGITS.contine(rest)}) {
+                            of.sterge_ultimul;
+                        }
+                    }
+
+                    dat(cat)
+                        este(1) {
+                            words += [BIGNUMS[j-1][:fem] ? 'o' : 'un', BIGNUMS[j-1][:sg]];
+                        }
+                        este(2) {
+                            words += ['două', BIGNUMS[j-1][:pl]];
+                        }
+                        altfel {
+                            words += (of + [BIGNUMS[j-1][:pl]]);
+                        };
+
+                    daca(number > 0) {
+                        daca(BIGNUMS[j][:num] > 1000) {
+                            words[-1] += separator;
+                        };
+                        words += __METODA__(self, number);
+                    }
+
+                    stop;
+                }
+            }
+        }
+        altdaca ((number > 19) si (number < 100)) {
+            var cat = intreg(number / 10);
+
+            dat(cat)
+                este(2) {
+                    words.adauga('douăzeci');
+                }
+                este(6) {
+                    words.adauga('șaizeci');
+                }
+                altfel {
+                    words.adauga(DIGITS[cat] + 'zeci');
+                };
+
+            daca (number % 10 != 0) {
+                words.adauga('și', DIGITS[number % 10]);
+            }
+        }
+        altdaca (number.e_infinit) {
+            return [infinit];
+        }
+        altfel {
+            return [numar_invalid];
+        }
+
+        return words;
+    }
+
+    metoda in_litere(num) {
+        var word = self._number_to_ro(num).join(" ");
+
+        daca (!diacritice) {
+            word = sterge_diacritice(word);
+        }
+
+        return word;
+    }
+}

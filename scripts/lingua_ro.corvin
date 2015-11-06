@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+
+include Lingua::RO::Numeros;
+
+var lingua = Lingua::RO::Numeros::nou(
+    separator: ','
+);
+
+bucla {
+    var numar = citeste(String, "numar: ");
+
+    daca (numar.arata_ca_numar) {
+        spune lingua.in_litere(numar);
+    }
+    altfel {
+        spune lingua.in_cifre(numar);
+    }
+}

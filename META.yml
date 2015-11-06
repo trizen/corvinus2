@@ -1,0 +1,214 @@
+---
+abstract: 'The Corvinus Programming Language'
+author:
+  - 'Daniel Șuteu (<trizenx@gmail.com>)'
+build_requires:
+  Test::More: '0'
+configure_requires:
+  Module::Build: '0'
+dynamic_config: 1
+generated_by: 'Module::Build version 0.4214, CPAN::Meta::Converter version 2.150005'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: '1.4'
+name: Corvinus
+provides:
+  Corvinus:
+    file: lib/Corvinus.pm
+    version: '2.10'
+  Corvinus::Convert::Convert:
+    file: lib/Corvinus/Convert/Convert.pm
+  Corvinus::Deparse::Corvinus:
+    file: lib/Corvinus/Deparse/Corvinus.pm
+  Corvinus::Deparse::Perl:
+    file: lib/Corvinus/Deparse/Perl.pm
+  Corvinus::Eval::Eval:
+    file: lib/Corvinus/Eval/Eval.pm
+  Corvinus::Math::Math:
+    file: lib/Corvinus/Math/Math.pm
+  Corvinus::Module::Func:
+    file: lib/Corvinus/Module/Func.pm
+  Corvinus::Module::OO:
+    file: lib/Corvinus/Module/OO.pm
+  Corvinus::Object::Object:
+    file: lib/Corvinus/Object/Object.pm
+  Corvinus::Object::Unary:
+    file: lib/Corvinus/Object/Unary.pm
+  Corvinus::Optimizer:
+    file: lib/Corvinus/Optimizer.pm
+  Corvinus::Parser:
+    file: lib/Corvinus/Parser.pm
+  Corvinus::Perl::Builtin:
+    file: lib/Corvinus/Perl/Builtin.pm
+  Corvinus::Perl::Perl:
+    file: lib/Corvinus/Perl/Perl.pm
+  Corvinus::Sys::SIG:
+    file: lib/Corvinus/Sys/SIG.pm
+  Corvinus::Sys::Sys:
+    file: lib/Corvinus/Sys/Sys.pm
+  Corvinus::Time::Gmtime:
+    file: lib/Corvinus/Time/Gmtime.pm
+  Corvinus::Time::Localtime:
+    file: lib/Corvinus/Time/Localtime.pm
+  Corvinus::Time::Time:
+    file: lib/Corvinus/Time/Time.pm
+  Corvinus::Types::Array::Array:
+    file: lib/Corvinus/Types/Array/Array.pm
+  Corvinus::Types::Array::HCArray:
+    file: lib/Corvinus/Types/Array/HCArray.pm
+  Corvinus::Types::Array::List:
+    file: lib/Corvinus/Types/Array/List.pm
+  Corvinus::Types::Array::MultiArray:
+    file: lib/Corvinus/Types/Array/MultiArray.pm
+  Corvinus::Types::Array::Pair:
+    file: lib/Corvinus/Types/Array/Pair.pm
+  Corvinus::Types::Black::Hole:
+    file: lib/Corvinus/Types/Black/Hole.pm
+  Corvinus::Types::Block::Break:
+    file: lib/Corvinus/Types/Block/Break.pm
+  Corvinus::Types::Block::Code:
+    file: lib/Corvinus/Types/Block/Code.pm
+  Corvinus::Types::Block::CodeInit:
+    file: lib/Corvinus/Types/Block/CodeInit.pm
+  Corvinus::Types::Block::Continue:
+    file: lib/Corvinus/Types/Block/Continue.pm
+  Corvinus::Types::Block::Default:
+    file: lib/Corvinus/Types/Block/Default.pm
+  Corvinus::Types::Block::Do:
+    file: lib/Corvinus/Types/Block/Do.pm
+  Corvinus::Types::Block::For:
+    file: lib/Corvinus/Types/Block/For.pm
+  Corvinus::Types::Block::Fork:
+    file: lib/Corvinus/Types/Block/Fork.pm
+  Corvinus::Types::Block::Gather:
+    file: lib/Corvinus/Types/Block/Gather.pm
+  Corvinus::Types::Block::Given:
+    file: lib/Corvinus/Types/Block/Given.pm
+  Corvinus::Types::Block::If:
+    file: lib/Corvinus/Types/Block/If.pm
+  Corvinus::Types::Block::Next:
+    file: lib/Corvinus/Types/Block/Next.pm
+  Corvinus::Types::Block::Return:
+    file: lib/Corvinus/Types/Block/Return.pm
+  Corvinus::Types::Block::Take:
+    file: lib/Corvinus/Types/Block/Take.pm
+  Corvinus::Types::Block::Try:
+    file: lib/Corvinus/Types/Block/Try.pm
+  Corvinus::Types::Block::When:
+    file: lib/Corvinus/Types/Block/When.pm
+  Corvinus::Types::Block::While:
+    file: lib/Corvinus/Types/Block/While.pm
+  Corvinus::Types::Bool::Bool:
+    file: lib/Corvinus/Types/Bool/Bool.pm
+  Corvinus::Types::Bool::Ternary:
+    file: lib/Corvinus/Types/Bool/Ternary.pm
+  Corvinus::Types::Byte::Byte:
+    file: lib/Corvinus/Types/Byte/Byte.pm
+  Corvinus::Types::Byte::Bytes:
+    file: lib/Corvinus/Types/Byte/Bytes.pm
+  Corvinus::Types::Char::Char:
+    file: lib/Corvinus/Types/Char/Char.pm
+  Corvinus::Types::Char::Chars:
+    file: lib/Corvinus/Types/Char/Chars.pm
+  Corvinus::Types::Glob::Backtick:
+    file: lib/Corvinus/Types/Glob/Backtick.pm
+  Corvinus::Types::Glob::Dir:
+    file: lib/Corvinus/Types/Glob/Dir.pm
+  Corvinus::Types::Glob::DirHandle:
+    file: lib/Corvinus/Types/Glob/DirHandle.pm
+  Corvinus::Types::Glob::File:
+    file: lib/Corvinus/Types/Glob/File.pm
+  Corvinus::Types::Glob::FileHandle:
+    file: lib/Corvinus/Types/Glob/FileHandle.pm
+  Corvinus::Types::Glob::Pipe:
+    file: lib/Corvinus/Types/Glob/Pipe.pm
+  Corvinus::Types::Glob::Socket:
+    file: lib/Corvinus/Types/Glob/Socket.pm
+  Corvinus::Types::Glob::SocketHandle:
+    file: lib/Corvinus/Types/Glob/SocketHandle.pm
+  Corvinus::Types::Glob::Stat:
+    file: lib/Corvinus/Types/Glob/Stat.pm
+  Corvinus::Types::Grapheme::Grapheme:
+    file: lib/Corvinus/Types/Grapheme/Grapheme.pm
+  Corvinus::Types::Grapheme::Graphemes:
+    file: lib/Corvinus/Types/Grapheme/Graphemes.pm
+  Corvinus::Types::Hash::Hash:
+    file: lib/Corvinus/Types/Hash/Hash.pm
+  Corvinus::Types::Nil::Nil:
+    file: lib/Corvinus/Types/Nil/Nil.pm
+  Corvinus::Types::Null::Null:
+    file: lib/Corvinus/Types/Null/Null.pm
+  Corvinus::Types::Number::Complex:
+    file: lib/Corvinus/Types/Number/Complex.pm
+  Corvinus::Types::Number::Number:
+    file: lib/Corvinus/Types/Number/Number.pm
+  Corvinus::Types::Range::RangeNumber:
+    file: lib/Corvinus/Types/Range/RangeNumber.pm
+  Corvinus::Types::Range::RangeString:
+    file: lib/Corvinus/Types/Range/RangeString.pm
+  Corvinus::Types::Regex::Match:
+    file: lib/Corvinus/Types/Regex/Match.pm
+  Corvinus::Types::Regex::Regex:
+    file: lib/Corvinus/Types/Regex/Regex.pm
+  Corvinus::Types::String::String:
+    file: lib/Corvinus/Types/String/String.pm
+  Corvinus::Variable::ClassInit:
+    file: lib/Corvinus/Variable/ClassInit.pm
+  Corvinus::Variable::Const:
+    file: lib/Corvinus/Variable/Const.pm
+  Corvinus::Variable::ConstInit:
+    file: lib/Corvinus/Variable/ConstInit.pm
+  Corvinus::Variable::Define:
+    file: lib/Corvinus/Variable/Define.pm
+  Corvinus::Variable::Global:
+    file: lib/Corvinus/Variable/Global.pm
+  Corvinus::Variable::Init:
+    file: lib/Corvinus/Variable/Init.pm
+  Corvinus::Variable::Label:
+    file: lib/Corvinus/Variable/Label.pm
+  Corvinus::Variable::LazyMethod:
+    file: lib/Corvinus/Variable/LazyMethod.pm
+  Corvinus::Variable::Local:
+    file: lib/Corvinus/Variable/Local.pm
+  Corvinus::Variable::Magic:
+    file: lib/Corvinus/Variable/Magic.pm
+  Corvinus::Variable::NamedParam:
+    file: lib/Corvinus/Variable/NamedParam.pm
+  Corvinus::Variable::Ref:
+    file: lib/Corvinus/Variable/Ref.pm
+  Corvinus::Variable::Static:
+    file: lib/Corvinus/Variable/Static.pm
+  Corvinus::Variable::Struct:
+    file: lib/Corvinus/Variable/Struct.pm
+  Corvinus::Variable::Variable:
+    file: lib/Corvinus/Variable/Variable.pm
+requires:
+  Cwd: '0'
+  Encode: '0'
+  Fcntl: '0'
+  File::Basename: '0'
+  File::Copy: '0'
+  File::Find: '0'
+  File::Path: '0'
+  File::Spec: '0'
+  Getopt::Std: '0'
+  List::Util: '1.33'
+  Math::BigFloat: '0'
+  Math::BigInt: '0'
+  Math::BigRat: '0'
+  Math::Complex: '0'
+  Math::Trig: '0'
+  Memoize: '0'
+  POSIX: '0'
+  Scalar::Util: '0'
+  Socket: '0'
+  Storable: '0'
+  Term::ReadLine: '0'
+  Time::HiRes: '0'
+  perl: v5.16.1
+  utf8: '0'
+resources:
+  license: http://dev.perl.org/licenses/
+version: '2.10'
+x_serialization_backend: 'CPAN::Meta::YAML version 0.016'

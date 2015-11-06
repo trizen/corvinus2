@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+scrie "Introduceti un numar: ";
+var numar = citeste(Numar);
+
+var suma = 0;
+
+cat_timp (numar > 0) {
+    suma += (numar % 10);
+    numar = intreg(numar / 10);
+}
+
+spune ("Suma este: ", suma);

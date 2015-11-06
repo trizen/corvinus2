@@ -1,0 +1,23 @@
+#!/usr/bin/ruby
+
+scrie "Cate numere doriti sa cititi: ";
+var n = citeste(Numar);
+
+var orig = n;
+var numere = Lista();
+
+cat_timp (n > 0) {
+    scrie "Introduceti un numar: ";
+    var num = citeste(Numar);
+    numere.adauga(num);
+    n -= 1;
+}
+
+daca (orig > 0) {
+    var suma = 0;
+    numere.fiecare { |numar|
+        suma += numar;
+    }
+
+    spune("Media este: ", suma / orig);
+}
