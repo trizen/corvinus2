@@ -108,11 +108,11 @@ scripts/sierpinski_triangle.sf
 scripts/suma_cifrelor.corvin
 scripts/text_string.corvin
 scripts/valoara_maxima.corvin
-share/corvinus/bigint.sm
-share/corvinus/bigrat.sm
-share/corvinus/Memoize.sm
-share/corvinus/ntheory.sm
-share/corvinus/Storable.sm
+share/corvinus/bigint.corvin
+share/corvinus/bigrat.corvin
+share/corvinus/Memoize.corvin
+share/corvinus/ntheory.corvin
+share/corvinus/Storable.corvin
 t/00-load.t
 t/01-parser.t
 t/manifest.t
