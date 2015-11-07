@@ -93,6 +93,7 @@ META.yml
 README.md
 scripts/acc.cv
 scripts/avg.cv
+scripts/benford_law.cv
 scripts/bern.cv
 scripts/binary_search.cv
 scripts/cell_auto.cv
@@ -108,6 +109,7 @@ scripts/Lingua/RO/Numeros.cv
 scripts/lingua_ro.cv
 scripts/manbrot.cv
 scripts/max.cv
+scripts/pi.cv
 scripts/s_carpet.cv
 scripts/s_triangle.cv
 scripts/set.cv

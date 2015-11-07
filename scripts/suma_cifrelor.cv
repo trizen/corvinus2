@@ -1,7 +1,6 @@
 #!/usr/bin/ruby
 
-scrie "Introduceti un numar: ";
-var numar = citeste(Numar);
+var numar = citeste("Introduceti un numar: ", Num);
 
 var suma = 0;
 

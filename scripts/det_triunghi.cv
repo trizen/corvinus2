@@ -20,9 +20,9 @@ clasa Triunghi(a, b, c) {
     }
 }
 
-var a = citeste(Num, "a: ");
-var b = citeste(Num, "b: ");
-var c = citeste(Num, "c: ");
+var a = citeste("a: ", Numar);
+var b = citeste("b: ", Numar);
+var c = citeste("c: ", Numar);
 
 var t = Triunghi(a, b, c);
 

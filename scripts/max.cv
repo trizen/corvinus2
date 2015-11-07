@@ -1,7 +1,7 @@
 #!/usr/bin/ruby
 
-var a = citeste(Num, "a: ");
-var b = citeste(Num, "b: ");
+var a = citeste("a: ", Numar);
+var b = citeste("b: ", Numar);
 
 func max(a, b) {
     daca (a > b) {

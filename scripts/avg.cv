@@ -1,14 +1,12 @@
 #!/usr/bin/ruby
 
-scrie "Cate numere doriti sa cititi: ";
-var n = citeste(Numar);
+var n = citeste("Cate numere doriti sa cititi: ", Numar);
 
 var orig = n;
 var numere = Lista();
 
 cat_timp (n > 0) {
-    scrie "Introduceti un numar: ";
-    var num = citeste(Numar);
+    var num = citeste("Introduceti un numar: ", Numar);
     numere.adauga(num);
     n -= 1;
 }

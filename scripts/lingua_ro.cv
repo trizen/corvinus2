@@ -7,7 +7,7 @@ var lingua = Lingua::RO::Numeros::nou(
 );
 
 bucla {
-    var numar = citeste(String, "numar: ");
+    var numar = citeste("numar: ", String) \\ stop;
 
     daca (numar.arata_ca_numar) {
         spune lingua.in_litere(numar);

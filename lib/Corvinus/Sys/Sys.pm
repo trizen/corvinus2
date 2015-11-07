@@ -175,9 +175,9 @@ package Corvinus::Sys::Sys {
         Corvinus::Types::Bool::Bool->new(CORE::say @args);
     }
 
-    *say = \&println;
+    *say     = \&println;
     *scrieln = \&println;
-    *spune = \&println;
+    *spune   = \&println;
 
     sub scanln {
         my ($self, $text) = @_;
@@ -189,23 +189,24 @@ package Corvinus::Sys::Sys {
         Corvinus::Types::String::String->new(scalar unpack("A*", scalar <STDIN>));
     }
 
-    *readln = \&scanln;
+    *readln        = \&scanln;
     *citeste_linie = \&scanln;
-    *citesteln = \&scanln;
+    *citesteln     = \&scanln;
 
     sub read {
-        my ($self, $type, $string) = @_;
+        my ($self, $type, $opt_arg) = @_;
 
-        if (defined $string) {
-            print $string;
+        if (defined $opt_arg) {
+            print $type;
+            $type = $opt_arg;
         }
 
         if (defined $type) {
-            chomp(my $input = <STDIN>);
+            chomp(my $input = <STDIN> // return);
             return $type->new($input);
         }
 
-        chomp(my $input = <STDIN>);
+        chomp(my $input = <STDIN> // return);
         Corvinus::Types::String::String->new($input);
     }
 
@@ -304,15 +305,15 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $passwd, $uid, $gid, $quota, $comment, $gcos, $dir, $shell) = @_;
         $name // return;
         Corvinus::Types::Array::Array->new(
-                                        Corvinus::Types::String::String->new($name),
-                                        Corvinus::Types::String::String->new($passwd),
-                                        Corvinus::Types::Number::Number->new($uid),
-                                        Corvinus::Types::Number::Number->new($gid),
-                                        Corvinus::Types::String::String->new($quota),
-                                        Corvinus::Types::String::String->new($comment),
-                                        Corvinus::Types::String::String->new($gcos),
-                                        Corvinus::Types::String::String->new($shell),
-                                       );
+                                           Corvinus::Types::String::String->new($name),
+                                           Corvinus::Types::String::String->new($passwd),
+                                           Corvinus::Types::Number::Number->new($uid),
+                                           Corvinus::Types::Number::Number->new($gid),
+                                           Corvinus::Types::String::String->new($quota),
+                                           Corvinus::Types::String::String->new($comment),
+                                           Corvinus::Types::String::String->new($gcos),
+                                           Corvinus::Types::String::String->new($shell),
+                                          );
     }
 
     sub setpwent {
@@ -339,13 +340,13 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $passwd, $gid, $members) = @_;
         $name // return
           Corvinus::Types::Array::Array->new(
-                                          Corvinus::Types::String::String->new($name),
-                                          Corvinus::Types::String::String->new($passwd),
-                                          Corvinus::Types::Number::Number->new($gid),
-                                          Corvinus::Types::Array::Array->new(
-                                                             map { Corvinus::Types::String::String->new($_) } split(' ', $members)
-                                          ),
-                                         );
+                                             Corvinus::Types::String::String->new($name),
+                                             Corvinus::Types::String::String->new($passwd),
+                                             Corvinus::Types::Number::Number->new($gid),
+                                             Corvinus::Types::Array::Array->new(
+                                                          map { Corvinus::Types::String::String->new($_) } split(' ', $members)
+                                             ),
+                                            );
     }
 
     sub setgrent {
@@ -372,12 +373,14 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $aliases, $addrtype, $length, @addrs) = @_;
         $name // return;
         Corvinus::Types::Array::Array->new(
-                                        Corvinus::Types::String::String->new($name),
-                                        Corvinus::Types::String::String->new($aliases),
-                                        Corvinus::Types::String::String->new($addrtype),
-                                        Corvinus::Types::Number::Number->new($length),
-                                        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } @addrs),
-                                       );
+                                           Corvinus::Types::String::String->new($name),
+                                           Corvinus::Types::String::String->new($aliases),
+                                           Corvinus::Types::String::String->new($addrtype),
+                                           Corvinus::Types::Number::Number->new($length),
+                                           Corvinus::Types::Array::Array->new(
+                                                                        map { Corvinus::Types::String::String->new($_) } @addrs
+                                           ),
+                                          );
     }
 
     sub sethostent {
@@ -404,11 +407,11 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $aliases, $addrtype, $net) = @_;
         $name // return;
         Corvinus::Types::Array::Array->new(
-                                        Corvinus::Types::String::String->new($name),
-                                        Corvinus::Types::String::String->new($aliases),
-                                        Corvinus::Types::String::String->new($addrtype),
-                                        Corvinus::Types::String::String->new($net),
-                                       );
+                                           Corvinus::Types::String::String->new($name),
+                                           Corvinus::Types::String::String->new($aliases),
+                                           Corvinus::Types::String::String->new($addrtype),
+                                           Corvinus::Types::String::String->new($net),
+                                          );
     }
 
     sub setnetent {
@@ -435,10 +438,10 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $aliases, $proto) = @_;
         $name // return;
         Corvinus::Types::Array::Array->new(
-                                        Corvinus::Types::String::String->new($name),
-                                        Corvinus::Types::String::String->new($aliases),
-                                        Corvinus::Types::String::String->new($proto),
-                                       );
+                                           Corvinus::Types::String::String->new($name),
+                                           Corvinus::Types::String::String->new($aliases),
+                                           Corvinus::Types::String::String->new($proto),
+                                          );
     }
 
     sub setprotoent {
@@ -465,11 +468,11 @@ package Corvinus::Sys::Sys {
         my ($self, $name, $aliases, $port, $proto) = @_;
         $name // return;
         Corvinus::Types::Array::Array->new(
-                                        Corvinus::Types::String::String->new($name),
-                                        Corvinus::Types::String::String->new($aliases),
-                                        Corvinus::Types::Number::Number->new($port),
-                                        Corvinus::Types::String::String->new($proto),
-                                       );
+                                           Corvinus::Types::String::String->new($name),
+                                           Corvinus::Types::String::String->new($aliases),
+                                           Corvinus::Types::Number::Number->new($port),
+                                           Corvinus::Types::String::String->new($proto),
+                                          );
     }
 
     sub setservent {
