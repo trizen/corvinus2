@@ -254,7 +254,7 @@ package Corvinus::Parser {
                   modul
 
                   DATA
-                  ARG
+                  ARGV
                   ARGF
                   ENV
 
@@ -390,7 +390,7 @@ package Corvinus::Parser {
                             $self->{line}, join(', ', grep { defined } $opt{error}, $opt{expected}), $error_line,);
 
         my $pointer = ' ' x ($point) . '^' . "\n";
-        die $error, $pointer, '~'x 80,"\n";
+        die $error, $pointer, '~' x 80, "\n";
     }
 
     sub find_var {
@@ -685,10 +685,11 @@ package Corvinus::Parser {
 
             if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                 $self->fatal_error(
-                                   code  => $_,
-                                   pos   => $-[2],
-                                   error => "'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                                  );
+                    code => $_,
+                    pos  => $-[2],
+                    error =>
+"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
+                );
             }
 
             my $value;
@@ -702,14 +703,14 @@ package Corvinus::Parser {
             }
 
             my $obj = Corvinus::Variable::Variable->new(
-                                                     name => $name,
-                                                     type => $opt{type},
-                                                     (defined($ref_type) ? (ref_type => $ref_type) : ()),
-                                                     class => $class_name,
-                                                     defined($value) ? (value => $value, has_value => 1) : (),
-                                                     $attr eq '*' ? (array => 1) : $attr eq ':' ? (hash => 1) : (),
-                                                     $opt{in_use} ? (in_use => 1) : (),
-                                                    );
+                                                        name => $name,
+                                                        type => $opt{type},
+                                                        (defined($ref_type) ? (ref_type => $ref_type) : ()),
+                                                        class => $class_name,
+                                                        defined($value) ? (value => $value, has_value => 1) : (),
+                                                        $attr eq '*' ? (array => 1) : $attr eq ':' ? (hash => 1) : (),
+                                                        $opt{in_use} ? (in_use => 1) : (),
+                                                       );
 
             if (!$opt{private}) {
                 unshift @{$self->{vars}{$class_name}},
@@ -990,10 +991,11 @@ package Corvinus::Parser {
                     my $name = $var->{name};
                     if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                         $self->fatal_error(
-                                           code  => $_,
-                                           pos   => (pos($_) - length($name)),
-                                       error => "'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                                          );
+                            code => $_,
+                            pos  => (pos($_) - length($name)),
+                            error =>
+"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
+                        );
                     }
                 }
 
@@ -1005,10 +1007,10 @@ package Corvinus::Parser {
 
                     my $obj = $self->parse_obj(code => $opt{code});
                     $obj // $self->fatal_error(
-                                               code  => $_,
-                                               pos   => pos,
-                                           error => qq{este necesară o expresie care să poată fi evaluată pentru numele "$name"},
-                                              );
+                                     code  => $_,
+                                     pos   => pos,
+                                     error => qq{este necesară o expresie care să poată fi evaluată pentru numele "$name"},
+                    );
 
                     my $var =
                       $type eq 'define'
@@ -1070,10 +1072,11 @@ package Corvinus::Parser {
 
                 if (defined($name) and (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name}))) {
                     $self->fatal_error(
-                                       code  => $_,
-                                       pos   => (pos($_) - length($name)),
-                                       error => "'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                                      );
+                        code => $_,
+                        pos  => (pos($_) - length($name)),
+                        error =>
+"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
+                    );
                 }
 
                 my $vars =
@@ -1085,10 +1088,10 @@ package Corvinus::Parser {
                                         );
 
                 my $struct = Corvinus::Variable::Struct->new(
-                                                          name  => $name,
-                                                          class => $class_name,
-                                                          vars  => $vars,
-                                                         );
+                                                             name  => $name,
+                                                             class => $class_name,
+                                                             vars  => $vars,
+                                                            );
 
                 if (defined $name) {
                     unshift @{$self->{vars}{$class_name}},
@@ -1116,10 +1119,11 @@ package Corvinus::Parser {
 
                 @{$vars}
                   || $self->fatal_error(
-                                        code  => $_,
-                                        pos   => pos,
-                                        error => q{este necesară specificarea a unuia sau mai multor identificatori după cuvântul cheie „enumera”, urmând sintaxa: „enumera(a, b, c, ...)”},
-                                       );
+                    code => $_,
+                    pos  => pos,
+                    error =>
+q{este necesară specificarea a unuia sau mai multor identificatori după cuvântul cheie „enumera”, urmând sintaxa: „enumera(a, b, c, ...)”},
+                  );
 
                 my $value = Corvinus::Types::Number::Number->new(-1);
 
@@ -1137,10 +1141,11 @@ package Corvinus::Parser {
 
                     if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                         $self->fatal_error(
-                                           code  => $_,
-                                           pos   => (pos($_) - length($name)),
-                                           error => "'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                                          );
+                            code => $_,
+                            pos  => (pos($_) - length($name)),
+                            error =>
+"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
+                        );
                     }
 
                     unshift @{$self->{vars}{$self->{class}}},
@@ -1198,11 +1203,11 @@ package Corvinus::Parser {
                   : $1;
 
                 state $trans = {
-                    clasa => 'class',
-                    function => 'func',
-                    metoda => 'method',
-                    functie => 'func',
-                };
+                                clasa    => 'class',
+                                function => 'func',
+                                metoda   => 'method',
+                                functie  => 'func',
+                               };
 
                 if (exists $trans->{$type}) {
                     $type = $trans->{$type};
@@ -1262,16 +1267,18 @@ package Corvinus::Parser {
                     and $type ne 'class'
                     and (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name}))) {
                     $self->fatal_error(
-                                       code  => $_,
-                                       pos   => $-[0],
-                                       error => "'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                                      );
+                        code => $_,
+                        pos  => $-[0],
+                        error =>
+"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
+                    );
                 }
 
                 my $obj =
                     $type eq 'func'   ? Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class_name)
                   : $type eq 'method' ? Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class_name)
-                  : $type eq 'class' ? Corvinus::Variable::ClassInit->new(name => ($built_in_obj // $name), class => $class_name)
+                  : $type eq 'class'
+                  ? Corvinus::Variable::ClassInit->new(name => ($built_in_obj // $name), class => $class_name)
                   : $type eq 'global' ? Corvinus::Variable::Global->new(name => $name, class => $class_name)
                   : $self->fatal_error(
                                        error    => "invalid type",
@@ -1289,10 +1296,10 @@ package Corvinus::Parser {
 
                         if ($var->{obj}{type} ne $type) {
                             $self->fatal_error(
-                                  code => $_,
-                                  pos  => $-[0],
-                                  error =>
-                                    "redeclarare invalidă ca funcție sau metodă a identificatorului '$var->{obj}{name}' (declarat inițial la linia $var->{line})",
+                                code => $_,
+                                pos  => $-[0],
+                                error =>
+"redeclarare invalidă ca funcție sau metodă a identificatorului '$var->{obj}{name}' (declarat inițial la linia $var->{line})",
                             );
                         }
 
@@ -1400,9 +1407,20 @@ package Corvinus::Parser {
                                           );
 
                     # Functions and method traits (example: "is cached")
-                    if (/\G\h*is\h+(?=\w)/gc) {
+                    if (/\G\h*(?:is|e)\h+(?=\w)/gc) {
+
+                        state $trans = {
+                                        memorat  => 'cached',
+                                        memorata => 'cached',
+                                       };
+
                         while (/\G(\w+)/gc) {
                             my $trait = $1;
+
+                            if (exists $trans->{$trait}) {
+                                $trait = $trans->{$trait};
+                            }
+
                             if ($trait eq 'cached') {
                                 $obj->{cached} = 1;
                             }
@@ -1528,10 +1546,10 @@ package Corvinus::Parser {
                 my $number = "0" . ($1 =~ tr/_//dr);
                 return
                   Corvinus::Types::Number::Number->new(
-                                                    $number =~ /^0[0-9]/
-                                                    ? Math::BigInt->from_oct($number)
-                                                    : Math::BigInt->new($number)
-                                                   );
+                                                       $number =~ /^0[0-9]/
+                                                       ? Math::BigInt->from_oct($number)
+                                                       : Math::BigInt->new($number)
+                                                      );
             }
 
             # Integer or float number
@@ -1563,8 +1581,8 @@ package Corvinus::Parser {
                 my $strings = $self->get_quoted_words(code => $opt{code});
 
                 if ($type eq 'w' or $type eq '<') {
-                    return Corvinus::Types::Array::HCArray->new(map { Corvinus::Types::String::String->new(s{\\(?=[\\#\s])}{}gr) }
-                                                             @{$strings});
+                    return Corvinus::Types::Array::HCArray->new(
+                                               map { Corvinus::Types::String::String->new(s{\\(?=[\\#\s])}{}gr) } @{$strings});
                 }
                 elsif ($type eq 'i') {
                     return Corvinus::Types::Array::HCArray->new(
@@ -1574,8 +1592,8 @@ package Corvinus::Parser {
                     );
                 }
                 elsif ($type eq 'n') {
-                    return Corvinus::Types::Array::HCArray->new(map { Corvinus::Types::Number::Number->new(s{\\(?=[\\#\s])}{}gr) }
-                                                             @{$strings});
+                    return Corvinus::Types::Array::HCArray->new(
+                                               map { Corvinus::Types::Number::Number->new(s{\\(?=[\\#\s])}{}gr) } @{$strings});
                 }
 
                 my ($inline_expression, @objs);
@@ -1609,10 +1627,10 @@ package Corvinus::Parser {
 
                 return
                   Corvinus::Eval::Eval->new(
-                                         expr          => $obj,
-                                         vars          => {$self->{class} => [@{$self->{vars}{$self->{class}}}]},
-                                         ref_vars_refs => {$self->{class} => [@{$self->{ref_vars_refs}{$self->{class}}}]},
-                                        );
+                                            expr          => $obj,
+                                            vars          => {$self->{class} => [@{$self->{vars}{$self->{class}}}]},
+                                            ref_vars_refs => {$self->{class} => [@{$self->{ref_vars_refs}{$self->{class}}}]},
+                                           );
             }
 
             #if (/\G(?:die|warn|assert(?:_(?:eq|ne))?)\b/gc) {
@@ -1646,7 +1664,8 @@ package Corvinus::Parser {
 
             if (/\G__DATE__\b/gc) {
                 my (undef, undef, undef, $day, $mon, $year) = localtime;
-                return Corvinus::Types::String::String->new(join('-', $year + 1900, map { sprintf "%02d", $_ } $mon + 1, $day));
+                return Corvinus::Types::String::String->new(
+                                                           join('-', $year + 1900, map { sprintf "%02d", $_ } $mon + 1, $day));
             }
 
             if (/\G__TIME__\b/gc) {
@@ -1671,7 +1690,7 @@ package Corvinus::Parser {
                     $self->{static_objects}{'__DATA__'} //= do {
                         open my $str_fh, '<:raw', \$self->{'__DATA__'};
                         Corvinus::Types::Glob::FileHandle->new(fh   => $str_fh,
-                                                            self => Corvinus::Types::Glob::File->new($self->{file_name}));
+                                                               self => Corvinus::Types::Glob::File->new($self->{file_name}));
                       }
                 );
             }
@@ -1712,18 +1731,20 @@ package Corvinus::Parser {
             }
 
             if (exists($self->{current_function})) {
-                /\G__FUNC__\b/gc && return $self->{current_function};
-                /\G__FUNC_NAME__\b/gc && return Corvinus::Types::String::String->new($self->{current_function}{name});
+                /\G__FUNC(?:TIE)?+__\b/gc && return $self->{current_function};
+                /\G__(?:FUNC_NAME|NUME_FUNC(?:TIE)?+)__\b/gc
+                  && return Corvinus::Types::String::String->new($self->{current_function}{name});
             }
 
             if (exists($self->{current_class})) {
-                /\G__CLASS__\b/gc && return $self->{current_class};
-                /\G__CLASS_NAME__\b/gc && return Corvinus::Types::String::String->new($self->{class_name});
+                /\G__CLAS[SA]__\b/gc && return $self->{current_class};
+                /\G__(?:CLASS_NAME|NUME_CLASA)__\b/gc && return Corvinus::Types::String::String->new($self->{class_name});
             }
 
             if (exists($self->{current_method})) {
-                /\G__METHOD__\b/gc && return $self->{current_method};
-                /\G__METHOD_NAME__\b/gc && return Corvinus::Types::String::String->new($self->{current_method}{name});
+                /\G__(?:METHOD|METODA)__\b/gc && return $self->{current_method};
+                /\G__(?:METHOD_NAME|NUME_METODA)__\b/gc
+                  && return Corvinus::Types::String::String->new($self->{current_method}{name});
             }
 
             # Variable call
@@ -1738,10 +1759,11 @@ package Corvinus::Parser {
                     return $var->{obj};
                 }
 
-                if ($name eq 'ARG' or $name eq 'ENV') {
+                if ($name eq 'ARGV' or $name eq 'ENV') {
 
                     my $type = 'var';
-                    my $variable = Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class, in_use => 1);
+                    my $variable =
+                      Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class, in_use => 1);
 
                     unshift @{$self->{vars}{$class}},
                       {
@@ -1757,17 +1779,8 @@ package Corvinus::Parser {
 
                 # Class instance variables
                 state $x = require List::Util;
-                if (
-                    ref($self->{current_class}) eq 'Corvinus::Variable::ClassInit'
-                    and defined(
-                        my $var = List::Util::first(
-                            sub { $_->{name} eq $name },
-                            @{$self->{current_class}{vars}},
-
-                            #@{$self->{current_class}{__DEF_VARS__}}
-                                                   )
-                               )
-                  ) {
+                if (ref($self->{current_class}) eq 'Corvinus::Variable::ClassInit'
+                    and defined(my $var = List::Util::first(sub { $_->{name} eq $name }, @{$self->{current_class}{vars}},))) {
                     if (exists $self->{current_method}) {
                         if (defined(my $var = $self->find_var('self', $class))) {
                             $var->{count}++;
@@ -1824,21 +1837,21 @@ package Corvinus::Parser {
                   ) {
                     return
                       Corvinus::Variable::Static->new(
-                                                   name => '__CONST__',
-                                                   expr => {
-                                                            $self->{class} => [
-                                                                        {
-                                                                         self => $obj,
-                                                                         call => [
-                                                                             {
-                                                                              method => 'get_constant',
-                                                                              arg => [Corvinus::Types::String::String->new($name)]
-                                                                             }
-                                                                         ]
-                                                                        }
-                                                            ]
-                                                           }
-                                                  );
+                                                      name => '__CONST__',
+                                                      expr => {
+                                                               $self->{class} => [
+                                                                     {
+                                                                      self => $obj,
+                                                                      call => [
+                                                                          {
+                                                                           method => 'get_constant',
+                                                                           arg => [Corvinus::Types::String::String->new($name)]
+                                                                          }
+                                                                      ]
+                                                                     }
+                                                               ]
+                                                              }
+                                                     );
                 }
 
                 # Method call in functional style
@@ -2047,10 +2060,10 @@ package Corvinus::Parser {
                                     error => "acolade nebalansate",
                                    );
 
-            $block->{vars} = [
-                map { $_->{obj} }
-                grep { ref($_) eq 'HASH' and ref($_->{obj}) eq 'Corvinus::Variable::Variable' } @{$self->{vars}{$self->{class}}}
-            ];
+            $block->{vars} = [map { $_->{obj} }
+                                grep { ref($_) eq 'HASH' and ref($_->{obj}) eq 'Corvinus::Variable::Variable' }
+                                @{$self->{vars}{$self->{class}}}
+                             ];
 
             $block->{init_vars} = Corvinus::Variable::Init->new(vars => $var_objs);
 
@@ -2123,10 +2136,10 @@ package Corvinus::Parser {
                         }
                         else {
                             $self->fatal_error(
-                                               code  => $_,
-                                               pos   => pos($_) - 1,
-                                               error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
-                                              );
+                                code  => $_,
+                                pos   => pos($_) - 1,
+                                error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
+                            );
                         }
                     }
 
@@ -2402,10 +2415,10 @@ package Corvinus::Parser {
                         }
                         else {
                             $self->fatal_error(
-                                               code  => $_,
-                                               pos   => pos($_) - 1,
-                                               error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
-                                              );
+                                code  => $_,
+                                pos   => pos($_) - 1,
+                                error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
+                            );
                         }
                     }
 
@@ -2496,10 +2509,10 @@ package Corvinus::Parser {
 
                 @{$var_names}
                   || $self->fatal_error(
-                                        code  => $_,
-                                        pos   => (pos($_)),
-                                        error => "este necesară specificarea a unuia sau mai multor identificatori pentru importare",
-                                       );
+                                 code  => $_,
+                                 pos   => (pos($_)),
+                                 error => "este necesară specificarea a unuia sau mai multor identificatori pentru importare",
+                  );
 
                 foreach my $var_name (@{$var_names}) {
                     my ($name, $class) = $self->get_name_and_class($var_name);
@@ -2560,10 +2573,11 @@ package Corvinus::Parser {
 
                     @{$var_names}
                       || $self->fatal_error(
-                                            code  => $_,
-                                            pos   => pos($_),
-                                            error => "modulul pentru includere nu este specificat în mod corect, sintaxa este: „Nume::De::Modul„",
-                                           );
+                           code => $_,
+                           pos  => pos($_),
+                           error =>
+                             "modulul pentru includere nu este specificat în mod corect, sintaxa este: „Nume::De::Modul„",
+                      );
 
                     foreach my $var_name (@{$var_names}) {
 
@@ -2626,10 +2640,12 @@ package Corvinus::Parser {
 
                         ref($value) ne ''
                           ? $self->fatal_error(
-                               code  => $_,
-                               pos   => pos($_),
-                               error => 'tip invalid pentru includere „' . ref($value) . '” (este necesar un obiect de tip text)',
-                          )
+                                               code  => $_,
+                                               pos   => pos($_),
+                                               error => 'tip invalid pentru includere „'
+                                                 . ref($value)
+                                                 . '” (este necesar un obiect de tip text)',
+                                              )
                           : [$value];
                     } @files;
                 }
@@ -2795,11 +2811,11 @@ package Corvinus::Parser {
                         my $keyword = $1;
 
                         state $trans = {
-                            daca => 'if',
-                            cat_timp => 'while',
-                            si => 'and',
-                            sau => 'or',
-                        };
+                                        daca     => 'if',
+                                        cat_timp => 'while',
+                                        si       => 'and',
+                                        sau      => 'or',
+                                       };
 
                         if (exists $trans->{$keyword}) {
                             $keyword = $trans->{$keyword};
@@ -2868,10 +2884,11 @@ package Corvinus::Parser {
             }
 
             $self->fatal_error(
-                               code  => $_,
-                               pos   => (pos($_)),
-                               error => "au fost găsite două obiecte consecutive în locul în care se aștepta o metodă sau un terminator de expresie („;”)",
-                              );
+                code => $_,
+                pos  => (pos($_)),
+                error =>
+"au fost găsite două obiecte consecutive în locul în care se aștepta o metodă sau un terminator de expresie („;”)",
+            );
 
             pos($_) += 1;
             redo;

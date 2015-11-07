@@ -18,7 +18,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *call = \&new;
-    *nou = \&new;
+    *nou  = \&new;
     *noua = \&new;
 
     sub get_value {
@@ -132,8 +132,9 @@ package Corvinus::Types::Array::Array {
         $self->new((@{$self}) x $num->get_value);
     }
 
-    *mul = \&multiply;
-*multiplica = \&multiply;
+    *mul        = \&multiply;
+    *multiplica = \&multiply;
+    *ori        = \&multiply;
 
     sub divide {
         my ($self, $num) = @_;
@@ -156,8 +157,8 @@ package Corvinus::Types::Array::Array {
         $self->new(@array);
     }
 
-    *div = \&divide;
- *imparte = \&divide;
+    *div     = \&divide;
+    *imparte = \&divide;
 
     sub or {
         my ($self, $array) = @_;
@@ -183,7 +184,7 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->new($#{$self} == -1);
     }
 
-    *e_gol = \&is_empty;
+    *e_gol   = \&is_empty;
     *e_goala = \&is_empty;
 
     sub subtract {
@@ -246,7 +247,8 @@ package Corvinus::Types::Array::Array {
 
     sub combinations {
         my ($self, $n) = @_;
-        Corvinus::Types::Array::Array->new(map { Corvinus::Types::Array::Array->new(@{$_}) } _combinations($n->get_value, @{$self}));
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::Array::Array->new(@{$_}) }
+                                           _combinations($n->get_value, @{$self}));
     }
 
     *combination = \&combinations;
@@ -273,9 +275,9 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Number::Number->new($counter);
     }
 
-    *count_by = \&count;
- *numara = \&count;
- *numara_dupa = \&count;
+    *count_by    = \&count;
+    *numara      = \&count;
+    *numara_dupa = \&count;
 
     sub eq {
         my ($self, $array) = @_;
@@ -292,14 +294,14 @@ package Corvinus::Types::Array::Array {
 
         return Corvinus::Types::Bool::Bool->true;
     }
-   *este = \&equals;
+    *este = \&equals;
 
     sub ne {
         my ($self, $array) = @_;
         $self->eq($array)->not;
     }
 
-*nu_este = \&ne;
+    *nu_este = \&ne;
 
     sub zip {
         my ($self, @arrays) = @_;
@@ -368,14 +370,14 @@ package Corvinus::Types::Array::Array {
     }
 
     *collapse = \&sum;
-    *suma = \&sum;
+    *suma     = \&sum;
 
     sub prod {
         $_[0]->reduce_operator('*');
     }
 
     *product = \&prod;
-    *produs = \&prod;
+    *produs  = \&prod;
 
     sub _min_max_by {
         my ($self, $code, $value) = @_;
@@ -398,13 +400,13 @@ package Corvinus::Types::Array::Array {
         $_[0]->_min_max_by($_[1], 1);
     }
 
- *max_dupa = \&max_by;
+    *max_dupa = \&max_by;
 
     sub min_by {
         $_[0]->_min_max_by($_[1], -1);
     }
 
- *min_dupa = \&min_by;
+    *min_dupa = \&min_by;
 
     sub last {
         my ($self, $arg) = @_;
@@ -417,7 +419,7 @@ package Corvinus::Types::Array::Array {
         @{$self} ? $self->[-1] : ();
     }
 
-*ultim = \&last;
+    *ultim = \&last;
 
     sub swap {
         my ($self, $i, $j) = @_;
@@ -445,7 +447,7 @@ package Corvinus::Types::Array::Array {
         @{$self} ? $self->[0] : ();
     }
 
- *intai = \&first;
+    *intai = \&first;
 
     sub _flatten {    # this exists for performance reasons
         my ($self) = @_;
@@ -477,14 +479,14 @@ package Corvinus::Types::Array::Array {
     }
 
     *has_index = \&exists;
-*exista = \&exists;
+    *exista    = \&exists;
 
     sub defined {
         my ($self, $index) = @_;
         Corvinus::Types::Bool::Bool->new(defined($self->[$index->get_value]));
     }
 
-*definit = \&defined;
+    *definit = \&defined;
 
     sub items {
         my ($self, @indices) = @_;
@@ -553,7 +555,7 @@ package Corvinus::Types::Array::Array {
 
     *for     = \&each;
     *foreach = \&each;
-*fiecare = \&each;
+    *fiecare = \&each;
 
     sub each_index {
         my ($self, $code) = @_;
@@ -584,9 +586,9 @@ package Corvinus::Types::Array::Array {
         $self->new(map { $code->run($_) } @{$self});
     }
 
-    *collect = \&map;
- *mapeaza = \&map;
-*colecteaza = \&map;
+    *collect    = \&map;
+    *mapeaza    = \&map;
+    *colecteaza = \&map;
 
     sub flat_map {
         my ($self, $code) = @_;
@@ -598,10 +600,10 @@ package Corvinus::Types::Array::Array {
         $self->new(grep { scalar $code->run($_) } @{$self});
     }
 
-    *filter = \&grep;
-    *select = \&grep;
-*selecteaza = \&grep;
-    *filtreaza = \&grep;
+    *filter     = \&grep;
+    *select     = \&grep;
+    *selecteaza = \&grep;
+    *filtreaza  = \&grep;
 
     sub group_by {
         my ($self, $code) = @_;
@@ -627,7 +629,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *first_by = \&find;
- *gaseste = \&find;
+    *gaseste  = \&find;
 
     sub any {
         my ($self, $code) = @_;
@@ -658,7 +660,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *toate = \&all;
-    *tot = \&all;
+    *tot   = \&all;
 
     sub assign_to {
         my ($self, @vars) = @_;
@@ -674,7 +676,7 @@ package Corvinus::Types::Array::Array {
         $self->new(@values);
     }
 
- *pune_in = \&assign_to;
+    *pune_in = \&assign_to;
 
     sub index {
         my ($self, $obj) = @_;
@@ -701,8 +703,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Number::Number->new(@{$self} ? 0 : -1);
     }
 
-    *first_index = \&index;
- *prima_pozitie = \&index;
+    *first_index   = \&index;
+    *prima_pozitie = \&index;
 
     sub rindex {
         my ($self, $obj) = @_;
@@ -730,8 +732,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Number::Number->new($#{$self});
     }
 
-    *last_index = \&rindex;
-*ultima_pozitie = \&last_index;
+    *last_index     = \&rindex;
+    *ultima_pozitie = \&last_index;
 
     sub reduce_pairs {
         my ($self, $obj) = @_;
@@ -785,8 +787,8 @@ package Corvinus::Types::Array::Array {
         $t;
     }
 
-    *bshuffle = \&best_shuffle;
- *amesteca_bine = \&best_shuffle;
+    *bshuffle      = \&best_shuffle;
+    *amesteca_bine = \&best_shuffle;
 
     sub pair_with {
         my ($self, @args) = @_;
@@ -812,17 +814,17 @@ package Corvinus::Types::Array::Array {
         $self->reduce_operator($obj->get_value);
     }
 
-    *inject = \&reduce;
-*reducere = \&reduce;
+    *inject   = \&reduce;
+    *reducere = \&reduce;
 
     sub length {
         my ($self) = @_;
         Corvinus::Types::Number::Number->new(scalar @{$self});
     }
 
-    *len  = \&length;    # alias
-    *size = \&length;
-*lungime = \&length;
+    *len     = \&length;    # alias
+    *size    = \&length;
+    *lungime = \&length;
 
     sub end {
         my ($self) = @_;
@@ -837,8 +839,8 @@ package Corvinus::Types::Array::Array {
         $num;
     }
 
-    *resize_to = \&resize;
-  *redimensioneaza = \&resize;
+    *resize_to       = \&resize;
+    *redimensioneaza = \&resize;
 
     sub rand {
         my ($self, $amount) = @_;
@@ -870,7 +872,7 @@ package Corvinus::Types::Array::Array {
         $self;
     }
 
-*introdu = \&insert;
+    *introdu = \&insert;
 
     sub unique {
         my ($self) = @_;
@@ -897,7 +899,7 @@ package Corvinus::Types::Array::Array {
 
     *uniq     = \&unique;
     *distinct = \&unique;
-*unic = \&unique;
+    *unic     = \&unique;
 
     sub last_unique {
         my ($self) = @_;
@@ -921,9 +923,9 @@ package Corvinus::Types::Array::Array {
         $self->new(grep { defined } @unique);
     }
 
-    *last_uniq = \&last_unique;
-*ultim_unic = \&last_unique;
-*ultim_distinct = \&last_unique;
+    *last_uniq      = \&last_unique;
+    *ultim_unic     = \&last_unique;
+    *ultim_distinct = \&last_unique;
 
     sub uniq_by {
         my ($self, $block) = @_;
@@ -949,7 +951,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *unique_by = \&uniq_by;
-*unic_dupa = \&uniq_by;
+    *unic_dupa = \&uniq_by;
 
     sub last_uniq_by {
         my ($self, $block) = @_;
@@ -974,13 +976,13 @@ package Corvinus::Types::Array::Array {
         $self->new(grep { defined } @unique);
     }
 
-    *last_unique_by = \&last_unique_by;
-*ultim_unic_dupa = \&last_unique_by;
+    *last_unique_by  = \&last_unique_by;
+    *ultim_unic_dupa = \&last_unique_by;
 
     sub abbrev {
         my ($self, $code) = @_;
 
-        my $__END__ = {};                                                               # some unique value
+        my $__END__ = {};                                                                  # some unique value
         my $__CALL__ = defined($code) && (ref($code) eq 'Corvinus::Types::Block::Code');
 
         my %table;
@@ -1034,8 +1036,8 @@ package Corvinus::Types::Array::Array {
     }
 
     *abbreviations = \&abbrev;
-*abrev = \&abbrev;
-*abrevieri = \&abbrev;
+    *abrev         = \&abbrev;
+    *abrevieri     = \&abbrev;
 
     sub contains {
         my ($self, $obj) = @_;
@@ -1060,7 +1062,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *contain = \&contains;
-*contine = \&contains;
+    *contine = \&contains;
 
     sub contains_type {
         my ($self, $obj) = @_;
@@ -1076,7 +1078,7 @@ package Corvinus::Types::Array::Array {
         return Corvinus::Types::Bool::Bool->false;
     }
 
- *contine_tipul = \&contains_type;
+    *contine_tipul = \&contains_type;
 
     sub contains_any {
         my ($self, $array) = @_;
@@ -1088,7 +1090,7 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-*contine_oricare = \&contains_any;
+    *contine_oricare = \&contains_any;
 
     sub contains_all {
         my ($self, $array) = @_;
@@ -1100,8 +1102,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->true;
     }
 
-*contine_toate = \&contains_all;
-*contine_tot = \&contains_all;
+    *contine_toate = \&contains_all;
+    *contine_tot   = \&contains_all;
 
     sub shift {
         my ($self, $num) = @_;
@@ -1114,8 +1116,8 @@ package Corvinus::Types::Array::Array {
         shift(@{$self});
     }
 
-    *drop_first = \&shift;
-    *drop_left  = \&shift;
+    *drop_first      = \&shift;
+    *drop_left       = \&shift;
     *inlatura_primul = \&shift;
 
     sub pop {
@@ -1130,9 +1132,9 @@ package Corvinus::Types::Array::Array {
         pop(@{$self});
     }
 
-    *drop_last  = \&pop;
-    *drop_right = \&pop;
-*inlatura_ultimul = \&pop;
+    *drop_last        = \&pop;
+    *drop_right       = \&pop;
+    *inlatura_ultimul = \&pop;
 
     sub pop_rand {
         my ($self) = @_;
@@ -1140,15 +1142,15 @@ package Corvinus::Types::Array::Array {
         CORE::splice(@{$self}, CORE::rand(scalar @{$self}), 1);
     }
 
- *inlatura_aleatoriu = \&pop_rand;
+    *inlatura_aleatoriu = \&pop_rand;
 
     sub delete_index {
         my ($self, $offset) = @_;
         CORE::splice(@{$self}, $offset->get_value, 1);
     }
 
-    *pop_at = \&delete_index;
-*inlatura_la_pozitia = \&delete_index;
+    *pop_at              = \&delete_index;
+    *inlatura_la_pozitia = \&delete_index;
 
     sub splice {
         my ($self, $offset, $length, @objects) = @_;
@@ -1270,7 +1272,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *permutations = \&permute;
-    *permutatii = \&permute;
+    *permutatii   = \&permute;
 
     sub pack {
         my ($self, $format) = @_;
@@ -1324,14 +1326,15 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::String::String->new(CORE::join($delim, @{$self}));
     }
 
-    *imbina = \&join;
+    *imbina    = \&join;
+    *imbina_cu = \&join;
 
     sub reverse {
         my ($self) = @_;
         $self->new(reverse @{$self});
     }
 
-    *reversed = \&reverse;    # alias
+    *reversed   = \&reverse;    # alias
     *inverseaza = \&reverse;
 
     sub to_hash {
@@ -1339,8 +1342,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Hash::Hash->new(@{$self});
     }
 
-    *to_h = \&to_hash;
-    *ca_dict = \&to_hash;
+    *to_h         = \&to_hash;
+    *ca_dict      = \&to_hash;
     *ca_dictionar = \&to_hash;
 
     sub copy {
@@ -1364,7 +1367,7 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *remove_first = \&delete_first;
+    *remove_first       = \&delete_first;
     *sterge_primul_dupa = \&delete_first;
 
     sub delete_last {
@@ -1382,7 +1385,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *sterge_ultimul_dupa = \&delete_last;
-    *remove_last = \&delete_last;
+    *remove_last         = \&delete_last;
 
     sub delete {
         my ($self, $obj) = @_;
@@ -1410,8 +1413,8 @@ package Corvinus::Types::Array::Array {
         $self;
     }
 
-    *remove_if = \&delete_if;
-*sterge_daca = \&delete_if;
+    *remove_if   = \&delete_if;
+    *sterge_daca = \&delete_if;
 
     sub delete_first_if {
         my ($self, $code) = @_;
@@ -1427,10 +1430,10 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *remove_first_if = \&delete_first_if;
- *sterge_primul_daca = \&delete_first_if;
+    *remove_first_if    = \&delete_first_if;
+    *sterge_primul_daca = \&delete_first_if;
 
-     sub delete_last_if {
+    sub delete_last_if {
         my ($self, $code) = @_;
 
         for (my $i = $#{$self} ; $i >= 0 ; --$i) {
@@ -1444,7 +1447,7 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *remove_last_if = \&delete_last_if;
+    *remove_last_if      = \&delete_last_if;
     *sterge_ultimul_daca = \&delete_last_if;
 
     sub to_list {

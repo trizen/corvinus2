@@ -17,6 +17,7 @@ package Corvinus::Types::Hash::Hash {
     }
 
     *call = \&new;
+    *nou  = \&new;
 
     sub get_value {
         my ($self) = @_;
@@ -54,7 +55,8 @@ package Corvinus::Types::Hash::Hash {
         Corvinus::Types::Number::Number->new(scalar CORE::keys %{$self});
     }
 
-    *len = \&length;
+    *len     = \&length;
+    *lungime = \&length;
 
     sub eq {
         my ($self, $obj) = @_;
@@ -104,7 +106,8 @@ package Corvinus::Types::Hash::Hash {
         $self;
     }
 
-    *add = \&append;
+    *add    = \&append;
+    *adauga = \&append;
 
     sub delete {
         my ($self, @keys) = @_;
@@ -151,7 +154,8 @@ package Corvinus::Types::Hash::Hash {
         $self->new(@pairs);
     }
 
-    *grep = \&select;
+    *grep       = \&select;
+    *selecteaza = \&select;
 
     sub delete_if {
         my ($self, $code) = @_;
@@ -162,8 +166,6 @@ package Corvinus::Types::Hash::Hash {
             }
         );
     }
-
-    *deleteIf = \&delete_if;
 
     sub concat {
         my ($self, $obj) = @_;
@@ -180,7 +182,8 @@ package Corvinus::Types::Hash::Hash {
         $self->new(@list);
     }
 
-    *merge = \&concat;
+    *merge  = \&concat;
+    *uneste = \&concat;
 
     sub merge_values {
         my ($self, $obj) = @_;
@@ -198,11 +201,14 @@ package Corvinus::Types::Hash::Hash {
         my ($self) = @_;
         Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } keys %{$self});
     }
+    *chei = \&keys;
 
     sub values {
         my ($self) = @_;
         Corvinus::Types::Array::Array->new(values %{$self});
     }
+
+    *valori = \&values;
 
     sub each_value {
         my ($self, $code) = @_;
@@ -216,6 +222,8 @@ package Corvinus::Types::Hash::Hash {
         $code;
     }
 
+    *fiecare_valoare = \&each_value;
+
     sub each_key {
         my ($self, $code) = @_;
 
@@ -227,6 +235,8 @@ package Corvinus::Types::Hash::Hash {
 
         $code;
     }
+
+    *fiecare_cheie = \&each_key;
 
     sub each {
         my ($self, $obj) = @_;
@@ -248,7 +258,9 @@ package Corvinus::Types::Hash::Hash {
         Corvinus::Types::Array::Array->new(Corvinus::Types::String::String->new($key), $value);
     }
 
-    *each_pair = \&each;
+    *each_pair       = \&each;
+    *fiecare         = \&each;
+    *fiecare_pereche = \&each;
 
     sub sort_by {
         my ($self, $code) = @_;
@@ -265,6 +277,8 @@ package Corvinus::Types::Hash::Hash {
         );
     }
 
+    *sorteaza_dupa = \&sort_by;
+
     sub to_a {
         my ($self) = @_;
         Corvinus::Types::Array::Array->new(
@@ -276,14 +290,17 @@ package Corvinus::Types::Hash::Hash {
 
     *pairs    = \&to_a;
     *to_array = \&to_a;
+    *ca_lista = \&to_a;
 
     sub exists {
         my ($self, $key) = @_;
         Corvinus::Types::Bool::Bool->new(exists $self->{$key});
     }
 
-    *has_key  = \&exists;
-    *contains = \&exists;
+    *contine   = \&exists;
+    *are_cheie = \&exists;
+    *has_key   = \&exists;
+    *contains  = \&exists;
 
     sub flip {
         my ($self) = @_;
@@ -295,12 +312,16 @@ package Corvinus::Types::Hash::Hash {
         $new_hash;
     }
 
+    *inverseaza = \&flip;
+
     sub copy {
         my ($self) = @_;
 
         state $x = require Storable;
         Storable::dclone($self);
     }
+
+    *copiaza = \&copy;
 
     sub dump {
         my ($self) = @_;

@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sierpinski_carpet
+#
+
+var c = ['##'];
+{
+    c = (c.mapeaza{.ori(3)}                     +
+         c.mapeaza{|x| x + ' '.ori(x.len) + x } +
+         c.mapeaza{.ori(3)});
+} * 3;
+spune c.imbina("\n");

@@ -1,19 +1,19 @@
 #!/usr/bin/ruby
 
-class Accumulator (sum) {
-    method add1(num) {
+clasa Accumulator (sum) {
+    metoda add1(num) {
         sum += num;
     }
 
-    method add2(num) {
+    metoda add2(num) {
         self{:sum} += num;
     }
 
-    method add3(num) {
+    metoda add3(num) {
         self.sum += num;
     }
 
-    method +(num) {
+    metoda +(num) {
         self.sum = (sum + num);
     }
 }
