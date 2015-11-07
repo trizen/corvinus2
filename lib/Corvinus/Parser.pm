@@ -1513,13 +1513,13 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
             }
 
             # "default {...}" construct
-            if (/\Gdefault\h*(?=\{)/gc) {
+            if (/\G(?:default|altfel)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
                 return Corvinus::Types::Block::Default->new(block => $block);
             }
 
             ## Experimental gather/take
-            if (/\Ggather\h*(?=\{)/gc) {
+            if (/\G(?:gather|colect(?:eaza)?+)\h*(?=\{)/gc) {
                 my $obj = Corvinus::Types::Block::Gather->new();
 
                 local $self->{current_gather} = $obj;
@@ -1530,7 +1530,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                 return $obj;
             }
 
-            if (exists($self->{current_gather}) and /\Gtake\b\h*/gc) {
+            if (exists($self->{current_gather}) and /\G(?:take|ia)\b\h*/gc) {
 
                 my $obj = (
                            /\G(?=\()/
@@ -2366,7 +2366,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                 # Try-catch construct
                 if (ref($obj) eq 'Corvinus::Types::Block::Try') {
                     $self->parse_whitespace();
-                    if (/\G\h*(?:catch|prinde)\b/gc) {
+                    if (/\G\h*(?:catch|salveaza)\b/gc) {
                         my $arg = $self->parse_obj(code => $opt{code});
                         push @{$struct{$self->{class}}[-1]{call}}, {method => 'catch', arg => [$arg]};
                     }
@@ -2449,7 +2449,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
             $self->parse_whitespace(code => $opt{code});
 
             # Module declaration
-            if (/\Gmodule\b\h*/gc) {
+            if (/\Gmodule?+\b\h*/gc) {
                 my $name =
                   /\G($self->{var_name_re})\h*/goc
                   ? $1
@@ -2585,7 +2585,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
                         state $x = require File::Spec;
                         my @path = split(/::/, $var_name);
-                        my $mod_path = File::Spec->catfile(@path[0 .. $#path - 1], $path[-1] . '.corvin');
+                        my $mod_path = File::Spec->catfile(@path[0 .. $#path - 1], $path[-1] . '.cv');
 
                         $Corvinus::INCLUDED{$var_name} = $mod_path;
 

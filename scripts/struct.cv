@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Compound_data_type
+#
+
+struct Punct(x, y);
+var p = Punct(1, 2);
+say p.y;              #=> 2

@@ -8,9 +8,9 @@ func sterge_diacritice(s) {
     s.tr('ăâșțî','aasti');
 }
 
-# Numere  => text
-var DIGITS = Dict.new;
-DIGITS['0'..'19'] = %w(
+# Numbers => text
+static DIGITS = Dict;
+DIGITS.@{'0'..'19'} = %w(
   zero unu doi trei patru cinci șase șapte opt nouă zece
   unsprezece
   doisprezece
@@ -21,46 +21,47 @@ DIGITS['0'..'19'] = %w(
   șaptesprezece
   optsprezece
   nouăsprezece
-);
+)...;
 
 # Text => numbers
-var WORDS = Dict.new;
-WORDS[DIGITS.valori.mapeaza {|v|sterge_diacritice(v)}] = DIGITS.chei.mapeaza{.ca_numar};
-WORDS[%w(o un doua sai)] = [1, 1, 2, 6];
+static WORDS = Dict.nou;
+WORDS.@{DIGITS.valori.mapeaza {|v| sterge_diacritice(v) }} = DIGITS.chei.mapeaza{.ca_numar}...;
+WORDS.@{%w(o un doua sai)} = (1, 1, 2, 6);
 
 # Colocvial
-WORDS[%w(unspe doispe treispe paispe cinspe cinsprezece saispe saptespe saptuspe optspe nouaspe)] =
-    [11, 12, 13, 14, 15, 15, 16, 17, 17, 18, 19];
+WORDS.@{%w(unspe doispe treispe paispe cinspe cinsprezece saispe saptespe saptuspe optspe nouaspe)} =
+(11, 12, 13, 14, 15, 15, 16, 17, 17, 18, 19);
 
 # Această listă conține numere mai mari de 99
 # Vezi: http://ro.wikipedia.org/wiki/Sistem_zecimal#Denumiri_ale_numerelor
-var BIGNUMS = (
-            [
-                [ 10**2,        'suta',         'sute', adev],
-                [ 10**3,         'mie',          'mii', adev],
-                [ 10**6,      'milion',     'milioane', fals],
-                [ 10**9,     'miliard',     'miliarde', fals],
-                [10**12,      'bilion',     'bilioane', fals],
-                [10**15,     'biliard',     'biliarde', fals],
-                [10**18,     'trilion',    'trilioane', fals],
-                [10**21,    'triliard',    'triliarde', fals],
-                [10**24,  'cvadrilion', 'cvadrilioane', fals],
-                [10**27, 'cvadriliard', 'cvadriliarde', fals],
-                [Mate.inf,  'inifinit',      'infinit', fals],
-            ]
-             -> mapeaza { |v|
-                 (var h = Dict.new)[%w(num sg pl fem)] = (v) => h;
-            }
+static BIGNUMS = (
+    [
+        [ 10**2,        'suta',         'sute', adev],
+        [ 10**3,         'mie',          'mii', adev],
+        [ 10**6,      'milion',     'milioane', fals],
+        [ 10**9,     'miliard',     'miliarde', fals],
+        [10**12,      'bilion',     'bilioane', fals],
+        [10**15,     'biliard',     'biliarde', fals],
+        [10**18,     'trilion',    'trilioane', fals],
+        [10**21,    'triliard',    'triliarde', fals],
+        [10**24,  'cvadrilion', 'cvadrilioane', fals],
+        [10**27, 'cvadriliard', 'cvadriliarde', fals],
+        [Mate.inf,  'inifinit',      'infinit', fals],
+    ] -> mapeaza { |v|
+         var h = Dict.nou;
+         h.@{%w(num sg pl fem)} = v...;
+         h;
+    }
 );
 
 # This hash is a reversed version of the above array and it's used to convert text into numbers
-static BIGWORDS = Dict.new;
+static BIGWORDS = Dict;
 BIGNUMS.each { |x|
-    BIGWORDS[x[:sg],x[:pl]] = [x[:num],x[:num]];
+    BIGWORDS{x{:sg},x{:pl}} = (x{:num}, x{:num});
 };
 
 # Change 'suta' to 'sută'
-BIGNUMS[0][:sg] = 'sută';
+BIGNUMS[0]{:sg} = 'sută';
 
 # This functions removes irrelevant characters from a text
 func normalizeaza_textul(s) {
@@ -76,25 +77,24 @@ func normalizeaza_textul(s) {
 func uneste_numerele(nums) {
 
     var num = 0;
-    cat_timp (nums.lungime > 0) {
-        var i = nums.sterge_primul;
+    cat_timp (nums.len > 0) {
+        var i = nums.shift;
 
-        # When the current number is lower than the next number
-        daca ((nums.lungime > 0) si (i < nums[0])) {
-            var n = nums.sterge_primul;
+        # When the current number is lower than the sari number
+        daca ((nums.len > 0) si (i < nums[0])) {
+            var n = nums.shift;
 
             # Factor (e.g.: 400 -> 4)
-            var f = intreg(i / 10**(i.log10.intreg));
+            var f = (i / (10**(i.log10.int)) -> int);
 
-            # When the next number is not really next to the current number
+            # When the sari number is not really sari to the current number
             # e.g.: $i == 400 and $n == 5000 # should produce 405_000 not 45_000
-            var mod = (n.lungime % 3);
-            daca (mod != 0) {
+            daca ((var mod = (n.len % 3)) != 0) {
                 f *= 10**(3 - mod);
             }
 
             # Join the numbers and continue
-            num += (10**(n.log10.int) * f + n);
+            num += (10**(n.log10.to_i) * f + n);
             sari;
         }
 
@@ -117,10 +117,10 @@ clasa nou(diacritice            = adev,
     metoda in_cifre(text) {
 
         # When text is not a string
-        text.is_a(String) sau return;
+        text.is_a(Text) || return;
 
         # If a thousand separator is defined, remove it from text
-        daca ((separator != '') si (separator.lungime > 1)) {
+        daca ((separator != '') si (separator.len > 1)) {
             text.gsub!(separator, ' ');
         }
 
@@ -139,27 +139,27 @@ clasa nou(diacritice            = adev,
         var amount = 0;  # int -- current number
         var factor = 1;  # int -- multiplication factor
 
-        daca (words.lungime > 0) {
+        daca (words.len) {
 
             # Check for negative numbers
             daca (words[0] == neg_sign) {
                 neg = true;
-                words.sterge_primul;
+                words.shift;
             }
 
             # Check for infinity and NaN
-            daca (words.lungime == 1) {
+            daca (words.len == 1) {
 
                 # Infinity
                 var inf = normalizeaza_textul(infinit);
                 daca (words[0] == inf) {
-                    return(neg ? Mate.inf.neg : Mate.inf);
+                    return(neg ? Math.inf.neg : Math.inf);
                 }
 
                 # Not a number
                 var nan = normalizeaza_textul(nu_e_numar);
                 daca (words[0] == nan) {
-                    return Numar.nen;       # nu-e-numar
+                    return Num.nan;
                 }
             }
         }
@@ -171,27 +171,27 @@ clasa nou(diacritice            = adev,
             daca (WORDS.contine(words[0])) {
                 factor = 1;
             }
-            altdaca (words[0].se_termina_cu('zeci')) {
+            sau_daca (words[0].se_termina_cu('zeci')) {
                 words[0].inlatura!('zeci');
                 factor = 10;
             }
 
             daca (factor > 0) {
-                amount = words.sterge_primul;
+                amount = words.shift;
             }
-            altdaca (BIGWORDS.contine(words[0])) {
-                factor = BIGWORDS[words.sterge_primul];
+            sau_daca (BIGWORDS.contine(words[0])) {
+                factor = BIGWORDS{words.shift};
             }
 
             daca (factor < 0) {
-                words.sterge_primul;
+                words.shift;
                 sari;
             }
 
             # Take and multiply the current number
             var num;
             daca (WORDS.contine(amount)) {
-                num = (WORDS[amount] * factor);
+                num = (WORDS{amount} * factor);
             }
             altfel {
                 sari;
@@ -200,22 +200,24 @@ clasa nou(diacritice            = adev,
             # Check for some word-joining tokens
             daca (words.lungime > 0) {
                 daca (words[0] == 'si') {    # e.g.: patruzeci si doi
-                    words.sterge_primul;
-                    num += WORDS[words.sterge_primul];
+                    words.shift;
+                    num += WORDS{words.shift};
                 }
 
                 daca (words.lungime > 0) {
-                    loop {
+                    bucla {
                         daca (words[0] == 'de') {    # e.g.: o suta de mii
-                            words.sterge_primul;
+                            words.shift;
                         }
 
                         daca (BIGWORDS.contine(words[0])) {
-                            num *= BIGWORDS[words.sterge_primul];
+                            num *= BIGWORDS{words.shift};
                         }
 
-                        toate {words.lungime > 0; words[0] == 'de'} sau stop;
-                    };
+                        daca ((words.len == 0) sau (words[0] != 'de')) {
+                            stop;
+                        }
+                    }
                 }
             }
 
@@ -231,7 +233,7 @@ clasa nou(diacritice            = adev,
             # Check for the decimal point
             daca ((words.lungime > 0) si (words[0] == dec_point)) {
                 adec = adev;
-                words.sterge_primul;
+                words.shift;
             }
         }
 
@@ -247,8 +249,8 @@ clasa nou(diacritice            = adev,
 
             # Special case -- check for leading zeros
             var zeros = '';
-            cat_timp ((decs.lungime > 0) si (decs[0] == 0)) {
-                zeros += decs.sterge_primul.ca_text;
+            cat_timp ((decs.lungime > 0) && (decs[0] == 0)) {
+                zeros += decs.shift.ca_text;
             }
 
             num += ('.' + zeros + uneste_numerele(decs).ca_text);
@@ -262,114 +264,113 @@ clasa nou(diacritice            = adev,
         return num;
     }
 
-    metoda _number_to_ro(number) {
+    metoda _in_litere(number) {
 
         var words = [];
         daca (DIGITS.contine(number)) {
-            words.adauga(DIGITS[number]);
+            words.adauga(DIGITS{number});
         }
-        altdaca (number.to_num! -> nu_e_numar) {
+        sau_daca (number.to_num! -> is_nan) {
             return [nu_e_numar];
         }
-        altdaca (number.e_negativ) {
+        sau_daca (number.is_negative) {
             words.adauga(semn_negativ);
-            words += __METODA__(self, number.absolut);
+            words.adauga(self._in_litere(number.abs)...);
         }
-        altdaca (!number.e_intreg) {
+        sau_daca (!(number.is_int)) {
 
-            words += __METODA__(self, number.int);
+            words.adauga(self._in_litere(number.int)...);
             words.adauga(punct_decimal);
 
-            number -= number.intreg;
+            number -= number.int;
 
-            cat_timp (number != number.intreg) {
-                number *= 10;
-                daca (number < 1) {
-                    words.adauga(DIGITS[0]);
-                }
+            cat_timp (number != number.int) {
+                number *= 10 < 1 && (words.adauga(DIGITS{0}));
             }
 
-            words += __METODA__(self, number.intreg);
+            words.adauga(self._in_litere(number.int)...);
         }
-        altdaca (number >= BIGNUMS[0][:num]) {
-            sir(0, BIGNUMS.sfarsit-1).fiecare { |i|
-                var j = BIGNUMS.sfarsit-i;
+        sau_daca (number >= BIGNUMS[0]{:num}) {
+            0 ... BIGNUMS.end-1 -> each { |i|
+                var j = BIGNUMS.end-i;
 
-                daca (toate { number >= BIGNUMS[j-1][:num]; number < BIGNUMS[j][:num]}) {
-                    var cat = intreg(number / BIGNUMS[j-1]['num']);
-                    number -= (BIGNUMS[j-1][:num] * intreg(number / BIGNUMS[j-1][:num]));
+                daca (number >= BIGNUMS[j-1]{:num} && (number < BIGNUMS[j]{:num})) {
+                    var cat = (number / BIGNUMS[j-1]{:num} -> int);
+                    number -= (BIGNUMS[j-1]{:num} * (number / BIGNUMS[j-1]{:num} -> int));
 
                     var of = [];
                     daca (DIGITS.contine(cat)) {
-                        of = [DIGITS[cat]];
+                        of = [DIGITS{cat}];
                     }
                     altfel {
-                        var w = (__METODA__(self, cat) + ['de']);
-                        daca ((w.lungime > 2) si (w[-2] == DIGITS[2])) {
+                        var w = (self._in_litere(cat) + ['de']);
+                        daca ((w.lungime > 2) si (w[-2] == DIGITS{2})) {
                             w[-2] = 'două';
-                        };
+                        }
                         of = w;
                     }
 
-                    daca ((cat >= 100) si (cat < 1000)) {
-                        var rest = (cat - 100*intreg(cat / 100));
-                        daca (toate {of.lungime > 0; rest != 0; DIGITS.contine(rest)}) {
-                            of.sterge_ultimul;
+                    daca (cat >= 100 && (cat < 1000)) {
+                        var rest = (cat - (100 * (cat / 100 -> int)));
+                        daca ((of.len != 0) si (rest != 0 && (DIGITS.contine(rest)))) {
+                            of.pop;
                         }
                     }
 
-                    dat(cat)
-                        este(1) {
-                            words += [BIGNUMS[j-1][:fem] ? 'o' : 'un', BIGNUMS[j-1][:sg]];
+                    dat(cat) {
+                        cand(1) {
+                            words += [BIGNUMS[j-1]{:fem} ? 'o' : 'un', BIGNUMS[j-1]{:sg}];
                         }
-                        este(2) {
-                            words += ['două', BIGNUMS[j-1][:pl]];
+                        cand(2) {
+                            words += ['două', BIGNUMS[j-1]{:pl}];
                         }
                         altfel {
-                            words += (of + [BIGNUMS[j-1][:pl]]);
-                        };
+                            words += (of + [BIGNUMS[j-1]{:pl}]);
+                        }
+                    }
 
                     daca(number > 0) {
-                        daca(BIGNUMS[j][:num] > 1000) {
-                            words[-1] += separator;
-                        };
-                        words += __METODA__(self, number);
+                        BIGNUMS[j]{:num} > 1000 && (
+                            words[-1] += separator
+                        );
+                        words.adauga(self._in_litere(number)...)
                     }
 
                     stop;
                 }
             }
         }
-        altdaca ((number > 19) si (number < 100)) {
-            var cat = intreg(number / 10);
+        sau_daca ((number > 19) si (number < 100)) {
+            var cat = (number / 10 -> int);
 
-            dat(cat)
-                este(2) {
+            dat(cat) {
+                cand(2) {
                     words.adauga('douăzeci');
                 }
-                este(6) {
+                cand(6) {
                     words.adauga('șaizeci');
                 }
                 altfel {
-                    words.adauga(DIGITS[cat] + 'zeci');
-                };
+                    words.adauga(DIGITS{cat} + 'zeci');
+                }
+            }
 
             daca (number % 10 != 0) {
-                words.adauga('și', DIGITS[number % 10]);
+                words.adauga('și', DIGITS{number % 10 -> intreg});
             }
         }
-        altdaca (number.e_infinit) {
+        sau_daca (number.e_infinit) {
             return [infinit];
         }
         altfel {
-            return [numar_invalid];
+            return([numar_invalid]);
         }
 
-        return words;
+        return(words);
     }
 
     metoda in_litere(num) {
-        var word = self._number_to_ro(num).join(" ");
+        var word = self._in_litere(num).join(" ");
 
         daca (!diacritice) {
             word = sterge_diacritice(word);

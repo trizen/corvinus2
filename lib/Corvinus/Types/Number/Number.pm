@@ -96,7 +96,7 @@ package Corvinus::Types::Number::Number {
     }
 
     *equals = \&eq;
-    *este = \&eq;
+    *este   = \&eq;
 
     sub ne {
         my ($self, $arg) = @_;
@@ -171,7 +171,7 @@ package Corvinus::Types::Number::Number {
     }
 
     *multiplica = \&mul;
-    *x = \&mul;
+    *x          = \&mul;
 
     sub div {
         my ($self, $num) = @_;
@@ -236,34 +236,34 @@ package Corvinus::Types::Number::Number {
     }
 
     *lista_coboara_la = \&array_downto;
-    *arr_downto = \&array_downto;
+    *arr_downto       = \&array_downto;
 
     sub to {
         my ($self, $num, $step) = @_;
         $step = defined($step) ? $step->get_value : 1;
         Corvinus::Types::Range::RangeNumber->__new__(
-                                                  from => $$self,
-                                                  to   => $num->get_value,
-                                                  step => $step,
-                                                 );
+                                                     from => $$self,
+                                                     to   => $num->get_value,
+                                                     step => $step,
+                                                    );
     }
 
-    *upto  = \&to;
-    *up_to = \&to;
+    *upto    = \&to;
+    *up_to   = \&to;
     *pana_la = \&to;
 
     sub downto {
         my ($self, $num, $step) = @_;
         $step = defined($step) ? $step->get_value : 1;
         Corvinus::Types::Range::RangeNumber->__new__(
-                                                  from => $$self,
-                                                  to   => $num->get_value,
-                                                  step => -$step,
-                                                 );
+                                                     from => $$self,
+                                                     to   => $num->get_value,
+                                                     step => -$step,
+                                                    );
     }
 
     *coboara_la = \&downto;
-    *down_to = \&downto;
+    *down_to    = \&downto;
 
     sub range {
         my ($self, $to, $step) = @_;
@@ -307,8 +307,8 @@ package Corvinus::Types::Number::Number {
         $self->new($$self->copy->babs);
     }
 
-    *absolut = \&abs;
-    *pozitiv = \&abs;
+    *absolut  = \&abs;
+    *pozitiv  = \&abs;
     *pos      = \&abs;
     *positive = \&abs;
 
@@ -415,7 +415,7 @@ package Corvinus::Types::Number::Number {
         $self->new($$self->copy->bneg);
     }
 
-    *negate = \&neg;
+    *negate  = \&neg;
     *negativ = \&neg;
 
     sub not {
@@ -471,7 +471,7 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Bool::Bool->new($$self->is_nan);
     }
 
-    *is_NaN = \&is_nan;
+    *is_NaN     = \&is_nan;
     *nu_e_numar = \&is_nan;
 
     sub is_positive {
@@ -479,8 +479,8 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Bool::Bool->new($$self->is_pos);
     }
 
-    *e_poz = \&is_positive;
-    *is_pos = \&is_positive;
+    *e_poz     = \&is_positive;
+    *is_pos    = \&is_positive;
     *e_pozitiv = \&is_positive;
 
     sub is_negative {
@@ -488,9 +488,9 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Bool::Bool->new($$self->is_neg);
     }
 
-    *e_neg = \&is_negative;
+    *e_neg     = \&is_negative;
     *e_negativ = \&is_negative;
-    *is_neg = \&is_negative;
+    *is_neg    = \&is_negative;
 
     sub is_even {
         my ($self) = @_;
@@ -511,7 +511,7 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Bool::Bool->new($$self->is_inf(defined($sign) ? $sign->get_value : ()));
     }
 
-    *e_infinit = \&is_inf;
+    *e_infinit   = \&is_inf;
     *is_infinite = \&is_inf;
 
     sub is_integer {
@@ -520,7 +520,7 @@ package Corvinus::Types::Number::Number {
     }
 
     *e_intreg = \&is_integer;
-    *is_int = \&is_integer;
+    *is_int   = \&is_integer;
 
     sub rand {
         my ($self, $max) = @_;
@@ -575,7 +575,7 @@ package Corvinus::Types::Number::Number {
     }
 
     *lungime = \&length;
-    *len = \&length;
+    *len     = \&length;
 
     sub digit {
         my ($self, $n) = @_;
@@ -597,7 +597,7 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Array::Array->new(@digits);
     }
 
-    *cifre = \&digits;
+    *cifre    = \&digits;
     *ca_cifre = \&digits;
 
     sub nok {
@@ -655,7 +655,7 @@ package Corvinus::Types::Number::Number {
         Corvinus::Types::Bool::Bool->new($$self->copy->bmod($num->get_value)->is_zero);
     }
 
-    *e_div = \&is_div;
+    *e_div       = \&is_div;
     *e_divizibil = \&is_div;
 
     sub divides {
@@ -705,14 +705,10 @@ package Corvinus::Types::Number::Number {
         $self->new($$self->numerator);
     }
 
-    *nu = \&numerator;
-
     sub denominator {
         my ($self) = @_;
         $self->new($$self->denominator);
     }
-
-    *de = \&denominator;
 
     sub parts {
         my ($self) = @_;

@@ -10,7 +10,7 @@ var dir = Complex::i;
 
 var fib = ['1', '0'];
 func fib_word(n) {
-    fib[n] \\= (fib_word(n-1) + fib_word(n-2));
+    fib[n] := (fib_word(n-1) + fib_word(n-2));
 }
 
 func pas {

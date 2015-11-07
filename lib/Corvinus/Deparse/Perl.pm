@@ -43,8 +43,11 @@ package Corvinus::Deparse::Perl {
             overload_methods => {
                                  to_str  => q{""},
                                  to_s    => q{""},
+                                 ca_text => q{""},
                                  to_bool => q{bool},
+                                 ca_bool => q{bool},
                                  to_num  => q{0+},
+                                 ca_num  => q{0+},
                                 },
 
             special_constructs => {
@@ -54,23 +57,32 @@ package Corvinus::Deparse::Perl {
                                   },
 
             translations => {
-                    'Corvinus::Types::Block::While' => {
-                            cat_timp => 'while',
-                    },
-                    'Corvinus::Types::Block::If' => {
-                            daca => 'if',
-                            sau_daca => 'elsif',
-                            altfel => 'else',
-                    },
-                    'Corvinus::Perl::Builtin' => {
-                            sari_la => 'goto',
-                            eroare => 'die',
-                            avert => 'warn',
-                    },
-                    'Corvinus::Types::Block::CodeInit' => {
-                            bucla => 'loop',
-                    },
-            },
+                             'Corvinus::Types::Block::While' => {
+                                                                 cat_timp => 'while',
+                                                                },
+                             'Corvinus::Types::Block::If' => {
+                                                              daca     => 'if',
+                                                              sau_daca => 'elsif',
+                                                              altfel   => 'else',
+                                                             },
+                             'Corvinus::Perl::Builtin' => {
+                                                           sari_la => 'goto',
+                                                           eroare  => 'die',
+                                                           avert   => 'warn',
+                                                          },
+                             'Corvinus::Types::Block::CodeInit' => {
+                                                                    bucla => 'loop',
+                                                                   },
+                             'Corvinus::Types::Block::Given' => {
+                                                                 dat => 'given',
+                                                                },
+                             'Corvinus::Types::Block::When' => {
+                                                                cand => 'when',
+                                                               },
+                             'Corvinus::Types::Block::Default' => {
+                                                                   altfel => 'default',
+                                                                  },
+                            },
 
             reassign_ops => {map (("$_=" => $_), qw(+ - % * / & | ^ ** && || << >> ÷))},
 
@@ -135,7 +147,7 @@ HEADER
                               $ref eq 'Corvinus::Variable::ClassInit'    ? $self->_dump_class_name($obj)
                             : $ref eq 'Corvinus::Variable::Ref'          ? 'REF'
                             : $ref eq 'Corvinus::Types::Block::CodeInit' ? 'Corvinus::Types::Block::Code'
-                            :                                           $ref
+                            :                                              $ref
                            );
     }
 
@@ -564,7 +576,7 @@ HEADER
                         else {
 
                             ## Old way
-                          # $code .= ";\n" . (' ' x $Corvinus::SPACES) . "sub $obj->{name} { \$$obj->{name}$refaddr->call(\@_) }";
+                       # $code .= ";\n" . (' ' x $Corvinus::SPACES) . "sub $obj->{name} { \$$obj->{name}$refaddr->call(\@_) }";
 
                             # New way
                             $code .= ";\n"
@@ -746,7 +758,8 @@ HEADER
                                  ? (join(' ', map { ref($_) ? $self->_dump_class_name($_) : $_ } @{$self->{inherit}}) . ' ')
                                  : ''
                                 )
-                              . ($self->{package_name} eq 'Corvinus::Object::Object' ? '' : "Corvinus::Object::Object") . ");\n";
+                              . ($self->{package_name} eq 'Corvinus::Object::Object' ? '' : "Corvinus::Object::Object")
+                              . ");\n";
                         }
 
                         if ($is_class and exists $self->{class_vars} and not $self->{ref_class}) {
@@ -1203,7 +1216,8 @@ HEADER
 
                     # != and == methods
                     if ($method eq '==' or $method eq '!=') {
-                        $code = 'Corvinus::Types::Bool::Bool->new(' . $code . 'eq' . $self->deparse_args(@{$call->{arg}}) . ')';
+                        $code =
+                          'Corvinus::Types::Bool::Bool->new(' . $code . 'eq' . $self->deparse_args(@{$call->{arg}}) . ')';
                         $code .= '->not' if ($method eq '!=');
                         next;
                     }
@@ -1218,7 +1232,8 @@ HEADER
                     # !~ and ~~ methods
                     if ($method eq '~~' or $method eq '!~') {
                         $self->top_add(qq{use experimental 'smartmatch';\n});
-                        $code = 'Corvinus::Types::Bool::Bool->new(' . $code . '~~' . $self->deparse_args(@{$call->{arg}}) . ')';
+                        $code =
+                          'Corvinus::Types::Bool::Bool->new(' . $code . '~~' . $self->deparse_args(@{$call->{arg}}) . ')';
                         $code .= '->not' if ($method eq '!~');
                         next;
                     }
@@ -1256,7 +1271,8 @@ HEADER
                         }
 
                         if ($method eq '>>' or $method eq 'scrie' or $method eq 'print') {
-                            $code = 'Corvinus::Types::Bool::Bool->new(CORE::print ' . $self->deparse_args(@{$call->{arg}}) . ')';
+                            $code =
+                              'Corvinus::Types::Bool::Bool->new(CORE::print ' . $self->deparse_args(@{$call->{arg}}) . ')';
                             next;
                         }
                     }
@@ -1321,7 +1337,13 @@ HEADER
                 }
 
                 if (exists $call->{keyword}) {
-                    $code .= $call->{keyword};
+
+                    my $key = $call->{keyword};
+                    if (exists $self->{translations}{$ref} and exists $self->{translations}{$ref}{$key}) {
+                        $key = $self->{translations}{$ref}{$key};
+                    }
+
+                    $code .= $key;
                 }
 
                 if (exists $call->{arg}) {
@@ -1336,7 +1358,8 @@ HEADER
                 if (exists $call->{block}) {
                     if ($ref eq 'Corvinus::Types::Block::Given'
                         or ($ref eq 'Corvinus::Types::Block::If' and $i == $#{$expr->{call}})) {
-                        $code = "do {\n" . (' ' x $Corvinus::SPACES) . $code . $self->deparse_bare_block(@{$call->{block}}) . '}';
+                        $code =
+                          "do {\n" . (' ' x $Corvinus::SPACES) . $code . $self->deparse_bare_block(@{$call->{block}}) . '}';
                     }
                     else {
                         $code .= $self->deparse_bare_block(@{$call->{block}});
@@ -1371,7 +1394,8 @@ HEADER
                         )
                   ) {
                     $results[-1] =
-                      (ref($expr) eq 'Corvinus::Variable::Label' ? $expr->{name} : $struct->{$class}[$i - 1]{self}->{name}) . ':'
+                        (ref($expr) eq 'Corvinus::Variable::Label' ? $expr->{name} : $struct->{$class}[$i - 1]{self}->{name})
+                      . ':'
                       . $results[-1];
                 }
                 elsif (

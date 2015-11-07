@@ -26,7 +26,7 @@ package Corvinus::Types::String::String {
     }
 
     *call = \&new;
-    *nou = \&new;
+    *nou  = \&new;
 
     sub get_value {
         ${$_[0]};
@@ -115,10 +115,10 @@ package Corvinus::Types::String::String {
         $self;
     }
 
-    *elimina = \&subtract;
-    *exclude = \&subtract;
+    *elimina  = \&subtract;
+    *exclude  = \&subtract;
     *inlatura = \&subtract;
-    *sterge = \&subtract;
+    *sterge   = \&subtract;
 
     sub match {
         my ($self, $regex, @rest) = @_;
@@ -153,27 +153,27 @@ package Corvinus::Types::String::String {
     sub to {
         my ($self, $string) = @_;
         Corvinus::Types::Range::RangeString->__new__(
-                                                  from => $$self,
-                                                  to   => $string->get_value,
-                                                  asc  => 1,
-                                                 );
+                                                     from => $$self,
+                                                     to   => $string->get_value,
+                                                     asc  => 1,
+                                                    );
     }
 
-    *up_to = \&to;
-    *upto  = \&to;
-    *sir = \&to;
+    *up_to   = \&to;
+    *upto    = \&to;
+    *sir     = \&to;
     *pana_la = \&to;
 
     sub downto {
         my ($self, $string) = @_;
         Corvinus::Types::Range::RangeString->__new__(
-                                                  from => $$self,
-                                                  to   => $string->get_value,
-                                                  asc  => 0,
-                                                 );
+                                                     from => $$self,
+                                                     to   => $string->get_value,
+                                                     asc  => 0,
+                                                    );
     }
 
-    *down_to = \&downto;
+    *down_to    = \&downto;
     *coboara_la = \&downto;
 
     sub range {
@@ -224,8 +224,8 @@ package Corvinus::Types::String::String {
         $self->new($$self x $num->get_value);
     }
 
-    *multiply = \&times;
-    *ori = \&times;
+    *multiply   = \&times;
+    *ori        = \&times;
     *multiplica = \&times;
 
     sub repeat {
@@ -239,8 +239,8 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Bool::Bool->new($$self eq $$arg);
     }
 
-    *eq = \&equals;
-    *is = \&equals;
+    *eq   = \&equals;
+    *is   = \&equals;
     *este = \*equals;
 
     sub ne {
@@ -264,9 +264,9 @@ package Corvinus::Types::String::String {
         $self->new(CORE::ucfirst $$self);
     }
 
-    *tc        = \&ucfirst;
-    *titlecase = \&ucfirst;
-    *capital = \&ucfirst;
+    *tc            = \&ucfirst;
+    *titlecase     = \&ucfirst;
+    *capital       = \&ucfirst;
     *capitalizeaza = \&ucfirst;
 
     sub lc {
@@ -274,9 +274,9 @@ package Corvinus::Types::String::String {
         $self->new(CORE::lc $$self);
     }
 
-    *downcase = \&lc;
-    *lower    = \&lc;
-    *litere_mici = \&lc;
+    *downcase       = \&lc;
+    *lower          = \&lc;
+    *litere_mici    = \&lc;
     *in_litere_mici = \&lc;
 
     sub uc {
@@ -284,8 +284,8 @@ package Corvinus::Types::String::String {
         $self->new(CORE::uc $$self);
     }
 
-    *upcase = \&uc;
-    *upper  = \&uc;
+    *upcase         = \&uc;
+    *upper          = \&uc;
     *in_litere_mari = \&uc;
 
     sub fc {
@@ -319,7 +319,7 @@ package Corvinus::Types::String::String {
         __PACKAGE__->new(CORE::substr($$self, $pos->get_value, 1));
     }
 
-    *char_at = \&char;
+    *char_at    = \&char;
     *caracterul = \&char;
 
     sub wordcase {
@@ -394,7 +394,8 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Number::Number->new($$self);
     }
 
-    *dec = \&num;
+    *dec   = \&num;
+    *numar = \&num;
 
     sub substr {
         my ($self, $offs, $len) = @_;
@@ -406,8 +407,8 @@ package Corvinus::Types::String::String {
     }
 
     *substring = \&substr;
-    *extrage = \&substr;
-    *subtext = \&substr;
+    *extrage   = \&substr;
+    *subtext   = \&substr;
 
     sub ft {
         my ($self, $from, $to) = @_;
@@ -438,58 +439,78 @@ package Corvinus::Types::String::String {
         __PACKAGE__->new($copy_str);
     }
 
+    *insereaza = \&insert;
+
     sub join {
         my ($self, @rest) = @_;
         __PACKAGE__->new(CORE::join($$self, map { $_->get_value } @rest));
     }
+
+    *imbina = \&join;
 
     sub clear {
         my ($self) = @_;
         $self->new('');
     }
 
+    *gol = \&is_empty;
+
     sub is_empty {
         my ($self) = @_;
         Corvinus::Types::Bool::Bool->new($$self eq '');
     }
 
+    *e_gol = \&is_empty;
+
     sub index {
         my ($self, $substr, $pos) = @_;
         Corvinus::Types::Number::Number->new(
-                                          defined($pos)
-                                          ? CORE::index($$self, $substr->get_value, $pos->get_value)
-                                          : CORE::index($$self, $substr->get_value)
-                                         );
+                                             defined($pos)
+                                             ? CORE::index($$self, $substr->get_value, $pos->get_value)
+                                             : CORE::index($$self, $substr->get_value)
+                                            );
     }
+
+    *prima_pozitie = \&index;
 
     sub rindex {
         my ($self, $substr, $pos) = @_;
         Corvinus::Types::Number::Number->new(
-                                          defined($pos)
-                                          ? CORE::rindex($$self, $substr->get_value, $pos->get_value)
-                                          : CORE::rindex($$self, $substr->get_value)
-                                         );
+                                             defined($pos)
+                                             ? CORE::rindex($$self, $substr->get_value, $pos->get_value)
+                                             : CORE::rindex($$self, $substr->get_value)
+                                            );
     }
+
+    *ultima_pozitie = \&rindex;
 
     sub ord {
         my ($self) = @_;
         Corvinus::Types::Number::Number->new(CORE::ord($$self));
     }
 
+    *valoare_ascii = \&ord;
+
     sub reverse {
         my ($self) = @_;
         $self->new(scalar CORE::reverse($$self));
     }
+
+    *iverseaza = \&reverse;
 
     sub printf {
         my ($self, @arguments) = @_;
         Corvinus::Types::Bool::Bool->new(printf $$self, @arguments);
     }
 
+    *scrief = \&printf;
+
     sub printlnf {
         my ($self, @arguments) = @_;
         Corvinus::Types::Bool::Bool->new(printf($$self . "\n", @arguments));
     }
+
+    *scrielnf = \&printlnf;
 
     sub sprintf {
         my ($self, @arguments) = @_;
@@ -526,7 +547,7 @@ package Corvinus::Types::String::String {
     }
 
     *replace = \&sub;
-    *subst = \&sub;
+    *subst   = \&sub;
 
     sub gsub {
         my ($self, $regex, $str) = @_;
@@ -601,16 +622,17 @@ package Corvinus::Types::String::String {
         if (CORE::not defined $sep) {
             return
               Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) }
-                                                split(' ', $$self, $size));
+                                                   split(' ', $$self, $size));
         }
 
         if (ref($sep) eq 'Corvinus::Types::Number::Number') {
-            return Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } unpack '(a' . $sep->get_value . ')*', $$self);
+            return Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } unpack '(a' . $sep->get_value . ')*',
+                                                      $$self);
         }
 
         $sep = $self->_string_or_regex($sep);
         Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) }
-                                          split(/$sep/, $$self, $size));
+                                             split(/$sep/, $$self, $size));
     }
 
     *imparte = \&split;
@@ -647,7 +669,7 @@ package Corvinus::Types::String::String {
         $array->each($obj);
     }
 
-    *words = \&each_word;
+    *words   = \&each_word;
     *cuvinte = \&each_word;
 
     sub bytes {
@@ -656,7 +678,7 @@ package Corvinus::Types::String::String {
     }
 
     *to_bytes = \&bytes;
-    *octeti = \&bytes;
+    *octeti   = \&bytes;
 
     sub each_byte {
         my ($self, $code) = @_;
@@ -665,7 +687,8 @@ package Corvinus::Types::String::String {
 
         state $x = require bytes;
         foreach my $i (0 .. bytes::length($string) - 1) {
-            if (defined(my $res = $code->_run_code(Corvinus::Types::Byte::Byte->new(CORE::ord bytes::substr($string, $i, 1))))) {
+            if (defined(my $res = $code->_run_code(Corvinus::Types::Byte::Byte->new(CORE::ord bytes::substr($string, $i, 1)))))
+            {
                 return $res;
             }
         }
@@ -680,7 +703,7 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Char::Chars->call($$self);
     }
 
-    *to_chars = \&chars;
+    *to_chars  = \&chars;
     *caractere = \&chars;
 
     sub each_char {
@@ -695,8 +718,8 @@ package Corvinus::Types::String::String {
         $self;
     }
 
-    *each = \&each_char;
-    *fiecare = \&each_char;
+    *each             = \&each_char;
+    *fiecare          = \&each_char;
     *fiecare_caracter = \&each_char;
 
     sub graphemes {
@@ -707,7 +730,7 @@ package Corvinus::Types::String::String {
     *graphs       = \&graphemes;
     *to_graphemes = \&graphemes;
     *to_graphs    = \&graphemes;
-    *grafeme = \&graphemes;
+    *grafeme      = \&graphemes;
 
     sub each_grapheme {
         my ($self, $code) = @_;
@@ -722,7 +745,7 @@ package Corvinus::Types::String::String {
         $self;
     }
 
-    *each_graph = \&each_grapheme;
+    *each_graph     = \&each_grapheme;
     *fiecare_grafem = \&each_grapheme;
 
     sub lines {
@@ -841,16 +864,16 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Number::Number->new(CORE::length(${$_[0]}));
     }
 
-    *len       = \&chars_length;
-    *length    = \&chars_length;
-    *chars_len = \&chars_length;
+    *len             = \&chars_length;
+    *length          = \&chars_length;
+    *chars_len       = \&chars_length;
     *numar_caractere = \&chars_length;
 
     sub graphs_length {
         Corvinus::Types::Number::Number->new(scalar(() = ${$_[0]} =~ /\X/g));
     }
 
-    *graphs_len = \&graphs_length;
+    *graphs_len    = \&graphs_length;
     *numar_grafeme = \&graphs_length;
 
     sub bytes_length {
@@ -860,7 +883,7 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Number::Number->new(bytes::length($$self));
     }
 
-    *bytes_len = \&bytes_length;
+    *bytes_len    = \&bytes_length;
     *numar_octeti = \&bytes_length;
 
     sub levenshtein {
@@ -1015,7 +1038,7 @@ package Corvinus::Types::String::String {
     }
 
     *starts_with = \&begins_with;
-    *incepe_cu = \&begins_with;
+    *incepe_cu   = \&begins_with;
 
     sub ends_with {
         my ($self, $string) = @_;

@@ -33,7 +33,7 @@ package Corvinus::Types::Block::Try {
           : $self->{val};
     }
 
-    *prinde = \&catch;
+    *salveaza = \&catch;
 
 };
 
