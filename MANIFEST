@@ -105,6 +105,7 @@ scripts/det_triunghi.cv
 scripts/fac_iter.cv
 scripts/fib_rec.cv
 scripts/fib_word.cv
+scripts/fork.cv
 scripts/Lingua/RO/Numeros.cv
 scripts/lingua_ro.cv
 scripts/manbrot.cv

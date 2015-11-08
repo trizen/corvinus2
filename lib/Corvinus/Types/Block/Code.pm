@@ -17,6 +17,8 @@ package Corvinus::Types::Block::Code {
         wantarray ? @objs : $objs[-1];
     }
 
+    *executa = \&run;
+
     sub call {
         my ($self, @args) = @_;
         my @objs = $self->{code}->(@args);
@@ -124,6 +126,8 @@ package Corvinus::Types::Block::Code {
         Corvinus::Types::Block::While->new->while($condition, $self);
     }
 
+    *cat_timp = \&while;
+
     sub loop {
         my ($self) = @_;
 
@@ -136,6 +140,8 @@ package Corvinus::Types::Block::Code {
         $self;
     }
 
+    *bucla = \&loop;
+
     sub if {
         my ($self, $bool) = @_;
 
@@ -145,6 +151,8 @@ package Corvinus::Types::Block::Code {
 
         $bool;
     }
+
+    *daca = \&if;
 
     sub fork {
         my ($self) = @_;
@@ -164,6 +172,8 @@ package Corvinus::Types::Block::Code {
         $fork->{pid} = $pid;
         $fork;
     }
+
+    *bifurca = \&fork;
 
     sub pfork {
         my ($self) = @_;

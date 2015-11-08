@@ -1188,7 +1188,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
             # Declaration of local variables, classes, methods and functions
             if (
-                   /\G(func(?:tion|tie)?+|clas[sa]|global)\b\h*/gc
+                   /\G(func|clas[sa]|global)\b\h*/gc
                 || /\G(->)\h*/gc
                 || (exists($self->{current_class})
                     && /\G(method|metoda)\b\h*/gc)
@@ -1203,10 +1203,8 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                   : $1;
 
                 state $trans = {
-                                clasa    => 'class',
-                                function => 'func',
-                                metoda   => 'method',
-                                functie  => 'func',
+                                clasa  => 'class',
+                                metoda => 'method',
                                };
 
                 if (exists $trans->{$type}) {

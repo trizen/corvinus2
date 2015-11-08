@@ -36,11 +36,14 @@ package Corvinus::Time::Time {
         Corvinus::Types::Number::Number->new($self->get_value);
     }
 
-    *sec = \&time;
+    *sec  = \&time;
+    *timp = \&time;
 
     sub now {
         Corvinus::Types::Number::Number->new(CORE::time);
     }
+
+    *acum = \&now;
 
     sub micro {
         my ($self) = @_;

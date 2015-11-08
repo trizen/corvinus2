@@ -4,7 +4,7 @@ package Corvinus::Types::Block::While {
         bless {}, __PACKAGE__;
     }
 
-    sub cat_timp {
+    sub while {
         my ($self, $condition, $block) = @_;
 
         while ($condition->run) {
@@ -15,6 +15,8 @@ package Corvinus::Types::Block::While {
 
         $self;
     }
+
+    *cat_timp = \&while;
 }
 
 1;

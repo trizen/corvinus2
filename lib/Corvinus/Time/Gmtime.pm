@@ -31,13 +31,20 @@ package Corvinus::Time::Gmtime {
             };
         }
 
-        *day       = \&mday;
-        *month     = \&mon;
-        *minute    = \&min;
-        *second    = \&sec;
-        *month_day = \&mday;
-        *week_day  = \&wday;
-        *year_day  = \&yday;
+        *day         = \&mday;
+        *zi          = \&mday;
+        *month       = \&mon;
+        *luna        = \&mon;
+        *minute      = \&min;
+        *minut       = \&min;
+        *second      = \&sec;
+        *secunda     = \&sec;
+        *month_day   = \&mday;
+        *ziua_lunii  = \&mday;
+        *week_day    = \&wday;
+        *ziua_sapt   = \&wday;
+        *year_day    = \&yday;
+        *ziua_anului = \&yday;
     }
 
     sub ctime {
@@ -54,6 +61,7 @@ package Corvinus::Time::Gmtime {
 
     *format = \&strftime;
     *strf   = \&strftime;
+    *timpf  = \&strftime;
 
 };
 

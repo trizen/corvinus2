@@ -21,13 +21,16 @@ package Corvinus::Types::Block::Fork {
         scalar eval { Storable::fd_retrieve($self->{fh}) };
     }
 
-    *wait = \&get;
-    *join = \&get;
+    *wait     = \&get;
+    *join     = \&get;
+    *asteapta = \&get;
 
     sub kill {
         my ($self, $signal) = @_;
         kill(defined($signal) ? $signal->get_value : 'KILL', $self->{pid});
     }
+
+    *omoara = \&kill;
 };
 
 1

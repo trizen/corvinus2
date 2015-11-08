@@ -64,6 +64,7 @@ package Corvinus::Types::Number::Number {
     }
 
     *la_puterea = \&pow;
+    *putere     = \&pow;
 
     sub inc {
         my ($self) = @_;

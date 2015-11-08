@@ -20,8 +20,12 @@ package Corvinus::Types::Bool::Bool {
 
         *call = \&new;
 
-        sub true  { $true }
+        sub true { $true }
+        *adev     = \&true;
+        *adevarat = \&true;
+
         sub false { $false }
+        *fals = \&false;
     }
 
     sub get_value { ${$_[0]} }
@@ -41,14 +45,19 @@ package Corvinus::Types::Bool::Bool {
         $_[0];
     }
 
+    *e_adev     = \&is_true;
+    *e_adevarat = \&is_true;
+
     sub not {
         my ($self) = @_;
         $self->get_value ? $self->false : $self->true;
     }
 
-    *is_false = \&not;
-    *flip     = \&not;
-    *toggle   = \&not;
+    *is_false   = \&not;
+    *flip       = \&not;
+    *toggle     = \&not;
+    *inverseaza = \&not;
+    *e_fals     = \&not;
 
     sub dump {
         my ($self) = @_;

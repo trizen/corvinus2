@@ -175,10 +175,14 @@ package Corvinus::Types::Number::Complex {
         Corvinus::Types::Bool::Bool->new($$self == $$arg);
     }
 
+    *este = \&eq;
+
     sub ne {
         my ($self, $arg) = @_;
         Corvinus::Types::Bool::Bool->new($$self != $$arg);
     }
+
+    *nu_este = \&ne;
 
     sub abs {
         my ($self) = @_;
@@ -205,7 +209,7 @@ package Corvinus::Types::Number::Complex {
     }
 
     *multiplica = \&mul;
-    *x = \&mul;
+    *x          = \&mul;
 
     sub div {
         my ($self, $arg) = @_;
@@ -297,7 +301,7 @@ package Corvinus::Types::Number::Complex {
         $self->new($$self->_negate);
     }
 
-    *negate = \&neg;
+    *negate  = \&neg;
     *negativ = \&neg;
 
     sub not {
@@ -456,7 +460,7 @@ package Corvinus::Types::Number::Complex {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *is_NaN = \&is_nan;
+    *is_NaN     = \&is_nan;
     *nu_e_numar = \&is_nan;
 
     sub is_positive {
@@ -464,18 +468,18 @@ package Corvinus::Types::Number::Complex {
         Corvinus::Types::Bool::Bool->new($$self >= 0);
     }
 
-    *e_poz = \&is_positive;
+    *e_poz     = \&is_positive;
     *e_pozitiv = \&is_positive;
-    *is_pos = \&is_positive;
+    *is_pos    = \&is_positive;
 
     sub is_negative {
         my ($self) = @_;
         Corvinus::Types::Bool::Bool->new($$self < 0);
     }
 
-    *e_neg = \&is_negative;
+    *e_neg     = \&is_negative;
     *e_negativ = \&is_negative;
-    *is_neg = \&is_negative;
+    *is_neg    = \&is_negative;
 
     sub is_even {
         my ($self) = @_;
@@ -497,14 +501,14 @@ package Corvinus::Types::Number::Complex {
     }
 
     *is_infinite = \&is_inf;
-    *e_infinit = \&is_inf;
+    *e_infinit   = \&is_inf;
 
     sub is_integer {
         my ($self) = @_;
         Corvinus::Types::Bool::Bool->new($$self == CORE::int($$self));
     }
 
-    *is_int = \&is_integer;
+    *is_int   = \&is_integer;
     *e_intreg = \&is_integer;
 
     sub rand {
@@ -539,7 +543,7 @@ package Corvinus::Types::Number::Complex {
         $self->new(sprintf "%.*f", $num->get_value * -1, $$self);
     }
 
-    *fround = \&roundf;
+    *fround       = \&roundf;
     *rotunjeste_f = \&roundf;
 
     sub digit { ... }

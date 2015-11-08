@@ -1,6 +1,6 @@
 #!/usr/bin/ruby
 
-functie fib(n) e memorat {
+func fib(n) e memorat {
 
     daca (n == 0) { return 0 }
     daca (n == 1) { return 1 }

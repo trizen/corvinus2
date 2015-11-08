@@ -119,15 +119,21 @@ package Corvinus::Math::Math {
         Corvinus::Types::Number::Number->new(Math::BigFloat->binf);
     }
 
+    *infinit = \&inf;
+
     sub precision {
         my ($self, $n) = @_;
         Corvinus::Types::Number::Number->new(Math::BigFloat->precision(defined($n) ? $n->get_value || undef : ()));
     }
 
+    *precizie = \&precision;
+
     sub accuracy {
         my ($self, $n) = @_;
         Corvinus::Types::Number::Number->new(Math::BigFloat->accuracy(defined($n) ? $n->get_value || undef : ()));
     }
+
+    *acuratete = \&accuracy;
 
     sub ceil {
         my ($self, $n) = @_;
@@ -144,10 +150,14 @@ package Corvinus::Math::Math {
         Corvinus::Types::Number::Number->new(Math::BigFloat->new($n->get_value)->bsqrt);
     }
 
+    *radical = \&sqrt;
+
     sub root {
         my ($self, $n, $m) = @_;
         Corvinus::Types::Number::Number->new(Math::BigFloat->new($n->get_value)->broot($m->get_value));
     }
+
+    *radacina = \&root;
 
     sub troot {
         my ($self, $n) = @_;
@@ -164,6 +174,9 @@ package Corvinus::Math::Math {
         Corvinus::Types::Number::Number->new(Math::BigFloat->new($n->get_value)->bpow($pow->get_value));
     }
 
+    *la_puterea = \&pow;
+    *putere     = \&pow;
+
     sub rand {
         my ($self, $from, $to) = @_;
 
@@ -179,12 +192,16 @@ package Corvinus::Math::Math {
         Corvinus::Types::Number::Number->new($from + CORE::rand($to - $from));
     }
 
+    *aleatoriu = \&rand;
+
     sub sum {
         my ($self, @nums) = @_;
 
         state $x = require List::Util;
         Corvinus::Types::Number::Number->new(List::Util::sum(map { $_->get_value } @nums));
     }
+
+    *suma = \&sum;
 
     sub max {
         my ($self, @nums) = @_;
@@ -204,6 +221,8 @@ package Corvinus::Math::Math {
         my ($self, @nums) = @_;
         Corvinus::Types::Number::Number->new($self->sum(@nums)->get_value / @nums);
     }
+
+    *media = \&avg;
 
     sub range_sum {
         my ($self, $from, $to, $step) = @_;
@@ -237,10 +256,10 @@ package Corvinus::Math::Math {
         $to     = $to->get_value;
 
         Corvinus::Types::Range::RangeNumber->__new__(
-                                                  from => $from,
-                                                  to   => $to,
-                                                  step => ($to - $from) / $amount,
-                                                 );
+                                                     from => $from,
+                                                     to   => $to,
+                                                     step => ($to - $from) / $amount,
+                                                    );
     }
 
     sub number_to_percentage {
@@ -257,6 +276,7 @@ package Corvinus::Math::Math {
     }
 
     *num2percent = \&number_to_percentage;
+    *in_procent  = \&number_to_percentage;
 
     {
         no strict 'refs';
