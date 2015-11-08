@@ -1,9 +1,9 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Compound_data_type
-#
-
 struct Punct(x, y);
-var p = Punct(1, 2);
-say p.y;              #=> 2
+
+var a = Punct(x: 1, y: 2);
+var b = Punct(x: 3, y: 4);
+
+spune a.x+b.x;            # 4
+spune a.y+b.y;            # 6

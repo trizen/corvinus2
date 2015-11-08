@@ -614,6 +614,9 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } $str =~ /$regex->{regex}/g);
     }
 
+    *colect     = \&scan;
+    *colecteaza = \&scan;
+
     sub split {
         my ($self, $sep, $size) = @_;
 
@@ -976,18 +979,29 @@ package Corvinus::Types::String::String {
     *distanta_jaro = \&jaro_distance;
 
     sub contains {
-        my ($self, $string, $start_pos) = @_;
+        my ($self, $arg, $start_pos) = @_;
 
         $start_pos =
           defined($start_pos)
           ? $start_pos->get_value
           : 0;
 
+        if (ref($arg) eq 'Corvinus::Types::Regex::Regex') {
+            my $regex = $arg->{regex};
+            my $s     = $$self;
+
+            if ($start_pos != 0) {
+                pos($s) = $start_pos;
+            }
+
+            return Corvinus::Types::Bool::Bool->new(scalar $s =~ /$regex/g);
+        }
+
         if ($start_pos < 0) {
             $start_pos = CORE::length($$self) + $start_pos;
         }
 
-        Corvinus::Types::Bool::Bool->new(CORE::index($$self, $string->get_value, $start_pos) != -1);
+        Corvinus::Types::Bool::Bool->new(CORE::index($$self, $arg->get_value, $start_pos) != -1);
     }
 
     *include = \&contains;

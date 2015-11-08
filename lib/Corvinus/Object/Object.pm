@@ -107,7 +107,8 @@ package Corvinus::Object::Object {
             @parents;
         };
 
-        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } $extract_parents->(CORE::ref($obj)));
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) }
+                                           $extract_parents->(CORE::ref($obj)));
     }
 
     sub super_join {
@@ -134,11 +135,15 @@ package Corvinus::Object::Object {
             $self;
         }
 
+        *def_metoda = \&def_method;
+
         sub undef_method {
             my ($self, $name) = @_;
             delete ${(CORE::ref($self) ? CORE::ref($self) : $self) . '::'}{$name};
             $self;
         }
+
+        *undef_metoda = \&undef_method;
 
         sub alias_method {
             my ($self, $old, $new) = @_;
@@ -163,9 +168,9 @@ package Corvinus::Object::Object {
                 $methods{$method} = (
                                      $alias{\&{$ref . '::' . $method}} //=
                                        Corvinus::Variable::LazyMethod->new(
-                                                                        obj    => $self,
-                                                                        method => \&{$ref . '::' . $method}
-                                                                       )
+                                                                           obj    => $self,
+                                                                           method => \&{$ref . '::' . $method}
+                                                                          )
                                     );
             }
 

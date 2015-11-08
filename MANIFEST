@@ -110,7 +110,12 @@ scripts/Lingua/RO/Numeros.cv
 scripts/lingua_ro.cv
 scripts/manbrot.cv
 scripts/max.cv
+scripts/metaprog.cv
+scripts/metode.cv
+scripts/multi_arr.cv
 scripts/pi.cv
+scripts/redeschidere_clase.cv
+scripts/regex.cv
 scripts/s_carpet.cv
 scripts/s_triangle.cv
 scripts/set.cv
@@ -118,6 +123,7 @@ scripts/struct.cv
 scripts/suma_cifrelor.cv
 scripts/text.cv
 scripts/turing.cv
+scripts/unicode.cv
 share/corvinus/bigint.corvin
 share/corvinus/bigrat.corvin
 share/corvinus/Memoize.corvin
