@@ -42,7 +42,9 @@ package Corvinus::Object::Object {
         Corvinus::Types::Bool::Bool->new(say @_);
     }
 
-    *spune = \&say;
+    *spune   = \&say;
+    *scrieln = \&say;
+    *println = \&say;
 
     sub print {
         Corvinus::Types::Bool::Bool->new(print @_);

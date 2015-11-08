@@ -71,6 +71,8 @@ package Corvinus::Perl::Perl {
         $guess_type->($data);
     }
 
+    *to_corvin = \&to_corvinus;
+
     sub eval {
         my ($self, $perl_code) = @_;
         $self->to_corvinus(eval $perl_code->get_value);

@@ -124,11 +124,11 @@ scripts/suma_cifrelor.cv
 scripts/text.cv
 scripts/turing.cv
 scripts/unicode.cv
-share/corvinus/bigint.corvin
-share/corvinus/bigrat.corvin
-share/corvinus/Memoize.corvin
-share/corvinus/ntheory.corvin
-share/corvinus/Storable.corvin
+share/corvinus/bigint.cv
+share/corvinus/bigrat.cv
+share/corvinus/Memoize.cv
+share/corvinus/ntheory.cv
+share/corvinus/Storable.cv
 t/00-load.t
 t/01-parser.t
 t/manifest.t
