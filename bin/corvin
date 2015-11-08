@@ -216,7 +216,7 @@ sub read_script {
 sub new_parser {
     my (%opt) = @_;
     Corvinus::Parser->new(file_name   => $opt{name},
-                       script_name => $opt{name},);
+                          script_name => $opt{name},);
 }
 
 sub optimize_struct {
@@ -250,9 +250,9 @@ sub parse_code {
             local @Corvinus::NAMESPACES;
 
             $struct = Corvinus::Parser->new(
-                                         file_name   => $parser->{file_name},
-                                         script_name => $parser->{script_name},
-                                        )->parse_script(code => \$code);
+                                            file_name   => $parser->{file_name},
+                                            script_name => $parser->{script_name},
+                                           )->parse_script(code => \$code);
 
             $struct = optimize_struct($struct);
         }
@@ -297,9 +297,9 @@ sub output_usage {
                     '-v'         => 'print version number and exit',
                     '-t'         => 'treat all command-line arguments as scripts',
                     '-r'         => 'parse and deparse a Corvinus program',
-                    '-R lang'    => ['parse and deparse a Corvinus program to a given language', 'valid values: corvinus, perl'],
-                    '-w'         => 'enable warnings with stack backtrace',
-                    '-W'         => 'make warnings fatal (with stack backtrace)',
+                    '-R lang' => ['parse and deparse a Corvinus program to a given language', 'valid values: corvinus, perl'],
+                    '-w'      => 'enable warnings with stack backtrace',
+                    '-W'      => 'make warnings fatal (with stack backtrace)',
                    );
 
     require File::Basename;
@@ -525,9 +525,9 @@ sub _get_loaded_modules {
 }
 
 sub deparse_structure {
-    my ($struct, $lang) = @_;
+    my ($struct, $arg) = @_;
 
-    my $lang   = $lang // 'Corvinus';
+    my $lang   = $arg // 'Corvinus';
     my $module = "Corvinus::Deparse::\u\L$lang";
     my $pm     = ($module =~ s{::}{/}gr . '.pm');
 
@@ -627,7 +627,7 @@ HEAD
 
                  close $fh;
              }
-         }
+           }
         } => $path
     );
 
