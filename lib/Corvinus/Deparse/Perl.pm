@@ -554,7 +554,7 @@ HEADER
                         $code =
                             "do {$code;\n"
                           . (' ' x $Corvinus::SPACES)
-                          . "\$$obj->{name}$refaddr = Corvinus::Types::Block::Code->new(Memoize::memoize(\$$obj->{name}${refaddr}->{code}))}";
+                          . "\$$obj->{name}$refaddr\->{code} = Memoize::memoize(\$$obj->{name}${refaddr}->{code}); \$$obj->{name}$refaddr}";
                     }
 
                     if ($obj->{type} eq 'method') {

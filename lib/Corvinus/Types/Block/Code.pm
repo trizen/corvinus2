@@ -174,6 +174,7 @@ package Corvinus::Types::Block::Code {
     }
 
     *bifurca = \&fork;
+    *paralel = \&fork;
 
     sub pfork {
         my ($self) = @_;

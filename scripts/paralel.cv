@@ -9,8 +9,8 @@ func qsort(lista) {
     spune lista;
     var pivot = lista.inlatura_aleatoriu;
 
-    var proc1 = { qsort(lista.select{ _ <= pivot}) }.bifurca;
-    var proc2 = { qsort(lista.select{ _  > pivot }) }.bifurca;
+    var proc1 = { qsort(lista.select{ _ <= pivot}) }.paralel;
+    var proc2 = { qsort(lista.select{ _  > pivot}) }.paralel;
 
     proc1.asteapta + [pivot] + proc2.asteapta;
 }
