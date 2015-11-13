@@ -163,6 +163,9 @@
       "Corvinus::Types::Block::If" : {
          "file" : "lib/Corvinus/Types/Block/If.pm"
       },
+      "Corvinus::Types::Block::Loop" : {
+         "file" : "lib/Corvinus/Types/Block/Loop.pm"
+      },
       "Corvinus::Types::Block::Next" : {
          "file" : "lib/Corvinus/Types/Block/Next.pm"
       },

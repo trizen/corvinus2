@@ -37,6 +37,7 @@ lib/Corvinus/Types/Block/Fork.pm
 lib/Corvinus/Types/Block/Gather.pm
 lib/Corvinus/Types/Block/Given.pm
 lib/Corvinus/Types/Block/If.pm
+lib/Corvinus/Types/Block/Loop.pm
 lib/Corvinus/Types/Block/Next.pm
 lib/Corvinus/Types/Block/Return.pm
 lib/Corvinus/Types/Block/Take.pm

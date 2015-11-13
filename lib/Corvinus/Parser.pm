@@ -66,7 +66,7 @@ package Corvinus::Parser {
                      | (?:Multi(?:Lista|Arr(?:ay)?+))\b          (?{ state $x = Corvinus::Types::Array::MultiArray->new })
                      | (?:Pereche|Pair)\b                        (?{ state $x = Corvinus::Types::Array::Pair->new })
                      | (?:Hash|Dict(?:ionar)?+)\b                (?{ state $x = Corvinus::Types::Hash::Hash->new })
-                     | (?:Text|String)\b                         (?{ state $x = Corvinus::Types::String::String->new })
+                     | (?:Text|Str(?:ing)?+)\b                   (?{ state $x = Corvinus::Types::String::String->new })
                      | Num(?:ar|ber)?+\b                         (?{ state $x = Corvinus::Types::Number::Number->new })
                      | (?:RangeNum(?:ber)?+|SirNum(?:ar)?+)\b    (?{ state $x = Corvinus::Types::Range::RangeNumber->new })
                      | (?:RangeStr(?:ing)?+|SirText)\b           (?{ state $x = Corvinus::Types::Range::RangeString->new })
@@ -185,7 +185,7 @@ package Corvinus::Parser {
                   Pereche Pair
                   MultiLista MultiArray MultiArr
                   Dict Dictionar Hash
-                  Text String
+                  Text Str String
                   Num Numar Number
                   SirText
                   SirNum SirNumar
