@@ -1,9 +1,5 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Binary_search
-#
-
 func binary_search(a, i) {
  
     var l = 0;

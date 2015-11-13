@@ -1,7 +1,7 @@
 package Corvinus::Optimizer {
 
     use 5.014;
-    require Scalar::Util;
+    use Scalar::Util qw(refaddr);
 
     use constant {
                   STRING  => 'Corvinus::Types::String::String',
@@ -492,7 +492,7 @@ package Corvinus::Optimizer {
                 ## ok
             }
             elsif ($obj->{type} eq 'func' or $obj->{type} eq 'method') {
-                if ($addr{Scalar::Util::refaddr($obj)}++) {
+                if ($addr{refaddr($obj)}++) {
                     ## ok
                 }
                 else {
@@ -501,7 +501,7 @@ package Corvinus::Optimizer {
             }
         }
         elsif ($ref eq 'Corvinus::Variable::ClassInit') {
-            if ($addr{Scalar::Util::refaddr($obj)}++) {
+            if ($addr{refaddr($obj)}++) {
                 ## ok
             }
             else {
@@ -509,7 +509,7 @@ package Corvinus::Optimizer {
             }
         }
         elsif ($ref eq 'Corvinus::Variable::Init') {
-            if ($addr{Scalar::Util::refaddr($obj)}++) {
+            if ($addr{refaddr($obj)}++) {
                 ## ok
             }
             else {
@@ -519,8 +519,26 @@ package Corvinus::Optimizer {
                 }
             }
         }
+        elsif ($ref eq 'Corvinus::Types::Block::Do') {
+            if ($addr{refaddr($obj)}++) {
+                ## ok
+            }
+            else {
+                my %code = $self->optimize($obj->{block}{code});
+                $obj->{block}{code} = \%code;
+            }
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Loop') {
+            if ($addr{refaddr($obj)}++) {
+                ## ok
+            }
+            else {
+                my %code = $self->optimize($obj->{block}{code});
+                $obj->{block}{code} = \%code;
+            }
+        }
         elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
-            if ($addr{Scalar::Util::refaddr($obj)}++) {
+            if ($addr{refaddr($obj)}++) {
                 ## ok
             }
             else {

@@ -1282,13 +1282,10 @@ package Corvinus::Types::String::String {
                    and exists $chars[$i + 1]
                    and $chars[$i + 1] eq '{') {
                 if (ref $parser eq 'Corvinus::Parser') {
-                    my $code = CORE::join('', @chars[$i + 1 .. $#chars]);
-                    my $block = $parser->parse_block(code => \$code);
-                    if (@{$block->{vars}} == 1) {
-                        $block = $block->{code};
-                    }
+                    my $code = 'do' . CORE::join('', @chars[$i + 1 .. $#chars]);
+                    my $block = $parser->parse_expr(code => \$code);
                     push @inline_expressions, [$i, $block];
-                    splice(@chars, $i--, 1 + pos($code));
+                    splice(@chars, $i--, 1 + pos($code) - 2);
                 }
                 else {
                     # Can't eval #{} at runtime!
@@ -1331,17 +1328,7 @@ package Corvinus::Types::String::String {
             my $string = '';
             foreach my $char (@chars) {
                 if (ref($char)) {
-                    my $block =
-                      ref($char) eq 'HASH'
-                      ? $char
-                      : {
-                         $parser->{class} => [
-                                              {
-                                               self => $char,
-                                               call => [{method => 'run'}]
-                                              }
-                                             ]
-                        };
+                    my $block = $char;
 
                     if ($string ne '') {
                         $append_arg->(Encode::decode_utf8(Encode::encode_utf8($string)));

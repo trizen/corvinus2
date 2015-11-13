@@ -1,9 +1,5 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Set#Sidef
-#
-
 clasa Set(*set) {
 
     metoda init {

@@ -1,5 +1,6 @@
 package Corvinus::Types::Block::Code {
 
+    use utf8;
     use 5.014;
     use parent qw(
       Corvinus::Object::Object
@@ -7,8 +8,8 @@ package Corvinus::Types::Block::Code {
       );
 
     sub new {
-        my (undef, $sub) = @_;
-        bless {code => $sub}, __PACKAGE__;
+        my (undef, %opt) = @_;
+        bless \%opt, __PACKAGE__;
     }
 
     sub run {
@@ -21,19 +22,34 @@ package Corvinus::Types::Block::Code {
 
     sub call {
         my ($self, @args) = @_;
+
         my @objs = $self->{code}->(@args);
 
-        @objs == 1 && ref($objs[0]) eq 'Corvinus::Types::Block::Return'
-          ? (
-             wantarray
-             ? @{$objs[0]{obj}}
-             : $objs[0]{obj}[-1]
-            )
-          : (
-             wantarray
-             ? @objs
-             : $objs[-1]
-            );
+        # Unpack 'return'ed arguments from bare-blocks
+        if (@objs == 1 and ref($objs[0]) eq 'Corvinus::Types::Block::Return') {
+            @objs = @{$objs[0]{obj}};
+        }
+
+        # Check the return types
+        if (exists $self->{returns}) {
+
+            if ($#{$self->{returns}} != $#objs) {
+                die qq{[EROARE] Număr invalid the obiecte returnate din $self->{type} $self->{class}<<$self->{name}>>: avem }
+                  . @objs
+                  . ", dar așteptam "
+                  . @{$self->{returns}};
+            }
+
+            foreach my $i (0 .. $#{$self->{returns}}) {
+                if (ref($objs[$i]) ne ($self->{returns}[$i])) {
+                    die qq{[EROARE] Tip de obiect invalid returnat din $self->{type} $self->{class}<<$self->{name}>>: avem <<}
+                      . ref($objs[$i])
+                      . qq{>>, dar așteptam <<$self->{returns}[$i]>>};
+                }
+            }
+        }
+
+        wantarray ? @objs : $objs[-1];
     }
 
     {

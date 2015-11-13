@@ -1,7 +1,5 @@
 #!/usr/bin/ruby
 
-# Translation of: http://rosettacode.org/wiki/Benford's_law#Perl
-
 var fibonacci = [0, 1] ;
 {
     fibonacci.append(fibonacci[-1] + $fibonacci[-2]);

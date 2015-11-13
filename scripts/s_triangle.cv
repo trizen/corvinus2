@@ -1,9 +1,5 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Sierpinski_triunghi
-#
-
 func sierpinski_triunghi(n) {
     var triunghi = ['*'];
     { |i|

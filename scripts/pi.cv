@@ -1,9 +1,5 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Pi
-#
-
 func pi(callback) {
     var (q, r, t, k, n, l) = (1, 0, 1, 1, 3, 3);
     bucla {

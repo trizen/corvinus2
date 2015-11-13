@@ -122,7 +122,6 @@ package Corvinus::Parser {
             prefix_obj_re => qr{\G
               (?:
                   (?:daca|if)\b                                  (?{ Corvinus::Types::Block::If->new })
-                | (?:executa|do)\b                               (?{ Corvinus::Types::Block::Do->new })
                 | (?:cat_timp|while)\b                           (?{ Corvinus::Types::Block::While->new })
                 | (?:incearca|try)\b                             (?{ Corvinus::Types::Block::Try->new })
                 | (?:pentru|for)\b                               (?{ Corvinus::Types::Block::For->new })
@@ -225,7 +224,7 @@ package Corvinus::Parser {
                   sari
                   stop
                   return returneaza
-                  pentru bucla
+                  pentru
                   daca cat_timp
                   dat cand
                   incearca
@@ -1441,48 +1440,39 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                     # Function return type (func name(...) -> Type {...})
                     if (/\G\h*->\h*/gc) {
 
-                        my $ret_name;
-                        my $try_expr;
-                        my $pos = pos($_);
-                        if (/\G($self->{var_name_re})\h*/gco) {
-                            $ret_name = $1;
+                        my @ref;
+                        if (/\G\(/gc) {    # multiple types
+                            while (1) {
+                                my ($ref) = $self->parse_expr(code => $opt{code});
+                                push @ref, $ref;
+
+                                /\G\s*\)/gc && last;
+                                /\G\s*,\s*/gc
+                                  || $self->fatal_error(
+                                                        error => "tip invalid de returnare specificat pentru funcția '$name'",
+                                                        expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
+                                                        code     => $_,
+                                                        pos      => pos($_),
+                                                       );
+                            }
                         }
-                        else {
-                            $try_expr = 1;
+                        else {    # only one type
+                            my ($ref) = $self->parse_expr(code => $opt{code});
+                            push @ref, $ref;
                         }
 
-                        if (
-                            $try_expr or (
-                                defined($ret_name) and (
-                                    exists($self->{built_in_classes}{$ret_name}) or do {
-                                        my $obj = $self->find_var($ret_name, $class_name);
-                                        defined($obj) and $obj->{type} eq 'class';
-                                    }
-                                )
-                            )
-                          ) {
-                            local $self->{_want_name} = 1;
-                            my ($return_obj) = $self->parse_expr(code => $try_expr ? $opt{code} : \$ret_name);
-
-                            if (ref($return_obj) eq 'HASH') {
+                        foreach my $ref (@ref) {
+                            if (ref($ref) eq 'HASH') {
                                 $self->fatal_error(
-                                                   error    => "invalid return-type for $type $self->{class_name}<<$name>>",
-                                                   expected => "expected a valid type, such as: Str, Num, Arr, etc...",
+                                                   error    => "tip invalid de returnare specificat pentru funcția '$name'",
+                                                   expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
                                                    code     => $_,
-                                                   pos      => $pos,
+                                                   pos      => pos($_),
                                                   );
                             }
+                        }
 
-                            $obj->{returns} = $return_obj;
-                        }
-                        else {
-                            $self->fatal_error(
-                                               error    => "tip invalid de returnare specificat pentru funcția '$name'",
-                                               expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
-                                               code     => $_,
-                                               pos      => $pos,
-                                              );
-                        }
+                        $obj->{returns} = \@ref;
                     }
 
                     /\G\h*\{\h*/gc
@@ -1514,6 +1504,18 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
             if (/\G(?:default|altfel)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
                 return Corvinus::Types::Block::Default->new(block => $block);
+            }
+
+            # "do {...}" construct
+            if (/\G(?:exec(?:uta)?+|do)\h*(?=\{)/gc) {
+                my $block = $self->parse_block(code => $opt{code});
+                return Corvinus::Types::Block::Do->new(block => $block);
+            }
+
+            # "loop {...}" construct
+            if (/\G(?:loop|bucla)\h*(?=\{)/gc) {
+                my $block = $self->parse_block(code => $opt{code});
+                return Corvinus::Types::Block::Loop->new(block => $block);
             }
 
             ## Experimental gather/take
@@ -1631,7 +1633,6 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                                            );
             }
 
-            #if (/\G(?:die|warn|assert(?:_(?:eq|ne))?)\b/gc) {
             if (/\Gassert(?:_(?:eq|ne))?\b/gc) {
                 pos($_) = $-[0];
                 return (Corvinus::Sys::Sys->new(line => $self->{line}, file_name => $self->{file_name}), 1);
@@ -2058,10 +2059,10 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                                     error => "acolade nebalansate",
                                    );
 
-            $block->{vars} = [map { $_->{obj} }
-                                grep { ref($_) eq 'HASH' and ref($_->{obj}) eq 'Corvinus::Variable::Variable' }
-                                @{$self->{vars}{$self->{class}}}
-                             ];
+          #$block->{vars} = [
+          #    map { $_->{obj} }
+          #    grep { ref($_) eq 'HASH' and ref($_->{obj}) eq 'Corvinus::Variable::Variable' } @{$self->{vars}{$self->{class}}}
+          #];
 
             $block->{init_vars} = Corvinus::Variable::Init->new(vars => $var_objs);
 

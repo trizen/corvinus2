@@ -1,7 +1,8 @@
 package Corvinus::Types::Block::Do {
 
     sub new {
-        bless {}, __PACKAGE__;
+        my (undef, %opt) = @_;
+        bless \%opt, __PACKAGE__;
     }
 
 }

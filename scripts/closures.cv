@@ -1,9 +1,5 @@
 #!/usr/bin/ruby
 
-#
-## http://rosettacode.org/wiki/Closures/Value_capture
-#
-
 var f = (
     0..9 -> mapeaza {|i| func(j){i * j} }
 );
