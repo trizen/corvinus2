@@ -125,6 +125,7 @@ scripts/suma_cifrelor.cv
 scripts/text.cv
 scripts/turing.cv
 scripts/unicode.cv
+scripts/vm.cv
 share/corvinus/bigint.cv
 share/corvinus/bigrat.cv
 share/corvinus/Memoize.cv

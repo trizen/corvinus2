@@ -56,31 +56,43 @@ package Corvinus::Deparse::Perl {
                                   },
 
             translations => {
-                             'Corvinus::Types::Block::While' => {
-                                                                 cat_timp => 'while',
-                                                                },
-                             'Corvinus::Types::Block::If' => {
-                                                              daca     => 'if',
-                                                              sau_daca => 'elsif',
-                                                              altfel   => 'else',
-                                                             },
-                             'Corvinus::Perl::Builtin' => {
-                                                           sari_la => 'goto',
-                                                           eroare  => 'die',
-                                                           avert   => 'warn',
-                                                          },
-                             'Corvinus::Types::Block::Given' => {
-                                                                 dat => 'given',
-                                                                },
-                             'Corvinus::Types::Block::When' => {
-                                                                cand => 'when',
-                                                               },
-                             'Corvinus::Types::Block::Default' => {
-                                                                   altfel => 'default',
-                                                                  },
+                'Corvinus::Types::Block::While' => {
+                                                    cat_timp => 'while',
+                                                   },
+
+                'Corvinus::Types::Block::If' => {
+                                                 daca     => 'if',
+                                                 sau_daca => 'elsif',
+                                                 altfel   => 'else',
+                                                },
+
+                'Corvinus::Perl::Builtin' => {
+                                              sari_la => 'goto',
+                                              eroare  => 'die',
+                                              avert   => 'warn',
+                                             },
+
+                'Corvinus::Types::Block::Given' => {
+                                                    dat => 'given',
+                                                   },
+
+                'Corvinus::Types::Block::When' => {
+                                                   cand => 'when',
+                                                  },
+
+                'Corvinus::Types::Block::Default' => {
+                                                      altfel => 'default',
+                                                     },
+
+                'Corvinus::Object::Unary' => {
+                                              '>'     => 'say',
+                                              '>>'    => 'print',
+                                              'spune' => 'say',
+                                              'scrie' => 'print',
+                                             },
                             },
 
-            reassign_ops => {map (("$_=" => $_), qw(+ - % * / & | ^ ** && || << >> ÷))},
+            reassign_ops => {map (("$_=" => $_), qw(+ - % * // / & | ^ ** && || << >> ÷))},
 
             inc_dec_ops => {
                             '++' => 'inc',
@@ -1254,12 +1266,12 @@ HEADER
                             next;
                         }
 
-                        if ($method eq '>' or $method eq 'spune' or $method eq 'say') {
+                        if ($method eq 'say') {
                             $code = 'Corvinus::Types::Bool::Bool->new(CORE::say ' . $self->deparse_args(@{$call->{arg}}) . ')';
                             next;
                         }
 
-                        if ($method eq '>>' or $method eq 'scrie' or $method eq 'print') {
+                        if ($method eq 'print') {
                             $code =
                               'Corvinus::Types::Bool::Bool->new(CORE::print ' . $self->deparse_args(@{$call->{arg}}) . ')';
                             next;
