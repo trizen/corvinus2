@@ -589,6 +589,22 @@ package Corvinus::Types::Array::Array {
     *collect    = \&map;
     *mapeaza    = \&map;
     *colecteaza = \&map;
+    *colect     = \&map;
+
+    sub map_with_index {
+        my ($self, $code) = @_;
+
+        my @arr;
+        foreach my $i (0 .. $#{$self}) {
+            push @arr, $code->run(Corvinus::Types::Number::Number->new($i), $self->[$i]);
+        }
+
+        $self->new(@arr);
+    }
+
+    *collect_with_index = \&map_with_index;
+    *mapeaza_cu_index   = \&map_with_index;
+    *colect_cu_index    = \&map_with_index;
 
     sub flat_map {
         my ($self, $code) = @_;
@@ -1367,8 +1383,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *remove_first       = \&delete_first;
-    *sterge_primul_dupa = \&delete_first;
+    *remove_first  = \&delete_first;
+    *sterge_primul = \&delete_first;
 
     sub delete_last {
         my ($self, $obj) = @_;
@@ -1384,8 +1400,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Bool::Bool->false;
     }
 
-    *sterge_ultimul_dupa = \&delete_last;
-    *remove_last         = \&delete_last;
+    *sterge_ultimul = \&delete_last;
+    *remove_last    = \&delete_last;
 
     sub delete {
         my ($self, $obj) = @_;
