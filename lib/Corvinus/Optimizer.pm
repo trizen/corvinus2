@@ -22,7 +22,13 @@ package Corvinus::Optimizer {
             my ($package, @names) = @_;
             my $module = $cache{$package} //= (($package =~ s{::}{/}gr) . '.pm');
             exists($INC{$module}) || require($module);
-            map { \&{$package . '::' . $_} } @names;
+            map {
+
+                # defined(&{$package . '::' . $_})
+                #  or warn "Invalid method $package: $_";
+
+                \&{$package . '::' . $_}
+            } @names;
         }
     }
 
@@ -38,14 +44,18 @@ package Corvinus::Optimizer {
              map {
                  { $_, [table(STRING)] }
                } methods(STRING, qw(
+                   new call
+
                    concat
+                   prepend
+
                    gt lt le ge cmp
 
                    xor and or
                    eq ne
 
                    index
-                   unpack
+                   crypt
 
                    levenshtein
                    contains
@@ -68,11 +78,21 @@ package Corvinus::Optimizer {
              map {
                  { $_, [] }
                } methods(STRING, qw(
-                   lc uc tc wc tclc lcfirst
+                   lc uc fc tc wc tclc lcfirst
 
                    pop
+                   chop
                    chomp
-                   length
+
+                   chars_len
+                   bytes_len
+                   graphs_len
+
+                   chars
+                   bytes
+                   lines
+                   words
+                   graphemes
 
                    ord
                    oct
@@ -81,10 +101,16 @@ package Corvinus::Optimizer {
                    num
                    not
 
+                   first
+                   last
+
                    repeat
                    reverse
                    clear
+                   sort
+
                    is_empty
+                   is_palindrome
 
                    trim
                    trim_beg
@@ -114,7 +140,7 @@ package Corvinus::Optimizer {
 
                    times
                    repeat
-                   char_at
+                   char
 
                    sprintf
                    sprintlnf
@@ -126,7 +152,11 @@ package Corvinus::Optimizer {
             ),
 
             # String.method(String | Number | Regex)
-            #(map {{$_, [table(STRING, NUMBER, REGEX)]}} methods(STRING, qw(split))),
+            (
+             map {
+                 { $_, [table(STRING, NUMBER, REGEX)] }
+               } methods(STRING, qw(split))
+            ),
 
             # String.method(String, String)
             (
@@ -170,25 +200,27 @@ package Corvinus::Optimizer {
              map {
                  { $_, [table(NUMBER)] }
                } methods(NUMBER, qw(
+                   new call
+
                    + - / * % **
 
                    lt gt le ge cmp acmp
                    eq ne
                    and or xor
 
-                   divmod
-
+                   digit
                    complex
                    root log
+                   npow
                    max min
                    round roundf
                    digit
                    nok
+                   rdiv
                    is_div
 
                    shift_right
                    shift_left
-                   next_power_of
                    )
                )
             ),
@@ -198,10 +230,13 @@ package Corvinus::Optimizer {
              map {
                  { $_, [] }
                } methods(NUMBER, qw(
+                   new call
                    inc dec not
 
                    factorial
                    sqrt
+                   npow2
+                   troot
                    abs
 
                    hex oct bin
@@ -209,13 +244,14 @@ package Corvinus::Optimizer {
                    cos sin
                    log ln log10 log2
 
-                   infinity
-                   negate
+                   inf
+                   neg
                    sign
                    nan
                    chr
 
                    is_zero
+                   is_one
                    is_nan
                    is_positive
                    is_negative
@@ -228,16 +264,21 @@ package Corvinus::Optimizer {
                    floor
                    length
 
+                   numerator
+                   denominator
+
+                   digits
+
                    as_bin
                    as_oct
                    as_hex
 
+                   rat
                    complex i
 
                    sstr
                    dump
                    commify
-                   next_power_of_two
                    )
                )
             ),
@@ -247,6 +288,7 @@ package Corvinus::Optimizer {
              map {
                  { $_, [table(NUMBER), table(NUMBER)] }
                } methods(NUMBER, qw(
+                   modpow
                    shift_right
                    shift_left
                    )
@@ -282,13 +324,17 @@ package Corvinus::Optimizer {
                    is_empty
 
                    min max
-                   minmax
 
                    sum
                    prod
 
+                   sort
+                   reverse
+
+                   unique
+                   last_unique
+
                    to_s
-                   to_list
                    dump
                    )
                )
@@ -300,6 +346,27 @@ package Corvinus::Optimizer {
                } methods(ARRAY, qw(
                    exists
                    defined
+                   contains
+
+                   multiply
+
+                   take_right
+                   take_left
+                   )
+               )
+            ),
+
+            (
+             map {
+                 { $_, [table(ARRAY)] }
+               } methods(ARRAY, qw(
+                   and
+                   or
+                   xor
+                   concat
+
+                   contains_any
+                   contains_all
                    )
                )
             ),
@@ -310,6 +377,8 @@ package Corvinus::Optimizer {
                } methods(ARRAY, qw(
                    pack
                    join
+                   contains
+                   reduce_operator
                    )
                )
             ),
@@ -414,13 +483,45 @@ package Corvinus::Optimizer {
 
         (COMPLEX) => [
 
-            # Complex.method(Complex)
+            # Complex.method(Complex|Number)
             (
              map {
-                 { $_, [table(COMPLEX)] }
+                 { $_, [table(COMPLEX, NUMBER)] }
                } methods(COMPLEX, qw(
-                   cmp
+                   cmp gt lt ge le eq ne
                    roundf
+
+                   mul
+                   div
+                   add
+                   sub
+                   exp
+                   log
+                   pow
+
+                   atan2
+                   )
+               )
+            ),
+
+            # Complex.method(Number|Complex, Number|Complex)
+            (
+             map {
+                 { $_, [table(NUMBER, COMPLEX)] }
+               } methods(COMPLEX, qw(
+                   call
+                   new
+                   )
+               )
+            ),
+
+            # Complex.method(Number|Complex, Number|Complex)
+            (
+             map {
+                 { $_, [table(NUMBER, COMPLEX), table(NUMBER, COMPLEX)] }
+               } methods(COMPLEX, qw(
+                   call
+                   new
                    )
                )
             ),
@@ -430,11 +531,45 @@ package Corvinus::Optimizer {
              map {
                  { $_, [] }
                } methods(COMPLEX, qw(
+                   new call
+
                    inc
                    dec
+                   abs
+
+                   log
+                   log10
+                   sqrt
+
+                   cos
+                   sin
+                   tan
+                   csc
+                   sec
+                   cot
+                   asin
+                   acos
+                   atan
+                   acsc
+                   asec
+                   acot
+                   sinh
+                   cosh
+                   tanh
+                   csch
+                   sech
+                   coth
+                   asinh
+                   acosh
+                   atanh
+                   acsch
+                   asech
+                   acoth
+
+                   pi
 
                    int
-                   negate
+                   neg
                    not
                    sign
 
@@ -442,9 +577,10 @@ package Corvinus::Optimizer {
                    imaginary
 
                    is_zero
+                   is_one
                    is_nan
-                   is_positive
-                   is_negative
+                   is_pos
+                   is_neg
                    is_even
                    is_odd
                    is_inf
@@ -508,6 +644,15 @@ package Corvinus::Optimizer {
                 $obj->{block} = $self->optimize_expr({self => $obj->{block}});
             }
         }
+        elsif ($ref eq 'Corvinus::Variable::Static') {
+            if ($addr{refaddr($obj)}++) {
+                ## ok
+            }
+            else {
+                my %code = $self->optimize($obj->{expr});
+                $obj->{expr} = \%code;
+            }
+        }
         elsif ($ref eq 'Corvinus::Variable::Init') {
             if ($addr{refaddr($obj)}++) {
                 ## ok
@@ -520,6 +665,15 @@ package Corvinus::Optimizer {
             }
         }
         elsif ($ref eq 'Corvinus::Types::Block::Do') {
+            if ($addr{refaddr($obj)}++) {
+                ## ok
+            }
+            else {
+                my %code = $self->optimize($obj->{block}{code});
+                $obj->{block}{code} = \%code;
+            }
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
             if ($addr{refaddr($obj)}++) {
                 ## ok
             }

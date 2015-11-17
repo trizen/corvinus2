@@ -29,10 +29,10 @@ var t = Triunghi(a, b, c);
 daca (t.echilateral) {
     spune "triunghi echilateral";
 }
-sau_daca (t.isoscel) {
+sau (t.isoscel) {
     spune "triunghi isoscel";
 }
-sau_daca (t.dreptunghic) {
+sau (t.dreptunghic) {
     spune "triunghi dreptunghic";
 }
 altfel {

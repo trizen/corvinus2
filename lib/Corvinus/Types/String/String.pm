@@ -259,6 +259,13 @@ package Corvinus::Types::String::String {
     *adauga = \&append;
     *uneste = \&append;
 
+    sub prepend {
+        my ($self, $string) = @_;
+        $self->new($string->get_value . $$self);
+    }
+
+    *adauga_inainte = \&prepend;
+
     sub ucfirst {
         my ($self) = @_;
         $self->new(CORE::ucfirst $$self);

@@ -33,6 +33,7 @@ lib/Corvinus/Types/Block/Continue.pm
 lib/Corvinus/Types/Block/Default.pm
 lib/Corvinus/Types/Block/Do.pm
 lib/Corvinus/Types/Block/For.pm
+lib/Corvinus/Types/Block/ForArray.pm
 lib/Corvinus/Types/Block/Fork.pm
 lib/Corvinus/Types/Block/Gather.pm
 lib/Corvinus/Types/Block/Given.pm
@@ -114,6 +115,7 @@ scripts/metaprog.cv
 scripts/metode.cv
 scripts/multi_arr.cv
 scripts/paralel.cv
+scripts/pentru_in.cv
 scripts/pi.cv
 scripts/redeschidere_clase.cv
 scripts/regex.cv

@@ -151,6 +151,9 @@
       "Corvinus::Types::Block::For" : {
          "file" : "lib/Corvinus/Types/Block/For.pm"
       },
+      "Corvinus::Types::Block::ForArray" : {
+         "file" : "lib/Corvinus/Types/Block/ForArray.pm"
+      },
       "Corvinus::Types::Block::Fork" : {
          "file" : "lib/Corvinus/Types/Block/Fork.pm"
       },

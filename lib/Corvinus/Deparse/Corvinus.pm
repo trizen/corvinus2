@@ -108,16 +108,22 @@ package Corvinus::Deparse::Corvinus {
         Data::Dump::quote($str);
     }
 
+    sub _dump_number {
+        my ($self, $num) = @_;
+
+        state $table = {
+                        'inf'  => q{Number.inf},
+                        '-inf' => q{Number.inf('-')},
+                        'nan'  => q{Number.nan},
+                        '0'    => q{Number},
+                       };
+
+        exists($table->{lc($num)}) ? $table->{lc($num)} : $num;
+    }
+
     sub _dump_array {
         my ($self, $array) = @_;
-        '[' . join(
-            ', ',
-
-            ref($array) eq 'Corvinus::Types::Array::Array'
-            ? (map { $self->deparse_expr({self => $_->get_value}) } @{$array})
-            : (map { $self->deparse_expr(ref($_) eq 'HASH' ? $_ : {self => $_}) } @{$array})
-          )
-          . ']';
+        '[' . join(', ', map { $self->deparse_expr(ref($_) eq 'HASH' ? $_ : {self => $_}) } @{$array}) . ']';
     }
 
     sub _dump_class_name {
@@ -287,7 +293,7 @@ package Corvinus::Deparse::Corvinus {
                         my @vars = @{$obj->{init_vars}{vars}};
                         pop @vars;
                         if (@vars) {
-                            $code .= '|' . $self->_dump_vars(@vars) . "|";
+                            $code .= '| ' . $self->_dump_vars(@vars) . ' |';
                         }
                     }
 
@@ -340,17 +346,13 @@ package Corvinus::Deparse::Corvinus {
             $code = 'LazyMethod';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Break') {
-            if (not exists $expr->{call}) {
-                $code = 'break';
-            }
+            $code = 'break';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Default') {
             $code = 'default' . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Next') {
-            if (not exists $expr->{call}) {
-                $code = 'next';
-            }
+            $code = 'next';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Continue') {
             $code = 'continue';
@@ -386,6 +388,12 @@ package Corvinus::Deparse::Corvinus {
         }
         elsif ($ref eq 'Corvinus::Types::Block::Loop') {
             $code = 'loop ' . $self->deparse_expr({self => $obj->{block}});
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
+            $code = 'for '
+              . $self->deparse_expr({self => $obj->{var}}) . ' in ('
+              . $self->deparse_expr({self => $obj->{array}}) . ') '
+              . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Math::Math') {
             $code = 'Math';
@@ -441,13 +449,18 @@ package Corvinus::Deparse::Corvinus {
         }
         elsif ($ref eq 'Corvinus::Types::Number::Number') {
             my $value = $obj->get_value;
-            my $num = ref($value) ? ref($value) eq 'Math::BigRat' ? $value->numify : $value->bstr : $value;
-            $code =
-                $num eq '0'        ? 'Number'
-              : lc($num) eq 'inf'  ? '0.inf'
-              : lc($num) eq '-inf' ? "0.inf('-')"
-              : lc($num) eq 'nan'  ? '0.nan'
-              :                      $num;
+
+            if (ref($value)) {
+                if (ref($value) eq 'Math::BigRat') {
+                    $code = '(' . join('//', map { $self->_dump_number($_) } $value->parts()) . ')';
+                }
+                else {
+                    $code = $self->_dump_number($value->bstr);
+                }
+            }
+            else {
+                $code = $self->_dump_number($value);
+            }
         }
         elsif ($ref eq 'Corvinus::Types::Array::Array' or $ref eq 'Corvinus::Types::Array::HCArray') {
             if (not @{$obj}) {

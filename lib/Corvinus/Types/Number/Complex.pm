@@ -455,6 +455,13 @@ package Corvinus::Types::Number::Complex {
 
     *e_zero = \&is_zero;
 
+    sub is_one {
+        my ($self) = @_;
+        Corvinus::Types::Bool::Bool->new($$self == 1);
+    }
+
+    *e_unu = \&is_one;
+
     sub is_nan {
         my ($self) = @_;
         Corvinus::Types::Bool::Bool->false;

@@ -881,6 +881,13 @@ HEADER
         elsif ($ref eq 'Corvinus::Types::Block::For') {
             ## ok
         }
+        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
+            $code =
+                'for my '
+              . $self->deparse_expr({self => $obj->{var}}) . '(@{'
+              . $self->deparse_expr({self => $obj->{array}}) . '})'
+              . $self->deparse_bare_block($obj->{block}->{code});
+        }
         elsif ($ref eq 'Corvinus::Types::Block::If') {
             ## ok
         }
@@ -1021,7 +1028,17 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Types::Number::Number') {
             my $value = $obj->get_value;
-            $code = $self->make_constant($ref, 'new', "Number$refaddr", ref($value) ? (q{'} . $value->bstr . q{'}) : $value);
+
+            if (ref($value)) {
+                if (ref($value) eq 'Math::BigRat') {
+                    $value = (q{Math::BigRat->new('} . join('/', $value->parts) . q{')});
+                }
+                else {
+                    $value = (q{'} . $value->bstr . q{'});
+                }
+            }
+
+            $code = $self->make_constant($ref, 'new', "Number$refaddr", $value);
         }
         elsif ($ref eq 'Corvinus::Types::Array::Array' or $ref eq 'Corvinus::Types::Array::HCArray') {
             $code = $self->_dump_array('Corvinus::Types::Array::Array', $obj);

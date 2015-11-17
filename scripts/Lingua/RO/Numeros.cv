@@ -171,7 +171,7 @@ clasa nou(diacritice            = adev,
             daca (WORDS.contine(words[0])) {
                 factor = 1;
             }
-            sau_daca (words[0].se_termina_cu('zeci')) {
+            sau (words[0].se_termina_cu('zeci')) {
                 words[0].inlatura!('zeci');
                 factor = 10;
             }
@@ -179,7 +179,7 @@ clasa nou(diacritice            = adev,
             daca (factor > 0) {
                 amount = words.shift;
             }
-            sau_daca (BIGWORDS.contine(words[0])) {
+            sau (BIGWORDS.contine(words[0])) {
                 factor = BIGWORDS{words.shift};
             }
 
@@ -270,14 +270,14 @@ clasa nou(diacritice            = adev,
         daca (DIGITS.contine(number)) {
             words.adauga(DIGITS{number});
         }
-        sau_daca (number.to_num! -> is_nan) {
+        sau (number.to_num! -> is_nan) {
             return [nu_e_numar];
         }
-        sau_daca (number.is_negative) {
+        sau (number.is_negative) {
             words.adauga(semn_negativ);
             words.adauga(self._in_litere(number.abs)...);
         }
-        sau_daca (!(number.is_int)) {
+        sau (!(number.is_int)) {
 
             words.adauga(self._in_litere(number.int)...);
             words.adauga(punct_decimal);
@@ -290,7 +290,7 @@ clasa nou(diacritice            = adev,
 
             words.adauga(self._in_litere(number.int)...);
         }
-        sau_daca (number >= BIGNUMS[0]{:num}) {
+        sau (number >= BIGNUMS[0]{:num}) {
             0 ... BIGNUMS.end-1 -> each { |i|
                 var j = BIGNUMS.end-i;
 
@@ -340,7 +340,7 @@ clasa nou(diacritice            = adev,
                 }
             }
         }
-        sau_daca ((number > 19) si (number < 100)) {
+        sau ((number > 19) si (number < 100)) {
             var cat = (number / 10 -> int);
 
             dat(cat) {
@@ -359,7 +359,7 @@ clasa nou(diacritice            = adev,
                 words.adauga('și', DIGITS{number % 10 -> intreg});
             }
         }
-        sau_daca (number.e_infinit) {
+        sau (number.e_infinit) {
             return [infinit];
         }
         altfel {
