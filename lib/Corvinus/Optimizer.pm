@@ -322,7 +322,6 @@ package Corvinus::Optimizer {
 
                    len end
                    is_empty
-
                    min max
 
                    sum
@@ -333,6 +332,7 @@ package Corvinus::Optimizer {
 
                    unique
                    last_unique
+                   flatten
 
                    to_s
                    dump
@@ -344,11 +344,26 @@ package Corvinus::Optimizer {
              map {
                  { $_, [table(NUMBER)] }
                } methods(ARRAY, qw(
+                   count
+                   index
+                   rindex
                    exists
                    defined
                    contains
+                   contains_type
 
+                   divide
                    multiply
+
+                   rotate
+
+                   first
+                   last
+                   item
+                   ft
+
+                   sum
+                   prod
 
                    take_right
                    take_left
@@ -365,6 +380,9 @@ package Corvinus::Optimizer {
                    xor
                    concat
 
+                   eq ne
+                   mzip
+                   contains_type
                    contains_any
                    contains_all
                    )
@@ -377,7 +395,12 @@ package Corvinus::Optimizer {
                } methods(ARRAY, qw(
                    pack
                    join
+                   index
+                   rindex
+                   count
                    contains
+                   contains_type
+                   reduce
                    reduce_operator
                    )
                )
@@ -701,10 +724,18 @@ package Corvinus::Optimizer {
             }
         }
         elsif ($ref eq 'Corvinus::Types::Array::HCArray') {
+            my $has_expr = 0;
+
             foreach my $i (0 .. $#{$obj}) {
                 if (ref($obj->[$i]) eq 'HASH') {
                     $obj->[$i] = $self->optimize_expr($obj->[$i]);
+                    $has_expr ||= ref($obj->[$i]) eq 'HASH';
                 }
+            }
+
+            # Has no expressions, so let's convert it into an Array
+            if (not $has_expr) {
+                $obj = Corvinus::Types::Array::Array->new(@{$obj});
             }
         }
 

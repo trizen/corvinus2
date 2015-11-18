@@ -1582,34 +1582,32 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                 my $strings = $self->get_quoted_words(code => $opt{code});
 
                 if ($type eq 'w' or $type eq '<') {
-                    return Corvinus::Types::Array::HCArray->new(
+                    return Corvinus::Types::Array::Array->new(
                                                map { Corvinus::Types::String::String->new(s{\\(?=[\\#\s])}{}gr) } @{$strings});
                 }
                 elsif ($type eq 'i') {
-                    return Corvinus::Types::Array::HCArray->new(
+                    return Corvinus::Types::Array::Array->new(
                         map {
                             Corvinus::Types::Number::Number->new(Math::BigInt->new(s{\\(?=[\\#\s])}{}gr))
                           } @{$strings}
                     );
                 }
                 elsif ($type eq 'n') {
-                    return Corvinus::Types::Array::HCArray->new(
+                    return Corvinus::Types::Array::Array->new(
                                                map { Corvinus::Types::Number::Number->new(s{\\(?=[\\#\s])}{}gr) } @{$strings});
                 }
 
                 my ($inline_expression, @objs);
                 foreach my $item (@{$strings}) {
                     my $str = Corvinus::Types::String::String->new($item)->apply_escapes($self);
-                    if (!$inline_expression and ref $str eq 'HASH') {
-                        $inline_expression = 1;
-                    }
+                    $inline_expression ||= ref($str) eq 'HASH';
                     push @objs, $str;
                 }
 
                 return (
                         $inline_expression
                         ? Corvinus::Types::Array::HCArray->new(map { {self => $_} } @objs)
-                        : Corvinus::Types::Array::HCArray->new(@objs)
+                        : Corvinus::Types::Array::Array->new(@objs)
                        );
             }
 

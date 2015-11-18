@@ -258,7 +258,7 @@ clasa nou(diacritice            = adev,
 
         num = num.ca_numar;
         daca (neg) {
-            num = num.negat
+            num.negativ!
         }
 
         return num;

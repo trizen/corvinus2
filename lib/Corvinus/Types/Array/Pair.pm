@@ -73,7 +73,7 @@ package Corvinus::Types::Array::Pair {
                     ", ",
                     map {
                         my $val = $_;
-                        eval { $val->can('dump') } ? ${$val->dump} : $val
+                        eval { $val->can('dump') } ? ${$val->dump} : defined($val) ? $val : 'nil'
                       } @{$self}
                 )
               )

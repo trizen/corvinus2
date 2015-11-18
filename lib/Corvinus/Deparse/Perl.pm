@@ -982,7 +982,19 @@ HEADER
             $code = $obj->{name};
         }
         elsif ($ref eq 'Corvinus::Types::Hash::Hash') {
-            $code = $self->make_constant($ref, 'new', "Hash$refaddr");
+            if (keys(%{$obj})) {
+                $code = $ref . '->new(' . join(
+                    ',',
+                    map {
+                        $self->_dump_string($_) . ' => '
+                          . (defined($obj->{$_}) ? $self->deparse_expr({self => $obj->{$_}}) : 'undef')
+                      } keys(%{$obj})
+                  )
+                  . ')';
+            }
+            else {
+                $code = $self->make_constant($ref, 'new', "Hash$refaddr");
+            }
         }
         elsif ($ref eq 'Corvinus::Types::Glob::Socket') {
             $code = $self->make_constant($ref, 'new', "Socket$refaddr");
@@ -1015,7 +1027,15 @@ HEADER
             $code = $self->make_constant($ref, 'new', "Complex$refaddr", "'" . ${$obj}->Re . "'", "'" . ${$obj}->Im . "'");
         }
         elsif ($ref eq 'Corvinus::Types::Array::Pair') {
-            $code = $ref . '->new';
+            if (all { not defined($_) } @{$obj}) {
+                $code = $self->make_constant($ref, 'new', "Pair$refaddr");
+            }
+            else {
+                $code =
+                    $ref
+                  . '->new('
+                  . join(', ', map { defined($_) ? $self->deparse_expr({self => $_}) : 'undef' } @{$obj}) . ')';
+            }
         }
         elsif ($ref eq 'Corvinus::Variable::NamedParam') {
             $code = $ref . '->new(' . $self->_dump_string($obj->[0]) . ',' . $self->deparse_args(@{$obj->[1]}) . ')';
