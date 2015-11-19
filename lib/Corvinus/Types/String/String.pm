@@ -38,26 +38,6 @@ package Corvinus::Types::String::String {
 
     *to_str = \&to_s;
 
-    sub unroll_operator {
-        my ($self, $operator, $arg) = @_;
-        $self->to_chars->unroll_operator(
-
-            # The operator, followed by...
-            $operator,
-
-            # ...an optional argument
-            defined($arg)
-            ? $arg->to_chars
-            : ()
-
-        )->join;
-    }
-
-    sub reduce_operator {
-        my ($self, $operator) = @_;
-        Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } split(//, $$self))->reduce_operator($operator);
-    }
-
     sub inc {
         my ($self) = @_;
         my $copy = $$self;

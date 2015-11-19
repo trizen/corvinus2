@@ -102,6 +102,7 @@ package Corvinus::Deparse::Corvinus {
     sub _dump_string {
         my ($self, $str) = @_;
 
+        return 'String' if $str eq '';
         state $x = eval { require Data::Dump };
         $x || return ('"' . quotemeta($str) . '"');
 
