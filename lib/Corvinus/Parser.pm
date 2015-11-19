@@ -123,18 +123,18 @@ package Corvinus::Parser {
             }x,
             prefix_obj_re => qr{\G
               (?:
-                  (?:daca|if)\b                                  (?{ Corvinus::Types::Block::If->new })
-                | (?:cat_timp|while)\b                           (?{ Corvinus::Types::Block::While->new })
-                | (?:incearca|try)\b                             (?{ Corvinus::Types::Block::Try->new })
-                | (?:pentru|for)\b                               (?{ Corvinus::Types::Block::For->new })
-                | return(?:eaza)?+\b                             (?{ Corvinus::Types::Block::Return->new })
-                | (?:dat|given)\b                                (?{ Corvinus::Types::Block::Given->new })
-                | (?:cand|when)\b                                (?{ Corvinus::Types::Block::When->new })
-                | (?:definit|citeste|defined|read)\b             (?{ state $x = Corvinus::Sys::Sys->new })
-                | (?:sari_la|eroare|avert|goto|die|warn)\b       (?{ state $x = Corvinus::Perl::Builtin->new })
-                | (?:[*\\&]|\+\+|--)                             (?{ state $x = Corvinus::Variable::Ref->new })
-                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)    (?{ state $x = Corvinus::Object::Unary->new })
-                | :                                              (?{ state $x = Corvinus::Types::Hash::Hash->new })
+                  (?:daca|if)\b                                              (?{ Corvinus::Types::Block::If->new })
+                | (?:cat_timp|while)\b                                       (?{ Corvinus::Types::Block::While->new })
+                | (?:incearca|try)\b                                         (?{ Corvinus::Types::Block::Try->new })
+                | (?:pentru|for)\b                                           (?{ Corvinus::Types::Block::For->new })
+                | return(?:eaza)?+\b                                         (?{ Corvinus::Types::Block::Return->new })
+                | (?:dat|given)\b                                            (?{ Corvinus::Types::Block::Given->new })
+                | (?:cand|when)\b                                            (?{ Corvinus::Types::Block::When->new })
+                | (?:definit|citeste|defined|read|assert(?:_(?:eq|ne))?+)\b  (?{ state $x = Corvinus::Sys::Sys->new })
+                | (?:sari_la|eroare|avert|goto|die|warn)\b                   (?{ state $x = Corvinus::Perl::Builtin->new })
+                | (?:[*\\&]|\+\+|--)                                         (?{ state $x = Corvinus::Variable::Ref->new })
+                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)                (?{ state $x = Corvinus::Object::Unary->new })
+                | :                                                          (?{ state $x = Corvinus::Types::Hash::Hash->new })
               )
             }x,
             quote_operators_re => qr{\G
@@ -1616,9 +1616,8 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                        );
             }
 
-            if (/$self->{prefix_obj_re}/goc) {
-                pos($_) = $-[0];
-                return ($^R, 1);
+            if (/($self->{prefix_obj_re})\h*/goc) {
+                return ($^R, 1, $1);
             }
 
             # Eval keyword
@@ -1635,11 +1634,6 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                                             vars          => {$self->{class} => [@{$self->{vars}{$self->{class}}}]},
                                             ref_vars_refs => {$self->{class} => [@{$self->{ref_vars_refs}{$self->{class}}}]},
                                            );
-            }
-
-            if (/\Gassert(?:_(?:eq|ne))?\b/gc) {
-                pos($_) = $-[0];
-                return (Corvinus::Sys::Sys->new(line => $self->{line}, file_name => $self->{file_name}), 1);
             }
 
             if (/\GParser\b/gc) {
@@ -2242,13 +2236,13 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
         my %struct;
         local *_ = $opt{code};
 
-        my ($obj, $obj_key) = $self->parse_expr(code => $opt{code});
+        my ($obj, $obj_key, $method) = $self->parse_expr(code => $opt{code});
 
         if (defined $obj) {
             push @{$struct{$self->{class}}}, {self => $obj};
 
             # for var in array { ... }
-            if (ref($obj) eq 'Corvinus::Types::Block::For' and /\G(?:pentru|for)\h+($self->{var_name_re})\h+in\h+/gc) {
+            if (ref($obj) eq 'Corvinus::Types::Block::For' and /\G($self->{var_name_re})\h+in\h+/gc) {
                 my ($var_name, $class_name) = $self->get_name_and_class($1);
 
                 my $array = (
@@ -2298,48 +2292,40 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
             }
 
             elsif ($obj_key) {
-                my ($method) = $self->get_method_name(code => $opt{code});
-                if (defined $method) {
+                my $arg = (
+                           /\G\h*(?=\()/gc
+                           ? $self->parse_arguments(code => $opt{code})
+                           : $self->parse_obj(code => $opt{code})
+                          );
 
-                    my $arg = (
-                               /\G\h*(?=\()/gc
-                               ? $self->parse_arguments(code => $opt{code})
-                               : $self->parse_obj(code => $opt{code})
-                              );
+                if (defined $arg) {
+                    my @arg = ($arg);
 
-                    if (defined $arg) {
-                        my @arg = ($arg);
-
-                        if (    ref($struct{$self->{class}}[-1]{self}) eq 'Corvinus::Types::Block::For'
-                            and ref($arg) eq 'HASH') {
-                            if ($#{$arg->{$self->{class}}} == 2) {
-                                @arg = (
-                                    map {
-                                        { $self->{class} => [$_] }
-                                      } @{$arg->{$self->{class}}}
-                                );
-                            }
-                            elsif ($#{$arg->{$self->{class}}} != 0) {
-                                $self->fatal_error(
-                                                   code  => $_,
-                                                   pos   => pos($_) - 1,
-                                                   error => "invalid for-loop: too many arguments",
-                                                  );
-                            }
+                    if (ref($struct{$self->{class}}[-1]{self}) eq 'Corvinus::Types::Block::For' and ref($arg) eq 'HASH') {
+                        if ($#{$arg->{$self->{class}}} == 2) {
+                            @arg = (
+                                map {
+                                    { $self->{class} => [$_] }
+                                  } @{$arg->{$self->{class}}}
+                            );
                         }
+                        elsif ($#{$arg->{$self->{class}}} != 0) {
+                            $self->fatal_error(
+                                               code  => $_,
+                                               pos   => pos($_) - 1,
+                                               error => "invalid for-loop: too many arguments",
+                                              );
+                        }
+                    }
 
-                        push @{$struct{$self->{class}}[-1]{call}}, {method => $method, arg => \@arg};
-                    }
-                    elsif (ref($obj) ne 'Corvinus::Types::Block::Return') {
-                        $self->fatal_error(
-                                           code  => $_,
-                                           error => "expected an argument. Did you mean '$method()' instead?",
-                                           pos   => pos($_) - 1,
-                                          );
-                    }
+                    push @{$struct{$self->{class}}[-1]{call}}, {method => $method, arg => \@arg};
                 }
-                else {
-                    die "[PARSER ERROR] The same object needs to be parsed again as a method for itself!";
+                elsif (ref($obj) ne 'Corvinus::Types::Block::Return') {
+                    $self->fatal_error(
+                                       code  => $_,
+                                       error => "expected an argument. Did you mean '$method()' instead?",
+                                       pos   => pos($_) - 1,
+                                      );
                 }
             }
 
