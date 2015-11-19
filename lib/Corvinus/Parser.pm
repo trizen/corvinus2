@@ -2293,7 +2293,7 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
             elsif ($obj_key) {
                 my $arg = (
-                           /\G\h*(?=\()/gc
+                           /\G(?=\()/
                            ? $self->parse_arguments(code => $opt{code})
                            : $self->parse_obj(code => $opt{code})
                           );
