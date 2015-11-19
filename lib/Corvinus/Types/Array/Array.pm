@@ -716,10 +716,9 @@ package Corvinus::Types::Array::Array {
                 return Corvinus::Types::Number::Number->new(-1);
             }
 
-            state $method = '=';
             foreach my $i (0 .. $#{$self}) {
-                $self->[$i]->$method($obj)
-                  && return Corvinus::Types::Number::Number->new($i);
+                $self->[$i] eq $obj
+                  and return Corvinus::Types::Number::Number->new($i);
             }
 
             return Corvinus::Types::Number::Number->new(-1);
@@ -744,10 +743,9 @@ package Corvinus::Types::Array::Array {
                 return Corvinus::Types::Number::Number->new(-1);
             }
 
-            state $method = '=';
             for (my $i = $#{$self} ; $i >= 0 ; $i--) {
-                $self->[$i]->$method($obj)
-                  && return Corvinus::Types::Number::Number->new($i);
+                $self->[$i] eq $obj
+                  and return Corvinus::Types::Number::Number->new($i);
             }
 
             return Corvinus::Types::Number::Number->new(-1);
