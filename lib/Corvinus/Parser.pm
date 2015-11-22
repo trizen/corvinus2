@@ -625,7 +625,7 @@ package Corvinus::Parser {
                 }
             }
 
-            defined($end_delim) && (/\G\h*,\h*/gc || last);
+            (defined($end_delim) && /\G\h*,\h*/gc) || last;
             $self->parse_whitespace(code => $opt{code});
         }
 
@@ -690,11 +690,11 @@ package Corvinus::Parser {
 
             if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                 $self->fatal_error(
-                    code => $_,
-                    pos  => $-[2],
-                    error =>
-"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                );
+                                   code  => $_,
+                                   pos   => $-[2],
+                                   error => "'$name' nu poate fi folosit în acest context pentru că este "
+                                     . "un cuvânt cheie sau o variabilă predefinită!",
+                                  );
             }
 
             my $value;
@@ -729,7 +729,7 @@ package Corvinus::Parser {
             }
 
             push @var_objs, $obj;
-            defined($end_delim) && (/\G\h*,\h*/gc || last);
+            (defined($end_delim) && /\G\h*,\h*/gc) || last;
             $self->parse_whitespace(code => $opt{code});
         }
 
@@ -996,11 +996,11 @@ package Corvinus::Parser {
                     my $name = $var->{name};
                     if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                         $self->fatal_error(
-                            code => $_,
-                            pos  => (pos($_) - length($name)),
-                            error =>
-"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                        );
+                                           code  => $_,
+                                           pos   => (pos($_) - length($name)),
+                                           error => "'$name' nu poate fi folosit în acest context pentru că "
+                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                          );
                     }
                 }
 
@@ -1077,11 +1077,11 @@ package Corvinus::Parser {
 
                 if (defined($name) and (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name}))) {
                     $self->fatal_error(
-                        code => $_,
-                        pos  => (pos($_) - length($name)),
-                        error =>
-"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                    );
+                                       code  => $_,
+                                       pos   => (pos($_) - length($name)),
+                                       error => "'$name' nu poate fi folosit în acest context pentru că "
+                                         . "este un cuvânt cheie sau o variabilă predefinită!",
+                                      );
                 }
 
                 my $vars =
@@ -1124,11 +1124,11 @@ package Corvinus::Parser {
 
                 @{$vars}
                   || $self->fatal_error(
-                    code => $_,
-                    pos  => pos,
-                    error =>
-q{este necesară specificarea a unuia sau mai multor identificatori după cuvântul cheie „enumera”, urmând sintaxa: „enumera(a, b, c, ...)”},
-                  );
+                                      code  => $_,
+                                      pos   => pos,
+                                      error => q{este necesară specificarea a unuia sau mai multor identificatori }
+                                        . q{după cuvântul cheie „enumera”, urmând sintaxa: „enumera(a, b, c, ...)”},
+                                       );
 
                 my $value = Corvinus::Types::Number::Number->new(-1);
 
@@ -1146,11 +1146,11 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
                     if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
                         $self->fatal_error(
-                            code => $_,
-                            pos  => (pos($_) - length($name)),
-                            error =>
-"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                        );
+                                           code  => $_,
+                                           pos   => (pos($_) - length($name)),
+                                           error => "'$name' nu poate fi folosit în acest context pentru că "
+                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                          );
                     }
 
                     unshift @{$self->{vars}{$self->{class}}},
@@ -1270,11 +1270,11 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
                     and $type ne 'class'
                     and (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name}))) {
                     $self->fatal_error(
-                        code => $_,
-                        pos  => $-[0],
-                        error =>
-"'$name' nu poate fi folosit în acest context pentru că este un cuvânt cheie sau o variabilă predefinită!",
-                    );
+                                       code  => $_,
+                                       pos   => $-[0],
+                                       error => "'$name' nu poate fi folosit în acest context pentru că "
+                                         . "este un cuvânt cheie sau o variabilă predefinită!",
+                                      );
                 }
 
                 my $obj =
@@ -1299,11 +1299,11 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
                         if ($var->{obj}{type} ne $type) {
                             $self->fatal_error(
-                                code => $_,
-                                pos  => $-[0],
-                                error =>
-"redeclarare invalidă ca funcție sau metodă a identificatorului '$var->{obj}{name}' (declarat inițial la linia $var->{line})",
-                            );
+                                               code  => $_,
+                                               pos   => $-[0],
+                                               error => "redeclarare invalidă ca funcție sau metodă a identificatorului"
+                                                 . " '$var->{obj}{name}' (declarat inițial la linia $var->{line})",
+                                              );
                         }
 
                         push @{$var->{obj}{value}{kids}}, $obj;
@@ -2978,11 +2978,11 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
             }
 
             $self->fatal_error(
-                code => $_,
-                pos  => (pos($_)),
-                error =>
-"au fost găsite două obiecte consecutive în locul în care se aștepta o metodă sau un terminator de expresie („;”)",
-            );
+                               code  => $_,
+                               pos   => (pos($_)),
+                               error => "au fost găsite două obiecte consecutive în locul în care "
+                                 . "se aștepta o metodă sau un terminator de expresie („;”)",
+                              );
 
             pos($_) += 1;
             redo;
