@@ -1525,7 +1525,7 @@ package Corvinus::Parser {
             }
 
             ## Experimental gather/take
-            if (/\G(?:gather|colect(?:eaza)?+)\h*(?=\{)/gc) {
+            if (/\G(?:gather|aduna)\h*(?=\{)/gc) {
                 my $obj = Corvinus::Types::Block::Gather->new();
 
                 local $self->{current_gather} = $obj;

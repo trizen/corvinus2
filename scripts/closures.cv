@@ -1,9 +1,11 @@
 #!/usr/bin/ruby
 
-var f = (
-    0..9 -> mapeaza {|i| func(j){i * j} }
-);
- 
-0..9 -> fiecare { |j|
-    spune f[j](j);
+var f = aduna {
+    10.ori { |i|
+        ia func(j){i * j}
+    }
+}
+
+10.ori { |i|
+    spune f[i-1](i)
 }
