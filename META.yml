@@ -27,6 +27,12 @@ provides:
     file: lib/Corvinus/Eval/Eval.pm
   Corvinus::Math::Math:
     file: lib/Corvinus/Math/Math.pm
+  Corvinus::Meta::Assert:
+    file: lib/Corvinus/Meta/Assert.pm
+  Corvinus::Meta::Error:
+    file: lib/Corvinus/Meta/Error.pm
+  Corvinus::Meta::Warning:
+    file: lib/Corvinus/Meta/Warning.pm
   Corvinus::Module::Func:
     file: lib/Corvinus/Module/Func.pm
   Corvinus::Module::OO:

@@ -7,6 +7,9 @@ lib/Corvinus/Deparse/Corvinus.pm
 lib/Corvinus/Deparse/Perl.pm
 lib/Corvinus/Eval/Eval.pm
 lib/Corvinus/Math/Math.pm
+lib/Corvinus/Meta/Assert.pm
+lib/Corvinus/Meta/Error.pm
+lib/Corvinus/Meta/Warning.pm
 lib/Corvinus/Module/Func.pm
 lib/Corvinus/Module/OO.pm
 lib/Corvinus/Object/Object.pm

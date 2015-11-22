@@ -328,8 +328,17 @@ package Corvinus::Deparse::Corvinus {
         elsif ($ref eq 'Corvinus::Sys::Sys') {
             $code = exists($obj->{file_name}) ? '' : 'Sys';
         }
+        elsif ($ref eq 'Corvinus::Meta::Assert') {
+            $code = $obj->{act} . $self->deparse_args($obj->{arg});
+        }
+        elsif ($ref eq 'Corvinus::Meta::Error') {
+            $code = 'eroare' . $self->deparse_args($obj->{arg});
+        }
+        elsif ($ref eq 'Corvinus::Meta::Warning') {
+            $code = 'avert' . $self->deparse_args($obj->{arg});
+        }
         elsif ($ref eq 'Corvinus::Eval::Eval') {
-            $code = 'eval(' . $self->deparse_script($obj->{expr}) . ')';
+            $code = 'eval' . $self->deparse_args($obj->{expr});
         }
         elsif ($ref eq 'Corvinus::Parser') {
             $code = 'Parser';

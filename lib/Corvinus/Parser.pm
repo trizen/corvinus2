@@ -123,18 +123,18 @@ package Corvinus::Parser {
             }x,
             prefix_obj_re => qr{\G
               (?:
-                  (?:daca|if)\b                                              (?{ Corvinus::Types::Block::If->new })
-                | (?:cat_timp|while)\b                                       (?{ Corvinus::Types::Block::While->new })
-                | (?:incearca|try)\b                                         (?{ Corvinus::Types::Block::Try->new })
-                | (?:pentru|for)\b                                           (?{ Corvinus::Types::Block::For->new })
-                | return(?:eaza)?+\b                                         (?{ Corvinus::Types::Block::Return->new })
-                | (?:dat|given)\b                                            (?{ Corvinus::Types::Block::Given->new })
-                | (?:cand|when)\b                                            (?{ Corvinus::Types::Block::When->new })
-                | (?:definit|citeste|defined|read|assert(?:_(?:eq|ne))?+)\b  (?{ state $x = Corvinus::Sys::Sys->new })
-                | (?:sari_la|eroare|avert|goto|die|warn)\b                   (?{ state $x = Corvinus::Perl::Builtin->new })
-                | (?:[*\\&]|\+\+|--)                                         (?{ state $x = Corvinus::Variable::Ref->new })
-                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)                (?{ state $x = Corvinus::Object::Unary->new })
-                | :                                                          (?{ state $x = Corvinus::Types::Hash::Hash->new })
+                  (?:daca|if)\b                                        (?{ Corvinus::Types::Block::If->new })
+                | (?:cat_timp|while)\b                                 (?{ Corvinus::Types::Block::While->new })
+                | (?:incearca|try)\b                                   (?{ Corvinus::Types::Block::Try->new })
+                | (?:pentru|for)\b                                     (?{ Corvinus::Types::Block::For->new })
+                | return(?:eaza)?+\b                                   (?{ Corvinus::Types::Block::Return->new })
+                | (?:dat|given)\b                                      (?{ Corvinus::Types::Block::Given->new })
+                | (?:cand|when)\b                                      (?{ Corvinus::Types::Block::When->new })
+                | (?:definit|citeste|defined|read)\b                   (?{ state $x = Corvinus::Sys::Sys->new })
+                | (?:sari_la|goto)\b                                   (?{ state $x = Corvinus::Perl::Builtin->new })
+                | (?:[*\\&]|\+\+|--)                                   (?{ state $x = Corvinus::Variable::Ref->new })
+                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)          (?{ state $x = Corvinus::Object::Unary->new })
+                | :                                                    (?{ state $x = Corvinus::Types::Hash::Hash->new })
               )
             }x,
             quote_operators_re => qr{\G
@@ -1618,6 +1618,61 @@ q{este necesară specificarea a unuia sau mai multor identificatori după cuvân
 
             if (/($self->{prefix_obj_re})\h*/goc) {
                 return ($^R, 1, $1);
+            }
+
+            # Assertions
+            if (/\G(afirma|assert(?:_(?:eq|ne))?+)\b\h*/gc) {
+                my $action = $1;
+
+                if ($action eq 'afirma') {
+                    $action = 'assert';
+                }
+
+                my $pos = pos($_);
+                my $arg = (
+                           /\G(?=\()/
+                           ? $self->parse_arguments(code => $opt{code})
+                           : $self->parse_obj(code => $opt{code})
+                          );
+
+                return
+                  Corvinus::Meta::Assert->new(
+                                              arg  => $arg,
+                                              act  => $action,
+                                              line => $self->{line},
+                                              file => $self->{file_name},
+                                              code => substr($_, $pos, pos($_) - $pos)
+                                             );
+            }
+
+            # die/warn
+            if (/\G(eroare|avert|die|warn)\b\h*/gc) {
+                my $action = $1;
+
+                if ($action eq 'eroare') {
+                    $action = 'die';
+                }
+                elsif ($action eq 'avert') {
+                    $action = 'warn';
+                }
+
+                my $arg = (
+                           /\G(?=\()/
+                           ? $self->parse_arguments(code => $opt{code})
+                           : $self->parse_obj(code => $opt{code})
+                          );
+
+                return (
+                        (
+                         $action eq 'die'
+                         ? "Corvinus::Meta::Error"
+                         : "Corvinus::Meta::Warning"
+                        )->new(
+                               arg  => $arg,
+                               line => $self->{line},
+                               file => $self->{file_name},
+                              )
+                       );
             }
 
             # Eval keyword

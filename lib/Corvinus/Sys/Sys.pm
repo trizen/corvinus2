@@ -111,27 +111,15 @@ package Corvinus::Sys::Sys {
         CORE::die(@args, "\n");
     }
 
-    *raise = \&die;
-
-    sub assert {
-        my ($self, $bool) = @_;
-        $bool || $self->die("assert: not true");
-    }
-
-    sub assert_eq {
-        my ($self, $arg1, $arg2) = @_;
-        Corvinus::Types::Bool::Bool->new(($arg1 eq $arg2) || $self->die("assert_eq: $arg1 == $arg2 is false"));
-    }
-
-    sub assert_ne {
-        my ($self, $arg1, $arg2) = @_;
-        Corvinus::Types::Bool::Bool->new(not($arg1 eq $arg2) || $self->die("assert_eq: $arg1 != $arg2 is false"));
-    }
+    *raise  = \&die;
+    *eroare = \&die;
 
     sub warn {
         my ($self, @args) = @_;
         CORE::warn(@args, "\n");
     }
+
+    *avert = \&warn;
 
     sub print {
         my ($self, @args) = @_;
