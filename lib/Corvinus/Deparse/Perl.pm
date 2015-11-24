@@ -218,7 +218,7 @@ HEADER
             ref($var) || next;
             if (exists $var->{array}) {
                 my $name = $var->{name} . refaddr($var);
-                push @{$self->{function_declarations}}, [-1, 'my @' . $name . ';'];
+                push @{$self->{block_declarations}}, [$self->{current_block} // -1, 'my @' . $name . ';'];
 
                 # Overwrite with the default values, when the array is empty
                 if (exists $var->{value}) {
@@ -235,7 +235,7 @@ HEADER
             }
             elsif (exists $var->{hash}) {
                 my $name = $var->{name} . refaddr($var);
-                push @{$self->{function_declarations}}, [-1, 'my %' . $name . ';'];
+                push @{$self->{block_declarations}}, [$self->{current_block} // -1, 'my %' . $name . ';'];
 
                 # Overwrite with the default values, when the hash has no keys
                 if (exists $var->{value}) {
@@ -258,8 +258,8 @@ HEADER
             }
         }
 
-        # XXX: should we store the declaration in something like 'block_declarations'?
-        push @{$self->{function_declarations}}, [-1, 'my(' . join(', ', map { $self->_dump_var($_) } @vars) . ')' . ';'];
+        push @{$self->{block_declarations}},
+          [$self->{current_block} // -1, 'my(' . join(', ', map { $self->_dump_var($_) } @vars) . ')' . ';'];
 
         # Return the variables on assignments
         if (@code > 1 or exists($init_obj->{args})) {
@@ -703,6 +703,8 @@ HEADER
                     my $is_function = exists($self->{function}) && $self->{function} == $refaddr;
                     my $is_class    = exists($self->{class})    && $self->{class} == $refaddr;
 
+                    local $self->{current_block} = $refaddr;
+
                     if ($is_class) {
                         $code = " {\n";
 
@@ -780,6 +782,13 @@ HEADER
                                and $self->{function_declarations}[-1][0] != $refaddr) {
                             $code .= (' ' x $Corvinus::SPACES) . pop(@{$self->{function_declarations}})->[1] . "\n";
                         }
+                    }
+
+                    # Localize variable declarations
+                    while (    exists($self->{block_declarations})
+                           and @{$self->{block_declarations}}
+                           and $self->{block_declarations}[-1][0] == $refaddr) {
+                        $code .= (' ' x $Corvinus::SPACES) . pop(@{$self->{block_declarations}})->[1] . "\n";
                     }
 
                     # Make the last statement to be the return value
@@ -1056,6 +1065,7 @@ HEADER
             local \$Corvinus::DEPARSER->{top_program} = '';
             local \$Corvinus::DEPARSER->{_has_constant} = 0;
             local \$Corvinus::DEPARSER->{function_declarations} = [];
+            local \$Corvinus::DEPARSER->{block_declarations} = [];
             \$Corvinus::DEPARSER->deparse(
             do {
                 local \$Corvinus::PARSER->{vars} = \$Corvinus::EVALS{$refaddr}{vars};
@@ -1473,6 +1483,11 @@ HEADER
               exists($self->{function_declarations})
                 && @{$self->{function_declarations}}
               ? ("\n" . join("\n", map { $_->[1] } @{$self->{function_declarations}}) . "\n")
+              : ''
+             )
+           . (
+              exists($self->{block_declarations})
+                && @{$self->{block_declarations}} ? ("\n" . join("\n", map { $_->[1] } @{$self->{block_declarations}}) . "\n")
               : ''
              )
            . $self->{top_program} . "\n"
