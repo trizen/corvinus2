@@ -957,7 +957,7 @@ package Corvinus::Parser {
                 return Corvinus::Variable::NamedParam->new($name, $obj);
             }
 
-            # Declaration of variable types
+            # Declaration of variables
             if (/\Gvar\b\h*/gc) {
                 my $type = 'var';
                 my $vars = $self->parse_init_vars(code => $opt{code}, type => $type);
@@ -987,6 +987,43 @@ package Corvinus::Parser {
                 return $init_obj;
             }
 
+            # "has" class attributes
+            if (exists($self->{current_class}) and /\G(?:has|are)\b\h*/gc) {
+                my $vars = $self->parse_init_vars(
+                                                  code    => $opt{code},
+                                                  type    => 'var',
+                                                  private => 1,
+                                                  in_use  => 1,
+                                                 );
+
+                foreach my $var (@{$vars}) {
+                    my $name = $var->{name};
+                    if (exists($self->{keywords}{$name}) or exists($self->{built_in_classes}{$name})) {
+                        $self->fatal_error(
+                                           code  => $_,
+                                           pos   => (pos($_) - length($name)),
+                                           error => "'$name' nu poate fi folosit în acest context pentru că "
+                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                          );
+                    }
+                }
+
+                my $args;
+                if (/\G\h*=\h*/gc) {
+                    $args = $self->parse_obj(code => $opt{code});
+                    $args // $self->fatal_error(
+                                                code  => $_,
+                                                pos   => pos($_) - 2,
+                                                error => qq{este necesară o expresie după `=` în declararea }
+                                                  . qq{atributurilor clasei `$self->{current_class}{name}`},
+                                               );
+                }
+
+                my $obj = Corvinus::Variable::ClassAttr->new(vars => $vars, defined($args) ? (args => $args) : ());
+                push @{$self->{current_class}{attributes}}, $obj;
+                return $obj;
+            }
+
             # Declaration of constants and static variables
             if (/\G(define|const|static)\b\h*/gc) {
                 my $type = $1;
@@ -1013,7 +1050,7 @@ package Corvinus::Parser {
                     my $obj = $self->parse_obj(code => $opt{code});
                     $obj // $self->fatal_error(
                                      code  => $_,
-                                     pos   => pos,
+                                     pos   => pos($_) - 2,
                                      error => qq{este necesară o expresie care să poată fi evaluată pentru numele "$name"},
                     );
 
@@ -1831,8 +1868,16 @@ package Corvinus::Parser {
 
                 # Class instance variables
                 state $x = require List::Util;
-                if (ref($self->{current_class}) eq 'Corvinus::Variable::ClassInit'
-                    and defined(my $var = List::Util::first(sub { $_->{name} eq $name }, @{$self->{current_class}{vars}},))) {
+                if (
+                    ref($self->{current_class}) eq 'Corvinus::Variable::ClassInit'
+                    and defined(
+                                my $var = List::Util::first(
+                                                            sub { $_->{name} eq $name },
+                                                            @{$self->{current_class}{vars}},
+                                                            map { @{$_->{vars}} } @{$self->{current_class}{attributes}}
+                                                           )
+                               )
+                  ) {
                     if (exists $self->{current_method}) {
                         if (defined(my $var = $self->find_var('self', $class))) {
                             $var->{count}++;

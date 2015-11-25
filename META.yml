@@ -16,7 +16,7 @@ name: Corvinus
 provides:
   Corvinus:
     file: lib/Corvinus.pm
-    version: '2.10'
+    version: '0.01'
   Corvinus::Convert::Convert:
     file: lib/Corvinus/Convert/Convert.pm
   Corvinus::Deparse::Corvinus:
@@ -163,6 +163,8 @@ provides:
     file: lib/Corvinus/Types/Regex/Regex.pm
   Corvinus::Types::String::String:
     file: lib/Corvinus/Types/String/String.pm
+  Corvinus::Variable::ClassAttr:
+    file: lib/Corvinus/Variable/ClassAttr.pm
   Corvinus::Variable::ClassInit:
     file: lib/Corvinus/Variable/ClassInit.pm
   Corvinus::Variable::Const:
@@ -220,5 +222,5 @@ requires:
   utf8: '0'
 resources:
   license: http://dev.perl.org/licenses/
-version: '2.10'
+version: '0.01'
 x_serialization_backend: 'CPAN::Meta::YAML version 0.016'

@@ -1,7 +1,7 @@
 package Corvinus {
 
     use 5.014;
-    our $VERSION = '2.10';
+    our $VERSION = '0.01';
 
     our $SPACES      = 0;    # the current number of spaces
     our $SPACES_INCR = 4;    # the number of spaces incrementor

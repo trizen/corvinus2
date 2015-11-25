@@ -56,7 +56,7 @@
    "provides" : {
       "Corvinus" : {
          "file" : "lib/Corvinus.pm",
-         "version" : "2.10"
+         "version" : "0.01"
       },
       "Corvinus::Convert::Convert" : {
          "file" : "lib/Corvinus/Convert/Convert.pm"
@@ -277,6 +277,9 @@
       "Corvinus::Types::String::String" : {
          "file" : "lib/Corvinus/Types/String/String.pm"
       },
+      "Corvinus::Variable::ClassAttr" : {
+         "file" : "lib/Corvinus/Variable/ClassAttr.pm"
+      },
       "Corvinus::Variable::ClassInit" : {
          "file" : "lib/Corvinus/Variable/ClassInit.pm"
       },
@@ -329,6 +332,6 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "2.10",
+   "version" : "0.01",
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

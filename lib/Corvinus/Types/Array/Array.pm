@@ -466,19 +466,6 @@ package Corvinus::Types::Array::Array {
 
     *min_dupa = \&min_by;
 
-    sub last {
-        my ($self, $arg) = @_;
-
-        if (defined $arg) {
-            my $from = @{$self} - $arg->get_value;
-            return $self->new(@{$self}[($from < 0 ? 0 : $from) .. $#{$self}]);
-        }
-
-        @{$self} ? $self->[-1] : ();
-    }
-
-    *ultim = \&last;
-
     sub swap {
         my ($self, $i, $j) = @_;
         @{$self}[$i, $j] = @{$self}[$j, $i];
@@ -499,13 +486,28 @@ package Corvinus::Types::Array::Array {
                 return return $self->find($arg);
             }
 
-            return $self->new(@{$self}[0 .. $arg->get_value - 1]);
+            my $max = $#{$self};
+            $arg = $arg->get_value - 1;
+            return $self->new(@{$self}[0 .. ($arg > $max ? $max : $arg)]);
         }
 
         @{$self} ? $self->[0] : ();
     }
 
     *intai = \&first;
+
+    sub last {
+        my ($self, $arg) = @_;
+
+        if (defined $arg) {
+            my $from = @{$self} - $arg->get_value;
+            return $self->new(@{$self}[($from < 0 ? 0 : $from) .. $#{$self}]);
+        }
+
+        @{$self} ? $self->[-1] : ();
+    }
+
+    *ultim = \&last;
 
     sub _flatten {    # this exists for performance reasons
         my ($self) = @_;
@@ -1372,7 +1374,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $num) = @_;
 
         $num = $num->get_value % ($#{$self} + 1);
-        return $self if $num == 0;
+        return $self->new(@{$self}) if $num == 0;
 
         # Surprisingly, this is slower:
         # $self->new(@{$self}[$num .. $#{$self}], @{$self}[0 .. $num - 1]);

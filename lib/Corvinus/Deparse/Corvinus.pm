@@ -59,8 +59,8 @@ package Corvinus::Deparse::Corvinus {
     }
 
     sub _dump_init_vars {
-        my ($self, $init_obj) = @_;
-        my $code = 'var(' . $self->_dump_vars(@{$init_obj->{vars}}) . ')';
+        my ($self, $init_obj, $type) = @_;
+        my $code = $type . '(' . $self->_dump_vars(@{$init_obj->{vars}}) . ')';
 
         if (exists $init_obj->{args}) {
             $code .= '=' . $self->deparse_args($init_obj->{args});
@@ -196,6 +196,9 @@ package Corvinus::Deparse::Corvinus {
                 }
             }
         }
+        elsif ($ref eq 'Corvinus::Variable::ClassAttr') {
+            $code = $self->_dump_init_vars($obj, 'are');
+        }
         elsif ($ref eq 'Corvinus::Variable::Struct') {
             if ($addr{refaddr($obj)}++) {
                 $code = $obj->{name};
@@ -211,7 +214,7 @@ package Corvinus::Deparse::Corvinus {
             $code = 'global ' . $obj->{class} . '::' . $obj->{name},;
         }
         elsif ($ref eq 'Corvinus::Variable::Init') {
-            $code = $self->_dump_init_vars($obj);
+            $code = $self->_dump_init_vars($obj, 'var');
         }
         elsif ($ref eq 'Corvinus::Variable::ConstInit') {
             $code = join(";\n" . (" " x $Corvinus::SPACES), map { $self->deparse_expr({self => $_}) } @{$obj->{vars}});

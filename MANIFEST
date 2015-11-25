@@ -75,6 +75,7 @@ lib/Corvinus/Types/Range/RangeString.pm
 lib/Corvinus/Types/Regex/Match.pm
 lib/Corvinus/Types/Regex/Regex.pm
 lib/Corvinus/Types/String/String.pm
+lib/Corvinus/Variable/ClassAttr.pm
 lib/Corvinus/Variable/ClassInit.pm
 lib/Corvinus/Variable/Const.pm
 lib/Corvinus/Variable/ConstInit.pm
