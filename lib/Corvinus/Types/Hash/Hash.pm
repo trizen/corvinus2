@@ -8,7 +8,7 @@ package Corvinus::Types::Hash::Hash {
       );
 
     use overload
-      q{bool} => sub { scalar(keys %{$_[0]}) },
+      q{bool} => sub { scalar(CORE::keys %{$_[0]}) },
       q{""}   => \&dump;
 
     sub new {
@@ -23,7 +23,7 @@ package Corvinus::Types::Hash::Hash {
         my ($self) = @_;
 
         my %hash;
-        foreach my $k (keys %{$self}) {
+        foreach my $k (CORE::keys %{$self}) {
             my $v = $self->{$k};
             $hash{$k} = (
                          index(ref($v), 'Corvinus::') == 0
@@ -119,8 +119,9 @@ package Corvinus::Types::Hash::Hash {
     sub _iterate {
         my ($self, $code, $callback) = @_;
 
-        while (my ($key, $value) = each %{$self}) {
+        foreach my $key (CORE::keys %{$self}) {
             my $key_obj = Corvinus::Types::String::String->new($key);
+            my $value   = $self->{$key};
 
             if ($code->run($key_obj, $value)) {
                 $callback->($key, $value);
@@ -133,12 +134,30 @@ package Corvinus::Types::Hash::Hash {
     sub map_val {
         my ($self, $code) = @_;
 
-        while (my ($key, $value) = each %{$self}) {
-            $self->{$key} = $code->run(Corvinus::Types::String::String->new($key), $value);
+        my %hash;
+        foreach my $key (CORE::keys %{$self}) {
+            $hash{$key} = $code->run(Corvinus::Types::String::String->new($key), $self->{$key});
         }
 
-        $self;
+        $self->new(%hash);
     }
+
+    *map_values  = \&map_val;
+    *mapeaza_val = \&map_val;
+
+    sub map {
+        my ($self, $code) = @_;
+
+        my %hash;
+        foreach my $key (CORE::keys %{$self}) {
+            my ($k, $v) = $code->run(Corvinus::Types::String::String->new($key), $self->{$key});
+            $hash{$k} = $v;
+        }
+
+        $self->new(%hash);
+    }
+
+    *mapeaza = \&map;
 
     sub select {
         my ($self, $code) = @_;
@@ -205,7 +224,7 @@ package Corvinus::Types::Hash::Hash {
 
     sub values {
         my ($self) = @_;
-        Corvinus::Types::Array::Array->new(values %{$self});
+        Corvinus::Types::Array::Array->new(CORE::values %{$self});
     }
 
     *valori = \&values;
@@ -266,8 +285,8 @@ package Corvinus::Types::Hash::Hash {
         my ($self, $code) = @_;
 
         my @array;
-        while (my ($key, $value) = CORE::each %{$self}) {
-            push @array, [$key, $code->run(Corvinus::Types::String::String->new($key), $value)];
+        foreach my $key (CORE::keys %{$self}) {
+            push @array, [$key, $code->run(Corvinus::Types::String::String->new($key), $self->{$key})];
         }
 
         Corvinus::Types::Array::Array->new(

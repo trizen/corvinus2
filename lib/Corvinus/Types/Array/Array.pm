@@ -280,7 +280,7 @@ package Corvinus::Types::Array::Array {
         my $head = shift @set;
         my @result = _combinations($n - 1, @set);
         foreach my $subarray (@result) {
-            unshift @{$subarray}, $head;
+            CORE::unshift @{$subarray}, $head;
         }
         @result, _combinations($n, @set);
     }
@@ -695,6 +695,24 @@ package Corvinus::Types::Array::Array {
     }
 
     *grupeaza_dupa = \&group_by;
+
+    sub freq {
+        my ($self) = @_;
+
+        my %hash;
+        foreach my $item (@{$self}) {
+            $hash{$item}++;
+        }
+
+        foreach my $key (keys %hash) {
+            $hash{$key} = Corvinus::Types::Number::Number->new($hash{$key});
+        }
+
+        Corvinus::Types::Hash::Hash->new(%hash);
+    }
+
+    *frequency = \&freq;
+    *frecventa = \&freq;
 
     sub find {
         my ($self, $code) = @_;
