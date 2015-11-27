@@ -23,7 +23,7 @@ package Corvinus::Types::Hash::Hash {
         my ($self) = @_;
 
         my %hash;
-        foreach my $k (CORE::keys %{$self}) {
+        foreach my $k (CORE::keys %$self) {
             my $v = $self->{$k};
             $hash{$k} = (
                          index(ref($v), 'Corvinus::') == 0
@@ -52,7 +52,7 @@ package Corvinus::Types::Hash::Hash {
 
     sub length {
         my ($self) = @_;
-        Corvinus::Types::Number::Number->new(scalar CORE::keys %{$self});
+        Corvinus::Types::Number::Number->new(scalar CORE::keys %$self);
     }
 
     *len     = \&length;
@@ -61,10 +61,10 @@ package Corvinus::Types::Hash::Hash {
     sub eq {
         my ($self, $obj) = @_;
 
-        (%{$self} eq %{$obj})
+        (%$self eq %{$obj})
           or return Corvinus::Types::Bool::Bool->false;
 
-        while (my ($key, $value) = each %{$self}) {
+        while (my ($key, $value) = each %$self) {
             exists($obj->{$key})
               or return Corvinus::Types::Bool::Bool->false;
 
@@ -84,11 +84,11 @@ package Corvinus::Types::Hash::Hash {
         my ($self, $obj) = @_;
 
         if (ref($self) ne ref($obj)
-            or %{$self} ne %{$obj}) {
+            or %$self ne %{$obj}) {
             return Corvinus::Types::Bool::Bool->false;
         }
 
-        while (my ($key) = each %{$self}) {
+        while (my ($key) = each %$self) {
             exists($obj->{$key})
               or return Corvinus::Types::Bool::Bool->false;
         }
@@ -116,26 +116,13 @@ package Corvinus::Types::Hash::Hash {
           : (delete @{$self}{@keys});
     }
 
-    sub _iterate {
-        my ($self, $code, $callback) = @_;
-
-        foreach my $key (CORE::keys %{$self}) {
-            my $key_obj = Corvinus::Types::String::String->new($key);
-            my $value   = $self->{$key};
-
-            if ($code->run($key_obj, $value)) {
-                $callback->($key, $value);
-            }
-        }
-
-        $self;
-    }
+    *sterge = \&delete;
 
     sub map_val {
         my ($self, $code) = @_;
 
         my %hash;
-        foreach my $key (CORE::keys %{$self}) {
+        foreach my $key (CORE::keys %$self) {
             $hash{$key} = $code->run(Corvinus::Types::String::String->new($key), $self->{$key});
         }
 
@@ -149,7 +136,7 @@ package Corvinus::Types::Hash::Hash {
         my ($self, $code) = @_;
 
         my %hash;
-        foreach my $key (CORE::keys %{$self}) {
+        foreach my $key (CORE::keys %$self) {
             my ($k, $v) = $code->run(Corvinus::Types::String::String->new($key), $self->{$key});
             $hash{$k} = $v;
         }
@@ -162,35 +149,58 @@ package Corvinus::Types::Hash::Hash {
     sub select {
         my ($self, $code) = @_;
 
-        my @pairs;
-        $self->_iterate(
-            $code,
-            sub {
-                push @pairs, @_;
+        my %hash;
+        foreach my $key (CORE::keys %$self) {
+            my $value = $self->{$key};
+            if ($code->run(Corvinus::Types::String::String->new($key), $value)) {
+                $hash{$key} = $value;
             }
-        );
+        }
 
-        $self->new(@pairs);
+        $self->new(%hash);
     }
 
+    *filter     = \&grep;
     *grep       = \&select;
-    *selecteaza = \&select;
+    *selecteaza = \&grep;
+    *filtreaza  = \&grep;
+
+    sub count {
+        my ($self, $code) = @_;
+
+        my $count = 0;
+        foreach my $key (CORE::keys %$self) {
+            if ($code->run(Corvinus::Types::String::String->new($key), $self->{$key})) {
+                ++$count;
+            }
+        }
+
+        Corvinus::Types::Number::Number->new($count);
+    }
+
+    *count_by    = \&count;
+    *numara      = \&count;
+    *numara_dupa = \&count;
 
     sub delete_if {
         my ($self, $code) = @_;
-        $self->_iterate(
-            $code,
-            sub {
-                delete $self->{$_[0]};
+
+        foreach my $key (CORE::keys %$self) {
+            if ($code->run(Corvinus::Types::String::String->new($key), $self->{$key})) {
+                delete($self->{$key});
             }
-        );
+        }
+
+        $self;
     }
+
+    *sterge_daca = \&delete_if;
 
     sub concat {
         my ($self, $obj) = @_;
 
         my @list;
-        while (my ($key, $val) = each %{$self}) {
+        while (my ($key, $val) = each %$self) {
             push @list, $key, $val;
         }
 
@@ -207,7 +217,7 @@ package Corvinus::Types::Hash::Hash {
     sub merge_values {
         my ($self, $obj) = @_;
 
-        while (my ($key, undef) = each %{$self}) {
+        while (my ($key, undef) = each %$self) {
             if (exists $obj->{$key}) {
                 $self->{$key} = $obj->{$key};
             }
@@ -218,13 +228,13 @@ package Corvinus::Types::Hash::Hash {
 
     sub keys {
         my ($self) = @_;
-        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } keys %{$self});
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } keys %$self);
     }
     *chei = \&keys;
 
     sub values {
         my ($self) = @_;
-        Corvinus::Types::Array::Array->new(CORE::values %{$self});
+        Corvinus::Types::Array::Array->new(CORE::values %$self);
     }
 
     *valori = \&values;
@@ -232,7 +242,7 @@ package Corvinus::Types::Hash::Hash {
     sub each_value {
         my ($self, $code) = @_;
 
-        foreach my $value (CORE::values %{$self}) {
+        foreach my $value (CORE::values %$self) {
             if (defined(my $res = $code->_run_code($value))) {
                 return $res;
             }
@@ -246,7 +256,7 @@ package Corvinus::Types::Hash::Hash {
     sub each_key {
         my ($self, $code) = @_;
 
-        foreach my $key (CORE::keys %{$self}) {
+        foreach my $key (CORE::keys %$self) {
             if (defined(my $res = $code->_run_code(Corvinus::Types::String::String->new($key)))) {
                 return $res;
             }
@@ -262,7 +272,7 @@ package Corvinus::Types::Hash::Hash {
 
         if (defined($obj)) {
 
-            foreach my $key (CORE::keys %{$self}) {
+            foreach my $key (CORE::keys %$self) {
                 if (defined(my $res = $obj->_run_code(Corvinus::Types::String::String->new($key), $self->{$key}))) {
                     return $res;
                 }
@@ -271,7 +281,7 @@ package Corvinus::Types::Hash::Hash {
             return $obj;
         }
 
-        my ($key, $value) = each(%{$self});
+        my ($key, $value) = each(%$self);
 
         $key // return;
         Corvinus::Types::Array::Array->new(Corvinus::Types::String::String->new($key), $value);
@@ -285,7 +295,7 @@ package Corvinus::Types::Hash::Hash {
         my ($self, $code) = @_;
 
         my @array;
-        foreach my $key (CORE::keys %{$self}) {
+        foreach my $key (CORE::keys %$self) {
             push @array, [$key, $code->run(Corvinus::Types::String::String->new($key), $self->{$key})];
         }
 
@@ -303,7 +313,7 @@ package Corvinus::Types::Hash::Hash {
         Corvinus::Types::Array::Array->new(
             map {
                 Corvinus::Types::Array::Pair->new(Corvinus::Types::String::String->new($_), $self->{$_})
-              } CORE::keys %{$self}
+              } CORE::keys %$self
         );
     }
 
@@ -325,8 +335,8 @@ package Corvinus::Types::Hash::Hash {
         my ($self) = @_;
 
         my $new_hash = $self->new();
-        @{$new_hash}{map { $_->get_value } CORE::values %{$self}} =
-          (map           { Corvinus::Types::String::String->new($_) } CORE::keys %{$self});
+        @{$new_hash}{map { $_->get_value } CORE::values %$self} =
+          (map           { Corvinus::Types::String::String->new($_) } CORE::keys %$self);
 
         $new_hash;
     }
@@ -348,7 +358,7 @@ package Corvinus::Types::Hash::Hash {
         $Corvinus::SPACES += $Corvinus::SPACES_INCR;
 
         # Sort the keys case insensitively
-        my @keys = sort { (lc($a) cmp lc($b)) || ($a cmp $b) } CORE::keys(%{$self});
+        my @keys = sort { (lc($a) cmp lc($b)) || ($a cmp $b) } CORE::keys(%$self);
 
         my $str = Corvinus::Types::String::String->new(
             "Hash(" . (
