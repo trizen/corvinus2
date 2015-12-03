@@ -40,11 +40,6 @@ package Corvinus::Deparse::Corvinus {
         $self->deparse_generic('(', ', ', ')', @args);
     }
 
-    sub deparse_block_expr {
-        my ($self, @args) = @_;
-        $self->deparse_generic('do{', ';', '}', @args);
-    }
-
     sub deparse_bare_block {
         my ($self, @args) = @_;
 
@@ -75,7 +70,7 @@ package Corvinus::Deparse::Corvinus {
         my $ref = ref($obj);
 
             $ref eq 'Corvinus::Variable::ClassInit'    ? $obj->{name}
-          : $ref eq 'Corvinus::Types::Block::CodeInit' ? 'Block'
+          : $ref eq 'Corvinus::Types::Block::CodeInit' ? 'Bloc'
           :                                              substr($ref, rindex($ref, '::') + 2);
     }
 
@@ -88,13 +83,9 @@ package Corvinus::Deparse::Corvinus {
                   . (exists($_->{class}) && $_->{class} ne $self->{class} ? $_->{class} . '::' : '')
                   . (exists($_->{ref_type}) ? ($self->_dump_reftype($_->{ref_type}) . ' ') : '')
                   . $_->{name}
-                  . (
-                    exists($_->{value}) ? do {
-                        my $value = $self->deparse_expr({self => $_->{value}});
-                        "=($value)";
-                      }
-                    : ''
-                    )
+                  . (exists($_->{where_block}) ? $self->deparse_expr({self => $_->{where_block}}) : '')
+                  . (exists($_->{where_expr}) ? ('(' . $self->deparse_expr({self => $_->{where_expr}}) . ')') : '')
+                  . (exists($_->{value}) ? ('=(' . $self->deparse_expr({self => $_->{value}}) . ')') : '')
               } @vars
             );
     }
@@ -102,7 +93,7 @@ package Corvinus::Deparse::Corvinus {
     sub _dump_string {
         my ($self, $str) = @_;
 
-        return 'String' if $str eq '';
+        return 'Text' if $str eq '';
         state $x = eval { require Data::Dump };
         $x || return ('"' . quotemeta($str) . '"');
 
@@ -113,10 +104,10 @@ package Corvinus::Deparse::Corvinus {
         my ($self, $num) = @_;
 
         state $table = {
-                        'inf'  => q{Number.inf},
-                        '-inf' => q{Number.inf('-')},
-                        'nan'  => q{Number.nan},
-                        '0'    => q{Number},
+                        'inf'  => q{Numar.inf},
+                        '-inf' => q{Numar.inf('-')},
+                        'nan'  => q{Numar.nan},
+                        '0'    => q{Numar},
                        };
 
         exists($table->{lc($num)}) ? $table->{lc($num)} : $num;
@@ -147,7 +138,7 @@ package Corvinus::Deparse::Corvinus {
             }
         }
         elsif ($ref eq 'Corvinus::Variable::Variable') {
-            if ($obj->{type} eq 'var' or $obj->{type} eq 'static' or $obj->{type} eq 'const' or $obj->{type} eq 'def') {
+            if ($obj->{type} eq 'var' or $obj->{type} eq 'static' or $obj->{type} eq 'const') {
                 $code =
                   $obj->{name} =~ /^[0-9]+\z/
                   ? ('$' . $obj->{name})
@@ -165,7 +156,7 @@ package Corvinus::Deparse::Corvinus {
                     my $in_module = $obj->{class} ne $self->{class};
 
                     if ($in_module) {
-                        $code = "module $obj->{class} {\n";
+                        $code = "modul $obj->{class} {\n";
                         $Corvinus::SPACES += $Corvinus::SPACES_INCR;
                         $code .= ' ' x $Corvinus::SPACES;
                     }
@@ -179,7 +170,7 @@ package Corvinus::Deparse::Corvinus {
                       . ') ';
 
                     if (exists $obj->{cached}) {
-                        $code .= 'is cached ';
+                        $code .= 'e memorata ';
                     }
 
                     if (exists $obj->{returns}) {
@@ -266,13 +257,13 @@ package Corvinus::Deparse::Corvinus {
                 my $in_module = $obj->{class} ne $self->{class};
 
                 if ($in_module) {
-                    $code = "module $obj->{class} {\n";
+                    $code = "modul $obj->{class} {\n";
                     $Corvinus::SPACES += $Corvinus::SPACES_INCR;
                     $code .= ' ' x $Corvinus::SPACES;
                 }
 
                 local $self->{class} = $obj->{class};
-                $code .= "class " . $self->_dump_class_name($obj->{name});
+                $code .= "clasa " . $self->_dump_class_name($obj->{name});
                 my $vars = $obj->{vars};
                 $code .= '(' . $self->_dump_vars(@{$vars}) . ')';
                 if (exists $obj->{inherit}) {
@@ -288,7 +279,7 @@ package Corvinus::Deparse::Corvinus {
         }
         elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
             if ($addr{refaddr($obj)}++) {
-                $code = keys(%{$obj}) ? '__BLOCK__' : 'Block';
+                $code = keys(%{$obj}) ? '__BLOC__' : 'Bloc';
             }
             else {
                 if (keys(%{$obj})) {
@@ -308,18 +299,23 @@ package Corvinus::Deparse::Corvinus {
                         $statements[-1] = '(' . $statements[-1] . ')';
                     }
 
-                    $code .=
-                      @statements
-                      ? ("\n"
-                         . (" " x $Corvinus::SPACES)
-                         . join(";\n" . (" " x $Corvinus::SPACES), @statements) . "\n"
-                         . (" " x ($Corvinus::SPACES - $Corvinus::SPACES_INCR)) . '}')
-                      : '}';
+                    if (@statements == 1 and length($statements[0]) <= 80) {
+                        $code .= "$statements[0]}";
+                    }
+                    else {
+                        $code .=
+                          @statements
+                          ? ("\n"
+                             . (" " x $Corvinus::SPACES)
+                             . join(";\n" . (" " x $Corvinus::SPACES), @statements) . "\n"
+                             . (" " x ($Corvinus::SPACES - $Corvinus::SPACES_INCR)) . '}')
+                          : '}';
+                    }
 
                     $Corvinus::SPACES -= $Corvinus::SPACES_INCR;
                 }
                 else {
-                    $code = 'Block';
+                    $code = 'Bloc';
                 }
             }
         }
@@ -329,7 +325,7 @@ package Corvinus::Deparse::Corvinus {
             }
         }
         elsif ($ref eq 'Corvinus::Sys::Sys') {
-            $code = exists($obj->{file_name}) ? '' : 'Sys';
+            $code = exists($obj->{file_name}) ? '' : 'Sistem';
         }
         elsif ($ref eq 'Corvinus::Meta::Assert') {
             $code = $obj->{act} . $self->deparse_args($obj->{arg});
@@ -359,16 +355,25 @@ package Corvinus::Deparse::Corvinus {
             $code = 'LazyMethod';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Break') {
-            $code = 'break';
+            $code = 'stop';
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Given') {
+            $code = 'dat ' . $self->deparse_args($obj->{expr}) . $self->deparse_bare_block($obj->{block}{code});
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::When') {
+            $code = 'cand(' . $self->deparse_args($obj->{expr}) . ')' . $self->deparse_bare_block($obj->{block}{code});
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Case') {
+            $code = 'caz(' . $self->deparse_args($obj->{expr}) . ')' . $self->deparse_bare_block($obj->{block}{code});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Default') {
-            $code = 'default' . $self->deparse_bare_block($obj->{block}->{code});
+            $code = 'altfel' . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Next') {
-            $code = 'next';
+            $code = 'sari';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Continue') {
-            $code = 'continue';
+            $code = 'continua';
         }
         elsif ($ref eq 'Corvinus::Types::Block::Return') {
             if (not exists $expr->{call}) {
@@ -391,25 +396,26 @@ package Corvinus::Deparse::Corvinus {
             $code = join(', ', map { $self->deparse_expr({self => $_}) } @{$obj});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Gather') {
-            $code = 'gather ' . $self->deparse_expr({self => $obj->{block}});
+            $code = 'aduna ' . $self->deparse_expr({self => $obj->{block}});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Take') {
-            $code = 'take' . $self->deparse_args($obj->{expr});
+            $code = 'ia' . $self->deparse_args($obj->{expr});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Do') {
             $code = 'do ' . $self->deparse_expr({self => $obj->{block}});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Loop') {
-            $code = 'loop ' . $self->deparse_expr({self => $obj->{block}});
+            $code = 'bucla ' . $self->deparse_expr({self => $obj->{block}});
         }
         elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
-            $code = 'for '
+            $code =
+                'pentru '
               . $self->deparse_expr({self => $obj->{var}}) . ' in ('
               . $self->deparse_expr({self => $obj->{array}}) . ') '
               . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Math::Math') {
-            $code = 'Math';
+            $code = 'Mate';
         }
         elsif ($ref eq 'Corvinus::Types::Glob::DirHandle') {
             $code = 'DirHandle';
@@ -455,10 +461,10 @@ package Corvinus::Deparse::Corvinus {
             $code = 'Perl';
         }
         elsif ($ref eq 'Corvinus::Time::Time') {
-            $code = 'Time';
+            $code = 'Timp';
         }
         elsif ($ref eq 'Corvinus::Sys::SIG') {
-            $code = 'Sig';
+            $code = 'Semnal';
         }
         elsif ($ref eq 'Corvinus::Types::Number::Number') {
             my $value = $obj->get_value;
@@ -477,14 +483,14 @@ package Corvinus::Deparse::Corvinus {
         }
         elsif ($ref eq 'Corvinus::Types::Array::Array' or $ref eq 'Corvinus::Types::Array::HCArray') {
             if (not @{$obj}) {
-                $code = 'Array';
+                $code = 'Lista';
             }
             else {
                 $code = $self->_dump_array($obj);
             }
         }
         elsif ($ref eq 'Corvinus::Types::Nil::Nil') {
-            $code = 'nil';
+            $code = 'nul';
         }
         elsif ($ref eq 'Corvinus::Object::Object') {
             $code = 'Object';
@@ -494,10 +500,9 @@ package Corvinus::Deparse::Corvinus {
 
             if ($ref eq 'Corvinus::Types::Glob::Backtick') {
                 if (${$obj} eq '') {
-                    $code = 'Backtick';
+                    $code = 'Comanda';
                 }
             }
-
             elsif ($ref eq 'Corvinus::Types::Number::Complex') {
                 if (${$obj} == 0) {
                     $code = 'Complex';
@@ -510,63 +515,63 @@ package Corvinus::Deparse::Corvinus {
             }
             elsif ($ref eq 'Corvinus::Types::Glob::File') {
                 if (${$obj} eq '') {
-                    $code = 'File';
+                    $code = 'Fisier';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Array::Pair') {
                 if (    not defined($obj->[0])
                     and not defined($obj->[1])) {
-                    $code = 'Pair';
+                    $code = 'Pereche';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Byte::Bytes') {
                 if (not @{$obj}) {
-                    $code = 'Bytes';
+                    $code = 'Octeti';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Byte::Byte') {
                 if (${$obj} == 0) {
-                    $code = 'Byte';
+                    $code = 'Octet';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Char::Chars') {
                 if (not @{$obj}) {
-                    $code = 'Chars';
+                    $code = 'Caractere';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Grapheme::Grapheme') {
                 if (${$obj} eq "\0") {
-                    $code = 'Grapheme';
+                    $code = 'Grafem';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Grapheme::Graphemes') {
                 if (not @{$obj}) {
-                    $code = 'Graphemes';
+                    $code = 'Grafeme';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Glob::Dir') {
                 if (${$obj} eq '') {
-                    $code = 'Dir';
+                    $code = 'Dosar';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Char::Char') {
                 if (${$obj} eq "\0") {
-                    $code = 'Char';
+                    $code = 'Caracter';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::String::String') {
                 if (${$obj} eq '') {
-                    $code = 'String';
+                    $code = 'Text';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Array::MultiArray') {
                 if (not @{$obj}) {
-                    $code = 'MultiArr';
+                    $code = 'MultiLista';
                 }
             }
             elsif ($ref eq 'Corvinus::Types::Glob::Pipe') {
                 if (not @{$obj}) {
-                    $code = 'Pipe';
+                    $code = 'Proces';
                 }
             }
         }
@@ -616,8 +621,8 @@ package Corvinus::Deparse::Corvinus {
                     }
                     elsif ($method =~ /^[\pL_]/) {
 
-                        if ($ref eq 'Corvinus::Types::Block::CodeInit' and $method eq 'loop') {
-                            $code = "loop $code";
+                        if ($ref eq 'Corvinus::Types::Block::CodeInit' and ($method eq 'loop' or $method eq 'bucla')) {
+                            $code = "bucla $code";
                         }
                         else {
 
@@ -664,13 +669,7 @@ package Corvinus::Deparse::Corvinus {
                 }
 
                 if (exists $call->{block}) {
-                    if ($ref eq 'Corvinus::Types::Block::Given'
-                        or ($ref eq 'Corvinus::Types::Block::If' and $i == $#{$expr->{call}})) {
-                        $code .= $self->deparse_bare_block(@{$call->{block}});
-                    }
-                    else {
-                        $code .= $self->deparse_bare_block(@{$call->{block}});
-                    }
+                    $code .= $self->deparse_bare_block(@{$call->{block}});
                     next;
                 }
             }
@@ -693,7 +692,7 @@ package Corvinus::Deparse::Corvinus {
             if ($in_module) {
                 my $spaces = " " x $Corvinus::SPACES_INCR;
                 s/^/$spaces/gm for @results;
-                $results[0] = "module $class {\n" . $results[0];
+                $results[0] = "modul $class {\n" . $results[0];
                 $results[-1] .= "\n}";
             }
         }

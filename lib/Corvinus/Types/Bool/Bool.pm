@@ -26,6 +26,13 @@ package Corvinus::Types::Bool::Bool {
 
         sub false { $false }
         *fals = \&false;
+
+        sub pick {
+            CORE::rand(1) < 0.5 ? $true : $false;
+        }
+
+        *rand      = \&pick;
+        *aleatoriu = \&pick;
     }
 
     sub get_value { ${$_[0]} }

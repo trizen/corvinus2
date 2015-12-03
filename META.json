@@ -56,7 +56,7 @@
    "provides" : {
       "Corvinus" : {
          "file" : "lib/Corvinus.pm",
-         "version" : "0.01"
+         "version" : "2.00"
       },
       "Corvinus::Convert::Convert" : {
          "file" : "lib/Corvinus/Convert/Convert.pm"
@@ -141,6 +141,9 @@
       },
       "Corvinus::Types::Block::Break" : {
          "file" : "lib/Corvinus/Types/Block/Break.pm"
+      },
+      "Corvinus::Types::Block::Case" : {
+         "file" : "lib/Corvinus/Types/Block/Case.pm"
       },
       "Corvinus::Types::Block::Code" : {
          "file" : "lib/Corvinus/Types/Block/Code.pm"
@@ -332,6 +335,6 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.01",
+   "version" : "2.00",
    "x_serialization_backend" : "JSON::PP version 2.27300"
 }

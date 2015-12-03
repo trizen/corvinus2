@@ -25,12 +25,12 @@ var ops = Dict(
     JMPLT,   Op("jmplt", 2),
 );
 
-clasa VM (
-    code = [],
-    pc = 0,
-    stack = [],
-    sp = -1
-){
+clasa VM {
+
+    are code = []
+    are pc = 0
+    are stack = []
+    are sp = -1
 
     metoda trace {
         var op = ops{code[pc]};

@@ -652,15 +652,50 @@ package Corvinus::Types::String::String {
         __PACKAGE__->new($acc);
     }
 
-    sub each_word {
-        my ($self, $obj) = @_;
-        my $array = Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } CORE::split(' ', $$self));
-        $obj // return $array;
-        $array->each($obj);
+    sub words {
+        my ($self) = @_;
+        Corvinus::Types::Array::Array->new(map { __PACKAGE__->new($_) } CORE::split(' ', $$self));
     }
 
-    *words   = \&each_word;
-    *cuvinte = \&each_word;
+    *cuvinte = \&words;
+
+    sub each_word {
+        my ($self, $code) = @_;
+
+        foreach my $word (CORE::split(' ', $$self)) {
+            if (defined(my $res = $code->_run_code(__PACKAGE__->new($word)))) {
+                return $res;
+            }
+        }
+
+        $self;
+    }
+
+    *fiecare_cuvant = \&each_word;
+
+    sub numbers {
+        my ($self) = @_;
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::Number::Number->new($_) } CORE::split(' ', $$self));
+    }
+
+    *nums   = \&numbers;
+    *numere = \&numbers;
+
+    sub each_number {
+        my ($self, $code) = @_;
+
+        foreach my $num (CORE::split(' ', $$self)) {
+            if (defined(my $res = $code->_run_code(Corvinus::Types::Number::Number->new($num)))) {
+                return $res;
+            }
+        }
+
+        $self;
+    }
+
+    *each_num      = \&each_number;
+    *fiecare_num   = \&each_number;
+    *fiecare_numar = \&each_number;
 
     sub bytes {
         my ($self) = @_;

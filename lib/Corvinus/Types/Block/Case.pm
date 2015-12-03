@@ -1,4 +1,4 @@
-package Corvinus::Types::Block::Given {
+package Corvinus::Types::Block::Case {
 
     sub new {
         my (undef, %opt) = @_;

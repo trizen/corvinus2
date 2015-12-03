@@ -93,13 +93,13 @@ package Corvinus::Types::Number::Complex {
 
     sub cartesian {
         my ($self) = @_;
-        ${$self}->display_format('cartesian');
+        $$self->display_format('cartesian');
         $self;
     }
 
     sub polar {
         my ($self) = @_;
-        ${$self}->display_format('polar');
+        $$self->display_format('polar');
         $self;
     }
 
@@ -109,6 +109,22 @@ package Corvinus::Types::Number::Complex {
     }
 
     *re = \&real;
+
+    sub parts {
+        my ($self) = @_;
+        map { Corvinus::Types::Number::Number->new($_) } @{$$self->_cartesian};
+    }
+
+    *reals = \&parts;
+    *parti = \&parts;
+
+    sub polars {
+        my ($self) = @_;
+        map { Corvinus::Types::Number::Number->new($_) } @{$$self->_polar};
+    }
+
+    *polari       = \&polars;
+    *parti_polare = \&polars;
 
     sub imaginary {
         my ($self) = @_;
@@ -271,6 +287,22 @@ package Corvinus::Types::Number::Complex {
     }
 
     *la_puterea = \&pow;
+
+    sub root {
+        my ($self, $n, $k) = @_;
+        local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
+        $self->new($$self->root($n->get_value, $k->get_value));
+    }
+
+    *radacina = \&root;
+
+    sub roots {
+        my ($self, $n) = @_;
+        local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
+        Corvinus::Types::Array::Array->new(map { $self->new($_) } $$self->root($n->get_value));
+    }
+
+    *radacini = \&roots;
 
     sub int {
         my ($self) = @_;

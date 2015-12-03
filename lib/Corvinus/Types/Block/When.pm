@@ -1,6 +1,8 @@
 package Corvinus::Types::Block::When {
+
     sub new {
-        bless {}, __PACKAGE__;
+        my (undef, %opt) = @_;
+        bless \%opt, __PACKAGE__;
     }
 }
 

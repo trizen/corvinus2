@@ -14,18 +14,161 @@ package Corvinus::Types::Block::Code {
 
     sub run {
         my ($self, @args) = @_;
-        my @objs = $self->{code}->(@args);
-        wantarray ? @objs : $objs[-1];
+        $self->{code}->(@args);
     }
 
     *executa = \&run;
 
-    sub call {
+    sub _multiple_dispatch {
         my ($self, @args) = @_;
 
-        my @objs = $self->{code}->(@args);
+      OUTER: foreach my $method ($self, (exists($self->{kids}) ? @{$self->{kids}} : ())) {
+            my $table = $self->{table};
 
-        # Unpack 'return'ed arguments from bare-blocks
+            my %seen;
+            my @left_args;
+            my @vars = @{$method->{vars}};
+
+            foreach my $arg (@args) {
+                if (ref($arg) eq 'Corvinus::Variable::NamedParam') {
+                    if (exists $table->{$arg->[0]}) {
+                        my $info = $vars[$table->{$arg->[0]}];
+                        if (exists $info->{slurpy}) {
+                            $seen{$arg->[0]} = $arg->[1];
+                        }
+                        else {
+                            $seen{$arg->[0]} = $arg->[1][-1];
+                        }
+                    }
+                    else {
+                        next OUTER;
+                    }
+                }
+                else {
+                    push @left_args, $arg;
+                }
+            }
+
+            foreach my $var (@vars) {
+                exists($seen{$var->{name}}) && next;
+                @left_args || last;
+                if (exists($var->{slurpy})) {
+                    $seen{$var->{name}} = [splice(@left_args)];
+                    last;
+                }
+                else {
+                    $seen{$var->{name}} = shift(@left_args);
+                }
+            }
+
+            @left_args && next;
+
+            my @pos_args;
+            foreach my $var (@vars) {
+                if (exists $var->{type}) {
+
+                    if (exists $seen{$var->{name}}) {
+                        my $value = $seen{$var->{name}};
+                        if (ref($value) eq $var->{type}
+                            or eval { $value->SUPER::isa($var->{type}) }) {
+
+                            if (exists $var->{where_block}) {
+                                $var->{where_block}($value) or next OUTER;
+                            }
+                            elsif (exists $var->{where_expr}) {
+                                $value eq $var->{where_expr} or next OUTER;
+                            }
+
+                            push @pos_args, $value;
+                        }
+                        else {
+                            next OUTER;
+                        }
+                    }
+                    elsif (exists $var->{has_value}) {
+                        push @pos_args, undef;
+                    }
+                    else {
+                        next OUTER;
+                    }
+                }
+                elsif (exists $seen{$var->{name}}) {
+                    if (exists $var->{where_block}) {
+                        $var->{where_block}($seen{$var->{name}}) or next OUTER;
+                    }
+                    elsif (exists $var->{where_expr}) {
+                        $var->{where_expr} eq $seen{$var->{name}} or next OUTER;
+                    }
+
+                    push @pos_args, exists($var->{slurpy}) ? @{$seen{$var->{name}}} : $seen{$var->{name}};
+                }
+                elsif (exists $var->{slurpy}) {
+                    ## ok
+                }
+                elsif (exists $var->{has_value}) {
+                    push @pos_args, undef;
+                }
+                else {
+                    next OUTER;
+                }
+            }
+
+            return ($method, $method->{code}(@pos_args));
+        }
+
+        my $name = Corvinus::normalize_type($self->{name} // '__ANON__');
+        my $type = $self->{type};
+
+        if ($type eq 'method') {
+            $type = 'metoda';
+        }
+        elsif ($type eq 'func') {
+            $type = 'functia';
+        }
+        elsif ($type eq 'block') {
+            $type = 'bloc';
+        }
+        elsif ($type eq 'struct') {
+            $type = 'structura';
+        }
+
+        die "[EROARE] $type `$name` nu este definită pentru `$name("
+          . join(', ', map { ref($_) ? Corvinus::normalize_type(ref($_)) : 'nil' } @args)
+          . ")`, apelată ca `"
+          . $name . '('
+          . join(
+            ', ',
+            map {
+                    ref($_) && eval { $_->can('dump') } ? $_->dump
+                  : ref($_) ? Corvinus::normalize_type(ref($_))
+                  : 'nil'
+              } @args
+          )
+          . ')`'
+          . "\n\nVariantele posibile sunt:"
+          . "\n    $name("
+          . join(
+            ")\n    $name(",
+            map {
+                join(
+                    ', ',
+                    map {
+                            (exists($_->{slurpy}) ? '*' : '')
+                          . $_->{name}
+                          . (exists($_->{type}) ? (": " . Corvinus::normalize_type($_->{type})) : '')
+                      } @{$_->{vars}}
+                    )
+              } ($self, (exists($self->{kids}) ? @{$self->{kids}} : ()))
+          )
+          . ")\n";
+    }
+
+    sub call {
+        my ($block, @args) = @_;
+
+        my ($self, @objs) = $block->_multiple_dispatch(@args);
+
+        # Unpack 'return'ed values from bare-blocks
         if (@objs == 1 and ref($objs[0]) eq 'Corvinus::Types::Block::Return') {
             @objs = @{$objs[0]{obj}};
         }
@@ -34,17 +177,22 @@ package Corvinus::Types::Block::Code {
         if (exists $self->{returns}) {
 
             if ($#{$self->{returns}} != $#objs) {
-                die qq{[EROARE] Număr invalid the obiecte returnate din $self->{type} $self->{class}<<$self->{name}>>: avem }
+                die qq{[EROARE] Număr invalid the obiecte returnate din $self->{type} }
+                  . (defined($self->{class}) ? Corvinus::normalize_type($self->{class}) . '.' : '')
+                  . qq{$self->{name}\(): got }
                   . @objs
                   . ", dar așteptam "
                   . @{$self->{returns}};
             }
 
             foreach my $i (0 .. $#{$self->{returns}}) {
-                if (ref($objs[$i]) ne ($self->{returns}[$i])) {
-                    die qq{[EROARE] Tip de obiect invalid returnat din $self->{type} $self->{class}<<$self->{name}>>: avem <<}
-                      . ref($objs[$i])
-                      . qq{>>, dar așteptam <<$self->{returns}[$i]>>};
+                if (not(ref($objs[$i]) eq ($self->{returns}[$i]) or eval { $objs[$i]->SUPER::isa($self->{returns}[$i]) })) {
+                    die qq{[EROARE] Tip de obiect invalid returnat din $self->{type} }
+                      . (defined($self->{class}) ? Corvinus::normalize_type($self->{class}) . '.' : '')
+                      . qq{$self->{name}\(): avem `}
+                      . Corvinus::normalize_type(ref($objs[$i]))
+                      . qq{`, dar așteptam `}
+                      . Corvinus::normalize_type($self->{returns}[$i]) . "`";
                 }
             }
         }
@@ -177,7 +325,7 @@ package Corvinus::Types::Block::Code {
         open(my $fh, '+>', undef);    # an anonymous temporary file
         my $fork = Corvinus::Types::Block::Fork->new(fh => $fh);
 
-        my $pid = fork() // die "[FATAL ERROR]: cannot fork";
+        my $pid = fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
             my $obj = $self->run;
@@ -197,7 +345,7 @@ package Corvinus::Types::Block::Code {
 
         my $fork = Corvinus::Types::Block::Fork->new();
 
-        my $pid = CORE::fork() // die "[FATAL ERROR]: cannot fork";
+        my $pid = CORE::fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
             $self->run;

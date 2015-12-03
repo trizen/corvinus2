@@ -42,8 +42,6 @@ package Corvinus::Parser {
                                    'Corvinus::Types::Block::While' => 1,
                                    'Corvinus::Types::Block::If'    => 1,
                                    'Corvinus::Types::Block::For'   => 1,
-                                   'Corvinus::Types::Block::Given' => 1,
-                                   'Corvinus::Types::Block::When'  => 1,
                                   },
 
             static_obj_re => qr{\G
@@ -128,8 +126,6 @@ package Corvinus::Parser {
                 | (?:incearca|try)\b                                   (?{ Corvinus::Types::Block::Try->new })
                 | (?:pentru|for)\b                                     (?{ Corvinus::Types::Block::For->new })
                 | return(?:eaza)?+\b                                   (?{ Corvinus::Types::Block::Return->new })
-                | (?:dat|given)\b                                      (?{ Corvinus::Types::Block::Given->new })
-                | (?:cand|when)\b                                      (?{ Corvinus::Types::Block::When->new })
                 | (?:definit|citeste|defined|read)\b                   (?{ state $x = Corvinus::Sys::Sys->new })
                 | (?:sari_la|goto)\b                                   (?{ state $x = Corvinus::Perl::Builtin->new })
                 | (?:[*\\&]|\+\+|--)                                   (?{ state $x = Corvinus::Variable::Ref->new })
@@ -223,22 +219,22 @@ package Corvinus::Parser {
             keywords => {
                 map { $_ => 1 }
                   qw(
-                  sari
-                  stop
+                  next sari
+                  break stop
                   return returneaza
-                  pentru
-                  daca cat_timp
-                  dat cand
-                  incearca
-                  continua
+                  for pentru
+                  if while daca cat_timp
+                  given dat
+                  try incearca
+                  continue continua
                   import
                   include
                   eval
-                  citeste
-                  eroare
-                  avert
+                  read citeste
+                  die eroare
+                  warn avert
 
-                  assert
+                  assert afirma
                   assert_eq
                   assert_ne
 
@@ -252,7 +248,7 @@ package Corvinus::Parser {
                   static
                   define
                   struct
-                  modul
+                  module modul
 
                   DATA
                   ARGV
@@ -374,9 +370,11 @@ package Corvinus::Parser {
     sub fatal_error {
         my ($self, %opt) = @_;
 
+        my $line_length = 75;
+
         my $start      = rindex($opt{code}, "\n", $opt{pos}) + 1;
         my $point      = $opt{pos} - $start;
-        my $error_line = (split(/\R/, substr($opt{code}, $start, 80)))[0];
+        my $error_line = (split(/\R/, substr($opt{code}, $start, $line_length)))[0];
 
         my @lines = (
                      "am identificat o erorare în programul dvs.",
@@ -388,14 +386,14 @@ package Corvinus::Parser {
         state $x = require File::Basename;
         my $basename = File::Basename::basename($0);
 
-        my $error = sprintf("%s: %s\n\nFisier: %s\nLinia : %s\nEroare: %s\n\n" . ("~" x 80) . "\n%s\n",
+        my $error = sprintf("%s: %s\n\nFisier: %s\nLinia : %s\nEroare: %s\n\n" . ("~" x $line_length) . "\n%s\n",
                             $basename,
                             $lines[rand @lines],
                             $self->{file_name} // '-',
                             $self->{line}, join(', ', grep { defined } $opt{error}, $opt{expected}), $error_line,);
 
         my $pointer = ' ' x ($point) . '^' . "\n";
-        die $error, $pointer, '~' x 80, "\n";
+        die $error, $pointer, '~' x $line_length, "\n";
     }
 
     sub find_var {
@@ -599,7 +597,9 @@ package Corvinus::Parser {
         my @vars;
         my %classes;
 
-        while (/\G(?<type>$self->{var_name_re}\h+$self->{var_name_re})/goc || /\G([*:]?$self->{var_name_re})/goc) {
+        while (   /\G(?<type>$self->{var_name_re}\h+$self->{var_name_re})\h*/goc
+               || /\G([*:]?$self->{var_name_re})\h*/goc
+               || (defined($end_delim) && /\G(?=[({])/)) {
             push @vars, $1;
 
             if ($opt{with_vals} && defined($end_delim)) {
@@ -616,6 +616,19 @@ package Corvinus::Parser {
                     type  => $opt{type},
                     line  => $self->{line},
                   };
+
+                if (/\G(?=\{)/) {
+                    my $code = substr($_, pos);
+                    $self->parse_block(code => \$code);
+                    $vars[-1] .= substr($_, pos($_), pos($code));
+                    pos($_) += pos($code);
+                }
+                elsif (/\G(?=\()/) {
+                    my $code = substr($_, pos);
+                    $self->parse_arguments(code => \$code);
+                    $vars[-1] .= substr($_, pos($_), pos($code));
+                    pos($_) += pos($code);
+                }
 
                 if (/$self->{var_init_sep_re}/goc) {
                     my $code = substr($_, pos);
@@ -661,7 +674,9 @@ package Corvinus::Parser {
         my $end_delim = $self->parse_delim(%opt);
 
         my @var_objs;
-        while (/\G(?<type>$self->{var_name_re})\h+($self->{var_name_re})/goc || /\G([*:]?)($self->{var_name_re})/goc) {
+        while (   /\G(?<type>$self->{var_name_re})\h+($self->{var_name_re})\h*/goc
+               || /\G([*:]?)($self->{var_name_re})\h*/goc
+               || (defined($end_delim) && /\G(?=[({])/)) {
             my ($attr, $name) = ($1, $2);
 
             my $ref_type;
@@ -677,8 +692,8 @@ package Corvinus::Parser {
                     $self->fatal_error(
                                        code     => $_,
                                        pos      => pos,
-                                       error    => "invalid type <<$type>> for variable '$name'",
-                                       expected => "expected a type, such as: Str, Num, File, etc...",
+                                       error    => "tip invalid („$type”) specificat pentru variabila '$name'",
+                                       expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
                                       );
                 }
 
@@ -697,25 +712,38 @@ package Corvinus::Parser {
                                   );
             }
 
-            my $value;
-            if (defined($end_delim) && /$self->{var_init_sep_re}/goc) {
-                my $obj = $self->parse_obj(code => $opt{code});
-                $value = (
-                          ref($obj) eq 'HASH'
-                          ? $obj
-                          : {$self->{class} => [{self => $obj}]}
-                         );
+            my ($value, $where_block, $where_expr);
+
+            if (defined($end_delim)) {
+
+                if (/\G\h*(?=\{)/gc) {
+                    $where_block = $self->parse_block(code => $opt{code});
+                }
+                elsif (/\G\h*(?=\()/gc) {
+                    $where_expr = $self->parse_arguments(code => $opt{code});
+                }
+
+                if (/$self->{var_init_sep_re}/goc) {
+                    my $obj = $self->parse_obj(code => $opt{code});
+                    $value = (
+                              ref($obj) eq 'HASH'
+                              ? $obj
+                              : {$self->{class} => [{self => $obj}]}
+                             );
+                }
             }
 
             my $obj = Corvinus::Variable::Variable->new(
-                                                        name => $name,
-                                                        type => $opt{type},
-                                                        (defined($ref_type) ? (ref_type => $ref_type) : ()),
-                                                        class => $class_name,
-                                                        defined($value) ? (value => $value, has_value => 1) : (),
-                                                        $attr eq '*' ? (array => 1) : $attr eq ':' ? (hash => 1) : (),
-                                                        $opt{in_use} ? (in_use => 1) : (),
-                                                       );
+                                       name => $name,
+                                       type => $opt{type},
+                                       (defined($ref_type) ? (ref_type => $ref_type) : ()),
+                                       class => $class_name,
+                                       defined($value) ? (value => $value, has_value => 1) : (),
+                                       $attr eq '*' ? (array => 1, slurpy => 1) : $attr eq ':' ? (hash => 1, slurpy => 1) : (),
+                                       defined($where_block) ? (where_block => $where_block) : (),
+                                       defined($where_expr)  ? (where_expr  => $where_expr)  : (),
+                                       $opt{in_use}          ? (in_use      => 1)            : (),
+            );
 
             if (!$opt{private}) {
                 unshift @{$self->{vars}{$class_name}},
@@ -959,15 +987,8 @@ package Corvinus::Parser {
 
             # Declaration of variables
             if (/\Gvar\b\h*/gc) {
-                my $type = 'var';
-                my $vars = $self->parse_init_vars(code => $opt{code}, type => $type);
-
-                $vars // $self->fatal_error(
-                                            code  => $_,
-                                            pos   => pos,
-                                            error => "expected a variable name after the keyword '$type'!",
-                                           );
-
+                my $type     = 'var';
+                my $vars     = $self->parse_init_vars(code => $opt{code}, type => $type);
                 my $init_obj = Corvinus::Variable::Init->new(vars => $vars);
 
                 if (/\G\h*=\h*/gc) {
@@ -1327,7 +1348,8 @@ package Corvinus::Parser {
                                        pos      => pos($_),
                                       );
 
-                my $private = 0;
+                my $has_kids = 0;
+                my $parent;
                 if (($type eq 'method' or $type eq 'func') and $name ne '') {
                     my $var = $self->find_var($name, $class_name);
 
@@ -1343,12 +1365,14 @@ package Corvinus::Parser {
                                               );
                         }
 
+                        $parent   = $var->{obj};
+                        $has_kids = 1;
+
                         push @{$var->{obj}{value}{kids}}, $obj;
-                        $private = 1;
                     }
                 }
 
-                if (not $private) {
+                if (not $has_kids) {
                     unshift @{$self->{vars}{$class_name}},
                       {
                         obj   => $obj,
@@ -1526,7 +1550,7 @@ package Corvinus::Parser {
                                             pos      => pos($_)
                                            );
 
-                    local $self->{$type eq 'func' ? 'current_function' : 'current_method'} = $obj;
+                    local $self->{$type eq 'func' ? 'current_function' : 'current_method'} = $has_kids ? $parent : $obj;
                     my $args = '|' . join(',', $type eq 'method' ? 'self' : (), @{$var_names}) . ' |';
 
                     my $code = '{' . $args . substr($_, pos);
@@ -1535,7 +1559,7 @@ package Corvinus::Parser {
 
                     $obj->{value} = $block;
 
-                    #if (not $private) {
+                    #if (not $has_kids) {
                     #    $self->{current_class}->add_method($name, $block) if $type eq 'method';
                     #}
                 }
@@ -1543,8 +1567,99 @@ package Corvinus::Parser {
                 return $obj;
             }
 
+            # "given(expr) {...}" construct
+            if (/\G(?:dat|given)\b\h*/gc) {
+                my $expr = (
+                            /\G(?=\()/
+                            ? $self->parse_arguments(code => $opt{code})
+                            : $self->parse_obj(code => $opt{code})
+                           );
+
+                $expr // $self->fatal_error(
+                                            error    => "declarare invalidă pentru `dat`",
+                                            expected => "sintaxa este: „dat (...) {...}”",
+                                            code     => $_,
+                                            pos      => pos($_),
+                                           );
+
+                my $given_obj = Corvinus::Types::Block::Given->new(expr => $expr);
+                local $self->{current_given} = $given_obj;
+                my $block = (
+                             /\G\h*(?=\{)/gc
+                             ? $self->parse_block(code => $opt{code})
+                             : $self->fatal_error(
+                                                  error    => "este necesar un bloc după expresia: `dat(...)`",
+                                                  expected => "sintaxa este: „dat (...) {...}",
+                                                  code     => $_,
+                                                  pos      => pos($_),
+                                                 )
+                            );
+
+                $given_obj->{block} = $block;
+
+                return $given_obj;
+            }
+
+            # "when(expr) {...}" construct
+            if (exists($self->{current_given}) && /\G(?:when|cand)\b\h*/gc) {
+                my $expr = (
+                            /\G(?=\()/
+                            ? $self->parse_arguments(code => $opt{code})
+                            : $self->parse_obj(code => $opt{code})
+                           );
+
+                $expr // $self->fatal_error(
+                                            error    => "declarare invalidă pentru `cand`",
+                                            expected => "sintaxa este: „cand (...) {...}”",
+                                            code     => $_,
+                                            pos      => pos($_),
+                                           );
+
+                my $block = (
+                             /\G\h*(?=\{)/gc
+                             ? $self->parse_block(code => $opt{code})
+                             : $self->fatal_error(
+                                                  error    => "este necesar un bloc după expresia: `cand(...)`",
+                                                  expected => "sintaxa este: „cand (...) {...}",
+                                                  code     => $_,
+                                                  pos      => pos($_),
+                                                 )
+                            );
+
+                return Corvinus::Types::Block::When->new(expr => $expr, block => $block);
+            }
+
+            # "case(expr) {...}" construct
+            if (exists($self->{current_given}) && /\G(?:caz|case)\b\h*/gc) {
+                my $expr = (
+                            /\G(?=\()/
+                            ? $self->parse_arguments(code => $opt{code})
+                            : $self->parse_obj(code => $opt{code})
+                           );
+
+                $expr // $self->fatal_error(
+                                            error    => "declarare invalidă pentru `caz`",
+                                            expected => "sintaxa este: „caz (...) {...}”",
+                                            code     => $_,
+                                            pos      => pos($_),
+                                           );
+
+                my $block = (
+                             /\G\h*(?=\{)/gc
+                             ? $self->parse_block(code => $opt{code})
+                             : $self->fatal_error(
+                                                  error    => "este necesar un bloc după expresia: `caz(...)`",
+                                                  expected => "sintaxa este: „caz (...) {...}",
+                                                  code     => $_,
+                                                  pos      => pos($_),
+                                                 )
+                            );
+
+                return Corvinus::Types::Block::Case->new(expr => $expr, block => $block);
+            }
+
             # "default {...}" construct
-            if (/\G(?:default|altfel)\h*(?=\{)/gc) {
+            if (exists($self->{current_given}) && /\G(?:default|altfel)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
                 return Corvinus::Types::Block::Default->new(block => $block);
             }
@@ -1561,7 +1676,7 @@ package Corvinus::Parser {
                 return Corvinus::Types::Block::Loop->new(block => $block);
             }
 
-            ## Experimental gather/take
+            # "gather/take" construct
             if (/\G(?:gather|aduna)\h*(?=\{)/gc) {
                 my $obj = Corvinus::Types::Block::Gather->new();
 
@@ -1665,7 +1780,6 @@ package Corvinus::Parser {
                     $action = 'assert';
                 }
 
-                my $pos = pos($_);
                 my $arg = (
                            /\G(?=\()/
                            ? $self->parse_arguments(code => $opt{code})
@@ -1678,7 +1792,6 @@ package Corvinus::Parser {
                                               act  => $action,
                                               line => $self->{line},
                                               file => $self->{file_name},
-                                              code => substr($_, $pos, pos($_) - $pos)
                                              );
             }
 
@@ -1798,8 +1911,8 @@ package Corvinus::Parser {
                 }
                 else {
                     $self->fatal_error(
-                                       error    => "invalid 'here-doc' declaration",
-                                       expected => "expected an alpha-numeric token after '<<'",
+                                       error    => "declarare invalidă pentru documentul <<'...'",
+                                       expected => "numele după „<<” este invalid",
                                        code     => $_,
                                        pos      => pos($_)
                                       );
@@ -1811,7 +1924,7 @@ package Corvinus::Parser {
                 return $obj;
             }
 
-            if (exists($self->{current_block}) && /\G__BLOCK__\b/gc) {
+            if (exists($self->{current_block}) && /\G__BLOCK?+__\b/gc) {
                 return $self->{current_block};
             }
 
@@ -2023,7 +2136,7 @@ package Corvinus::Parser {
                 $self->fatal_error(
                                    code  => $_,
                                    pos   => (pos($_) - length($1)),
-                                   error => "attempt to use the deprecated regex variables",
+                                   error => "variabila \$$1 nu este validă",
                                   );
 
                 #return $self->{regexp_vars}{$1} //= Corvinus::Variable::Variable->new(name => $1, type => 'var');
@@ -2390,7 +2503,6 @@ package Corvinus::Parser {
                                                         array => $array,
                                                        );
             }
-
             elsif ($obj_key) {
                 my $arg = (
                            /\G(?=\()/

@@ -39,16 +39,6 @@ package Corvinus::Deparse::Perl {
                 '\\\\=' => '//=',
                         },
 
-            overload_methods => {
-                                 to_str  => q{""},
-                                 to_s    => q{""},
-                                 ca_text => q{""},
-                                 to_bool => q{bool},
-                                 ca_bool => q{bool},
-                                 to_num  => q{0+},
-                                 ca_num  => q{0+},
-                                },
-
             special_constructs => {
                                    'Corvinus::Types::Block::If'    => 1,
                                    'Corvinus::Types::Block::While' => 1,
@@ -178,7 +168,9 @@ HEADER
     sub _dump_var {
         my ($self, $var, $refaddr) = @_;
 
-        $var->{in_use} || exists($var->{value}) || exists($var->{ref_type}) || return 'undef';
+        $var->{name} // return 'undef';
+
+        # $var->{in_use} || exists($var->{value}) || exists($var->{ref_type}) || return 'undef';
 
         (
            exists($var->{array}) ? '@'
@@ -297,7 +289,7 @@ HEADER
 
         }
 
-        (' ' x $Corvinus::SPACES) . join(";\n" . (' ' x $Corvinus::SPACES), @code) . ";\n";
+        @code ? ((' ' x $Corvinus::SPACES) . join(";\n" . (' ' x $Corvinus::SPACES), @code) . ";\n") : '';
     }
 
     sub _dump_sub_init_vars {
@@ -307,55 +299,12 @@ HEADER
 
         my @dumped_vars = map { ref($_) ? $self->_dump_var($_) : $_ } @vars;
 
-        # Return when all variables are "undef" (i.e.: not in use)
+        # Return when all variables are "undef"
         if (all { $_ eq 'undef' } @dumped_vars) {
             return '';
         }
 
-        #my $code = (' ' x $Corvinus::SPACES) . "my (" . join(', ', @dumped_vars) . ') = @_;' . "\n";
-        my $code = (' ' x $Corvinus::SPACES) . join(
-            "\n" . (' ' x $Corvinus::SPACES),
-            join(
-                '',
-                map { s/^\s+//r }
-                  "my \@__vars__ = (" . join(', ', map { $_ eq 'undef' ? $_ : "\\my $_" } @dumped_vars) . ');',
-                "{state \$table = {"
-                  . join(', ', map { ref($vars[$_]) ? "$vars[$_]{name} => $_" : () } 0 .. $#vars) . "};",
-                'my (@left, %seen);',
-                q(foreach my $arg(@_) {),
-                q(    if (ref($arg) eq 'Corvinus::Variable::NamedParam') {),
-                q(        if (exists $table->{$arg->[0]}) {),
-                q(            my $var = $__vars__[$table->{$arg->[0]}] // next;),
-                q(            if (ref($var) eq 'SCALAR') { ),
-                q(               $$var = ${$arg->[1]}[-1];),
-                q(            } elsif (ref($var) eq 'ARRAY') {),
-                q(              @$var = @{$arg->[1]};),
-                q(            } else {),
-                q(              %$var = @{$arg->[1]};),
-                q(            }),
-                q(            undef $seen{$var};),
-                q(         } else {),
-                q(             die "No such named parameter: <<$arg->[0]>>";),
-                q(         }),
-                q(     } else {),
-                q(        push @left, $arg;),
-                q(     }),
-                q(}),
-
-                q(foreach my $var(@__vars__) {),
-                q(    next if exists $seen{$var // do{shift @left; next}};),
-                q(    @left || last;),
-                q(    if (ref($var) eq 'SCALAR') {),
-                q(      $$var = shift @left;),
-                q(    } elsif (ref($var) eq 'ARRAY') {),
-                q(      @$var = @left; last;),
-                q(    } else {),
-                q(      %$var = @left; last;),
-                q(    }),
-                q(}}),
-                )
-          )
-          . "\n";
+        my $code = (' ' x $Corvinus::SPACES) . "my (" . join(', ', @dumped_vars) . ') = @_;' . "\n";
 
         foreach my $var (@vars) {
 
@@ -389,16 +338,6 @@ HEADER
                     if ($value ne '') {
                         $code .= (' ' x $Corvinus::SPACES) . "\$$var->{name}" . refaddr($var) . " //= " . $value . ";\n";
                     }
-                }
-
-                if (exists($var->{ref_type})) {
-                    my $var_name = "\$$var->{name}" . refaddr($var);
-                    my $type     = $self->_dump_reftype($var->{ref_type});
-                    $code .=
-                        (' ' x $Corvinus::SPACES)
-                      . "(ref($var_name) eq $type || ($type ne 'REF' && eval{$var_name->SUPER::isa($type)})) or "
-                      . "die q{[ERROR] Invalid type-parameter for variable <<$var->{name}>> in $self->{parent_name}[0] <<$self->{parent_name}[1]>>: got <<} . "
-                      . "ref($var_name) . q{>>, but expected $type};\n";
                 }
             }
         }
@@ -453,6 +392,36 @@ HEADER
               } @{$array}
           )
           . '}';
+    }
+
+    sub _dump_var_attr {
+        my ($self, @vars) = @_;
+
+        'vars => [' . join(
+            ', ',
+            map {
+                    "{ name => "
+                  . $self->_dump_string($_->{name})
+                  . (exists($_->{slurpy})    ? (", slurpy => " . $_->{slurpy})                       : '')
+                  . (exists($_->{ref_type})  ? (", type => " . $self->_dump_reftype($_->{ref_type})) : '')
+                  . (exists($_->{has_value}) ? (', has_value => 1')                                  : '')
+                  . (
+                     exists($_->{where_block})
+                     ? (', where_block => sub{'
+                        . $self->_dump_sub_init_vars($_->{where_block}{init_vars}{vars}[0])
+                        . $self->deparse_generic('', ';', '', $_->{where_block}{code}) . '}')
+                     : ''
+                    )
+                  . (
+                     exists($_->{where_expr}) ? (', where_expr => do{' . $self->deparse_expr({self => $_->{where_expr}}) . '}')
+                     : ''
+                    )
+                  . '}'
+              } @vars
+          )
+          . ']' . ', '
+          . 'table => {'
+          . join(', ', map { $self->_dump_string($vars[$_]{name}) . ' => ' . $_ } 0 .. $#vars) . '}';
     }
 
     sub _dump_class_name {
@@ -558,13 +527,14 @@ HEADER
 
                     # Check to see if the method/function has kids (can do multiple dispatch)
                     if (exists $obj->{value}{kids}) {
-                        die "[ERROR] Multiple dispatch is currently unsupported!";
+                        chop $code;
 
-                        # my $deparsed_block = $self->deparse_expr({self => $block});
-                        #my @kids = map{$self->deparse_expr({self=>$_})}@{$obj->{value}{kids}};
-                        #die join('', @kids);
-                        #$code .= 'Corvinus::Types::Block::MultiDispatch->new(' . join(', ',  $deparsed_block, @kids). ')';
+                        my @kids = map {
+                            local $_->{type} = 'func';
+                            "do{" . $self->deparse_expr({self => $_}) . "}";
+                        } @{$obj->{value}{kids}};
 
+                        $code .= ', kids => [' . join(', ', @kids) . '])';
                     }
 
                     # Check the return value (when "-> Type" is specified)
@@ -599,24 +569,11 @@ HEADER
 
                         # Other methods
                         else {
-
-                            ## Old way
-                       # $code .= ";\n" . (' ' x $Corvinus::SPACES) . "sub $obj->{name} { \$$obj->{name}$refaddr->call(\@_) }";
-
-                            # New way
                             $code .= ";\n"
                               . (' ' x $Corvinus::SPACES)
                               . "state \$_$refaddr = do { no strict 'refs'; *{"
                               . $self->_dump_string("$self->{package_name}::$name")
                               . "} = sub { \$$obj->{name}$refaddr->call(\@_) } }";
-                        }
-
-                        # Add the "overload" pragma for some special methods
-                        if (exists $self->{overload_methods}{$obj->{name}}) {
-                            $code .= ";\n"
-                              . (' ' x $Corvinus::SPACES)
-                              . qq{use overload q{$self->{overload_methods}{$obj->{name}}} => }
-                              . $self->_dump_string("$self->{package_name}::$obj->{name}");
                         }
                     }
                 }
@@ -638,7 +595,6 @@ HEADER
                 $obj->{inited} = 1;
                 $self->top_add('use constant ' . $name . ' => ' . 'do {' . $self->deparse_script($obj->{expr}) . " };\n");
             }
-
             $code = $value;
         }
         elsif ($ref eq 'Corvinus::Variable::Const') {
@@ -710,7 +666,7 @@ HEADER
 
                 local $self->{class}            = refaddr($block);
                 local $self->{class_name}       = $obj->{name};
-                local $self->{parent_name}      = ['class initialization', $obj->{name}];
+                local $self->{parent_name}      = ['class', $package_name];
                 local $self->{package_name}     = $package_name;
                 local $self->{inherit}          = $obj->{inherit} if exists $obj->{inherit};
                 local $self->{class_vars}       = $obj->{vars} if exists $obj->{vars};
@@ -722,7 +678,20 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
             if ($addr{$refaddr}++) {
-                $code = 'Corvinus::Types::Block::Code->new(code => __SUB__)';
+                $code = 'Corvinus::Types::Block::Code->new(code => __SUB__';
+
+                if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
+                    my @vars = @{$obj->{init_vars}{vars}};
+
+                    # Remove the underscore (_) variable
+                    if (@vars > 1 or (@vars == 1 and $vars[0]{name} eq '_')) {
+                        pop @vars;
+                    }
+
+                    $code .= ', ' . $self->_dump_var_attr(@vars);
+                }
+
+                $code .= ')';
             }
             else {
                 if (%{$obj}) {
@@ -752,30 +721,45 @@ HEADER
 
                         if ($is_class and not $self->{ref_class}) {
 
-                            $code .= (" " x $Corvinus::SPACES) . 'sub new {' . "\n";
+                            $code .=
+                              (" " x $Corvinus::SPACES)
+                              . "\$new$refaddr = Corvinus::Types::Block::Code->new(code => sub {" . "\n";
+                            push @{$self->{function_declarations}}, [$refaddr, "my \$new$refaddr;"];
 
                             $Corvinus::SPACES += $Corvinus::SPACES_INCR;
+                            $code .= $self->_dump_sub_init_vars(@{$self->{class_vars}})
+                              . $self->_dump_class_attributes(@{$self->{class_attributes}});
 
-                            $code .= $self->_dump_sub_init_vars('undef', @{$self->{class_vars}});
-                            $code .= $self->_dump_class_attributes(@{$self->{class_attributes}});
-
-                            $code .= " " x $Corvinus::SPACES;
-                            $code .= 'my $self = bless {';
+                            $code .= (' ' x $Corvinus::SPACES) . 'my $self = bless {';
                             foreach my $var (@{$self->{class_vars}}, map { @{$_->{vars}} } @{$self->{class_attributes}}) {
                                 $code .= qq{"\Q$var->{name}\E"=>} . $self->_dump_var($var) . ',';
                             }
 
-                            $code .= '}, __PACKAGE__;' . "\n";
-                            $code .= (" " x $Corvinus::SPACES) . '$self->init() if $self->can("init");' . "\n";
-                            $code .= (" " x $Corvinus::SPACES) . '$self;' . "\n";
+                            $code .=
+                                '}, __PACKAGE__;' . "\n"
+                              . (' ' x $Corvinus::SPACES)
+                              . '$self->init() if $self->can("init");' . "\n"
+                              . (' ' x $Corvinus::SPACES)
+                              . '$self;' . "\n";
 
                             $Corvinus::SPACES -= $Corvinus::SPACES_INCR;
-                            $code .= " " x $Corvinus::SPACES . "}";
-                            $code .= "\n" . (' ' x $Corvinus::SPACES) . "*call = \\&new;\n";
+                            $code .=
+                                (" " x $Corvinus::SPACES . "}") . ', '
+                              . $self->_dump_var_attr(@{$self->{class_vars}})
+                              . ", type => "
+                              . $self->_dump_string('class')
+                              . ", name => "
+                              . $self->_dump_string($self->{parent_name}[1]) . ");\n"
+                              . (' ' x $Corvinus::SPACES)
+                              . "state \$_$refaddr = do { no strict 'refs'; *{"
+                              . $self->_dump_string("$self->{package_name}\::new")
+                              . "} = *{"
+                              . $self->_dump_string("$self->{package_name}\::call")
+                              . "} = sub { CORE::shift(\@_); \$new$refaddr->call(\@_) } };\n";
 
                             foreach my $var (@{$self->{class_vars}}, map { @{$_->{vars}} } @{$self->{class_attributes}}) {
-                                $code .= " " x $Corvinus::SPACES;
-                                $code .= qq{sub $var->{name} : lvalue { \$_[0]->{"\Q$var->{name}\E"} }\n};
+                                $code .=
+                                  (' ' x $Corvinus::SPACES) . qq{sub $var->{name} : lvalue { \$_[0]->{"\Q$var->{name}\E"} }\n};
                             }
                         }
                     }
@@ -842,15 +826,32 @@ HEADER
                       . (" " x ($Corvinus::SPACES -= $Corvinus::SPACES_INCR)) . '}';
 
                     if (not $is_class) {
-                        if (exists $self->{parent_name}) {
+                        if ($is_function) {
                             $code .= ','
                               . join(',',
                                      'type => ' . $self->_dump_string($self->{parent_name}[0]),
                                      'name => ' . $self->_dump_string($self->{parent_name}[1]));
                         }
+                        else {
+                            $code .= ', '
+                              . join(', ',
+                                     'type => ' . $self->_dump_string('block'),
+                                     'name => ' . $self->_dump_string('__BLOCK__'),);
+                        }
 
                         if (exists $self->{class_name}) {
                             $code .= ',' . 'class => ' . $self->_dump_string($self->{class_name});
+                        }
+
+                        if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
+                            my @vars = @{$obj->{init_vars}{vars}};
+
+                            # Remove the underscore (_) variable
+                            if (@vars > 1 or (@vars == 1 and $vars[0]{name} eq '_')) {
+                                pop @vars;
+                            }
+
+                            $code .= ', ' . $self->_dump_var_attr(@vars);
                         }
                         $code .= ')';
                     }
@@ -869,35 +870,36 @@ HEADER
                 $code = $name;
             }
             else {
-                local $self->{parent_name} = ['struct initialization', $obj->{name}];
-
-                # Mark the variables all in use
-                foreach my $var (@{$obj->{vars}}) {
-                    $var->{in_use} = 1;
-                }
-
                 $Corvinus::SPACES += $Corvinus::SPACES_INCR;
                 $code =
                     "package $name {\n"
                   . (' ' x $Corvinus::SPACES)
-                  . "sub new {\n"
+                  . "\$new$refaddr = Corvinus::Types::Block::Code->new(code => sub {" . "\n"
                   . (' ' x $Corvinus::SPACES)
-                  . $self->_dump_sub_init_vars('undef', @{$obj->{vars}})
-
+                  . $self->_dump_sub_init_vars(@{$obj->{vars}})
                   . (' ' x ($Corvinus::SPACES * 2))
                   . "bless {"
                   . join(", ", map { $self->_dump_string($_->{name}) . " => " . $self->_dump_var($_) } @{$obj->{vars}})
                   . "}, __PACKAGE__" . "\n"
-                  . (' ' x $Corvinus::SPACES) . "}\n"
-                  .
-
-                  (' ' x $Corvinus::SPACES) . "*call = \\&new;\n" .
-
-                  (' ' x $Corvinus::SPACES)
+                  . (' ' x $Corvinus::SPACES) . "}" . ', '
+                  . 'name => '
+                  . $self->_dump_string($name) . ', '
+                  . 'type => '
+                  . $self->_dump_string('struct') . ', '
+                  . $self->_dump_var_attr(@{$obj->{vars}}) . ");\n" . ";\n"
+                  . (' ' x $Corvinus::SPACES)
+                  . "state \$_$refaddr = do { no strict 'refs'; *{"
+                  . $self->_dump_string("$name\::new")
+                  . "} = *{"
+                  . $self->_dump_string("$name\::call")
+                  . "} = sub { CORE::shift(\@_); \$new$refaddr->call(\@_) } };\n"
+                  . (' ' x $Corvinus::SPACES)
                   . join("\n" . (' ' x $Corvinus::SPACES),
                          map { "sub $_->{name} : lvalue { \$_[0]->{$_->{name}} }" } @{$obj->{vars}})
+                  . "\n"
+                  . (' ' x ($Corvinus::SPACES - $Corvinus::SPACES_INCR)) . "}";
 
-                  . "\n" . (' ' x ($Corvinus::SPACES - $Corvinus::SPACES_INCR)) . "}";
+                push @{$self->{function_declarations}}, [$refaddr, "my \$new$refaddr;"];
 
                 $Corvinus::SPACES -= $Corvinus::SPACES_INCR;
             }
@@ -919,26 +921,11 @@ HEADER
         elsif ($ref eq 'Corvinus::Types::String::String') {
             $code = $self->make_constant($ref, 'new', "String$refaddr", $self->_dump_string(${$obj}));
         }
-        elsif ($ref eq 'Corvinus::Types::Bool::Bool') {
-            $code = $self->make_constant($ref, 'new', ${$obj} ? ("true$refaddr", 1) : ("false$refaddr", 0));
-        }
         elsif ($ref eq 'Corvinus::Types::Array::Array' or $ref eq 'Corvinus::Types::Array::HCArray') {
             $code = $self->_dump_array('Corvinus::Types::Array::Array', $obj);
         }
-        elsif ($ref eq 'Corvinus::Types::Block::If') {
-            ## ok
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::While') {
-            ## ok
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::Do') {
-            $code = 'do {' . join(';', $self->deparse_script($obj->{block}{code})) . '}';
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::Loop') {
-            $code = 'while(1) {' . join(';', $self->deparse_script($obj->{block}{code})) . '}';
-        }
-        elsif ($ref eq 'Corvinus::Variable::NamedParam') {
-            $code = $ref . '->new(' . $self->_dump_string($obj->[0]) . ',' . $self->deparse_args(@{$obj->[1]}) . ')';
+        elsif ($ref eq 'Corvinus::Types::Bool::Bool') {
+            $code = $self->make_constant($ref, 'new', ${$obj} ? ("true$refaddr", 1) : ("false$refaddr", 0));
         }
         elsif ($ref eq 'Corvinus::Types::Regex::Regex') {
             $code =
@@ -946,11 +933,51 @@ HEADER
                                    $self->_dump_string("$obj->{regex}"),
                                    $obj->{global} ? '"g"' : ());
         }
+        elsif ($ref eq 'Corvinus::Types::Block::If' or $ref eq 'Corvinus::Types::Block::While') {
+            ## ok
+        }
+        elsif ($ref eq 'Corvinus::Types::Bool::Ternary') {
+            $code = '('
+              . $self->deparse_script($obj->{cond}) . '?'
+              . $self->deparse_block_expr($obj->{true}) . ':'
+              . $self->deparse_block_expr($obj->{false}) . ')';
+        }
+        elsif ($ref eq 'Corvinus::Variable::NamedParam') {
+            $code = $ref . '->new(' . $self->_dump_string($obj->[0]) . ',' . $self->deparse_args(@{$obj->[1]}) . ')';
+        }
+        elsif ($ref eq 'Corvinus::Types::Nil::Nil') {
+            $code = 'undef';
+        }
+        elsif ($ref eq 'Corvinus::Types::Hash::Hash') {
+            if (keys(%{$obj})) {
+                $code = $ref . '->new(' . join(
+                    ',',
+                    map {
+                        $self->_dump_string($_) . ' => '
+                          . (defined($obj->{$_}) ? $self->deparse_expr({self => $obj->{$_}}) : 'undef')
+                      } keys(%{$obj})
+                  )
+                  . ')';
+            }
+            else {
+                $code = $self->make_constant($ref, 'new', "Hash$refaddr");
+            }
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Do') {
+            $code = 'do {' . join(';', $self->deparse_script($obj->{block}{code})) . '}';
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Loop') {
+            $code = 'while(1) {' . join(';', $self->deparse_script($obj->{block}{code})) . '}';
+        }
         elsif ($ref eq 'Corvinus::Types::Block::Given') {
             $self->top_add(qq{use experimental 'smartmatch';\n});
+            $code = 'do{given ' . $self->deparse_args($obj->{expr}) . $self->deparse_bare_block($obj->{block}{code}) . '}';
         }
         elsif ($ref eq 'Corvinus::Types::Block::When') {
-            $self->top_add(qq{use experimental 'smartmatch';\n});
+            $code = 'when($_ ~~ ' . $self->deparse_args($obj->{expr}) . ')' . $self->deparse_bare_block($obj->{block}{code});
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::Case') {
+            $code = 'when(!!' . $self->deparse_args($obj->{expr}) . ')' . $self->deparse_bare_block($obj->{block}{code});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Default') {
             $code = 'default' . $self->deparse_bare_block($obj->{block}->{code});
@@ -968,39 +995,11 @@ HEADER
         elsif ($ref eq 'Corvinus::Types::Block::Try') {
             $code = $ref . '->new';
         }
-        elsif ($ref eq 'Corvinus::Types::Bool::Ternary') {
-            $code = '('
-              . $self->deparse_script($obj->{cond}) . '?'
-              . $self->deparse_block_expr($obj->{true}) . ':'
-              . $self->deparse_block_expr($obj->{false}) . ')';
-        }
-        elsif ($ref eq 'Corvinus::Types::Hash::Hash') {
-            if (keys(%{$obj})) {
-                $code = $ref . '->new(' . join(
-                    ',',
-                    map {
-                        $self->_dump_string($_) . ' => '
-                          . (defined($obj->{$_}) ? $self->deparse_expr({self => $obj->{$_}}) : 'undef')
-                      } keys(%{$obj})
-                  )
-                  . ')';
-            }
-            else {
-                $code = $self->make_constant($ref, 'new', "Hash$refaddr");
-            }
-        }
         elsif ($ref eq 'Corvinus::Variable::Ref') {
             ## ok
         }
         elsif ($ref eq 'Corvinus::Types::Block::For') {
             ## ok
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
-            $code =
-                'for my '
-              . $self->deparse_expr({self => $obj->{var}}) . '(@{'
-              . $self->deparse_expr({self => $obj->{array}}) . '})'
-              . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Types::Block::Break') {
             $code = 'last';
@@ -1052,44 +1051,6 @@ HEADER
         elsif ($ref eq 'Corvinus::Types::Glob::Socket') {
             $code = $self->make_constant($ref, 'new', "Socket$refaddr");
         }
-        elsif ($ref eq 'Corvinus::Types::Number::Complex') {
-            $code = $self->make_constant($ref, 'new', "Complex$refaddr", "'" . ${$obj}->Re . "'", "'" . ${$obj}->Im . "'");
-        }
-        elsif ($ref eq 'Corvinus::Meta::Assert') {
-            my @args = $self->deparse_script($obj->{arg});
-
-            if ($obj->{act} eq 'assert') {
-
-                # Check arity
-                @args == 1
-                  or die "[EROARE] Număr incorect de argumente pentru $obj->{act}\() în"
-                  . " $obj->{file} la linia $obj->{line} (necesită un argument)\n";
-
-                # Generate code
-                $code = qq~do{do{$args[0]} or CORE::die "afirmația \Q$obj->{code}\E este falsă ~
-                  . qq~în \Q$obj->{file}\E la linia $obj->{line}\\n"}~;
-            }
-            elsif ($obj->{act} eq 'assert_eq' or $obj->{act} eq 'assert_ne') {
-
-                # Check arity
-                @args == 2
-                  or die "[EROARE] Număr incorect de argumente pentru $obj->{act}\() în"
-                  . " $obj->{file} la linia $obj->{line} (necesită două argumente)\n";
-
-                # Generate code
-                $code = "do{"
-                  . ($obj->{act} eq 'assert_ne' ? qq{not(do{$args[0]} eq do{$args[1]})} : qq{do{$args[0]} eq do{$args[1]}})
-                  . qq{ or CORE::die "afirmația $obj->{act}\Q$obj->{code}\E este falsă în \Q$obj->{file}\E la linia $obj->{line}\\n\"\}};
-            }
-        }
-        elsif ($ref eq 'Corvinus::Meta::Error') {
-            my @args = $self->deparse_args($obj->{arg});
-            $code = qq~do{CORE::die(@args, " în \Q$obj->{file}\E linia $obj->{line}\\n")}~;
-        }
-        elsif ($ref eq 'Corvinus::Meta::Warning') {
-            my @args = $self->deparse_args($obj->{arg});
-            $code = qq~Corvinus::Types::Bool::Bool->new(CORE::warn(@args, " în \Q$obj->{file}\E linia $obj->{line}\\n"))~;
-        }
         elsif ($ref eq 'Corvinus::Eval::Eval') {
             $Corvinus::EVALS{$refaddr} = $obj;
             $code = qq~
@@ -1101,6 +1062,8 @@ HEADER
             local \$Corvinus::DEPARSER->{block_declarations} = [];
             \$Corvinus::DEPARSER->deparse(
             do {
+                local \$Corvinus::PARSER->{line} = 0;
+                local \$Corvinus::PARSER->{file_name} = 'eval($refaddr)';
                 local \$Corvinus::PARSER->{vars} = \$Corvinus::EVALS{$refaddr}{vars};
                 local \$Corvinus::PARSER->{ref_vars_refs} = \$Corvinus::EVALS{$refaddr}{ref_vars_refs};
                 \$Corvinus::PARSER->parse_script(code => \\(~ . $self->deparse_script($obj->{expr}) . qq~->get_value));
@@ -1111,6 +1074,9 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Sys::SIG') {
             $code = $self->make_constant($ref, 'new', "Sig$refaddr");
+        }
+        elsif ($ref eq 'Corvinus::Types::Number::Complex') {
+            $code = $self->make_constant($ref, 'new', "Complex$refaddr", "'" . ${$obj}->Re . "'", "'" . ${$obj}->Im . "'");
         }
         elsif ($ref eq 'Corvinus::Types::Array::Pair') {
             if (all { not defined($_) } @{$obj}) {
@@ -1123,14 +1089,8 @@ HEADER
                   . join(', ', map { defined($_) ? $self->deparse_expr({self => $_}) : 'undef' } @{$obj}) . ')';
             }
         }
-        elsif ($ref eq 'Corvinus::Types::Nil::Nil') {
-            $code = 'undef';
-        }
         elsif ($ref eq 'Corvinus::Types::Null::Null') {
             $code = $self->make_constant($ref, 'new', "Null$refaddr");
-        }
-        elsif ($ref eq 'Corvinus::Types::Range::RangeNumber' or $ref eq 'Corvinus::Types::Range::RangeString') {
-            $code = $ref . '->new';
         }
         elsif ($ref eq 'Corvinus::Module::OO') {
             $code = $self->make_constant($ref, '__NEW__', "MOD_OO$refaddr", $self->_dump_string($obj->{module}));
@@ -1138,13 +1098,7 @@ HEADER
         elsif ($ref eq 'Corvinus::Module::Func') {
             $code = $self->make_constant($ref, '__NEW__', "MOD_F$refaddr", $self->_dump_string($obj->{module}));
         }
-        elsif ($ref eq 'Corvinus::Sys::Sys') {
-            $code = $self->make_constant($ref, 'new', "Sys$refaddr");
-        }
-        elsif ($ref eq 'Corvinus::Object::Object') {
-            $code = $self->make_constant($ref, 'new', "Object$refaddr");
-        }
-        elsif ($ref eq 'Corvinus::Variable::LazyMethod') {
+        elsif ($ref eq 'Corvinus::Types::Range::RangeNumber' or $ref eq 'Corvinus::Types::Range::RangeString') {
             $code = $ref . '->new';
         }
         elsif ($ref eq 'Corvinus::Types::Glob::Backtick') {
@@ -1155,6 +1109,61 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Types::Glob::Dir') {
             $code = $self->make_constant($ref, 'new', "Dir$refaddr", $self->_dump_string(${$obj}));
+        }
+        elsif ($ref eq 'Corvinus::Sys::Sys') {
+            $code = $self->make_constant($ref, 'new', "Sys$refaddr");
+        }
+        elsif ($ref eq 'Corvinus::Meta::Assert') {
+            my @args = $self->deparse_script($obj->{arg});
+
+            if ($obj->{act} eq 'assert') {
+
+                # Check arity
+                @args == 1
+                  or die "[EROARE] Număr incorect de argumente pentru $obj->{act}\() în"
+                  . " $obj->{file} la linia $obj->{line} (necesită un argument)\n";
+
+                # Generate code
+                $code =
+                    qq~do{my \$a$refaddr = do{$args[0]}; \$a$refaddr~
+                  . qq~ or CORE::die "afirmația $obj->{act}(\$a$refaddr) este falsă ~
+                  . qq~în \Q$obj->{file}\E la linia $obj->{line}\\n"}~;
+            }
+            elsif ($obj->{act} eq 'assert_eq' or $obj->{act} eq 'assert_ne') {
+
+                # Check arity
+                @args == 2
+                  or die "[EROARE] Număr incorect de argumente pentru $obj->{act}\() în"
+                  . " $obj->{file} la linia $obj->{line} (necesită două argumente)\n";
+
+                # Generate code
+                $code = "do{"
+                  . "my \$a$refaddr = do{$args[0]};"
+                  . "my \$b$refaddr = do{$args[1]};"
+                  . ($obj->{act} eq 'assert_ne' ? qq{CORE::not(\$a$refaddr eq \$b$refaddr)} : qq{\$a$refaddr eq \$b$refaddr})
+                  . qq~ or CORE::die "afirmația $obj->{act}(\$a$refaddr, \$b$refaddr) este falsă în \Q$obj->{file}\E la linia $obj->{line}\\n"}~;
+            }
+        }
+        elsif ($ref eq 'Corvinus::Meta::Error') {
+            my @args = $self->deparse_args($obj->{arg});
+            $code = qq~do{CORE::die(@args, " în \Q$obj->{file}\E linia $obj->{line}\\n")}~;
+        }
+        elsif ($ref eq 'Corvinus::Meta::Warning') {
+            my @args = $self->deparse_args($obj->{arg});
+            $code = qq~Corvinus::Types::Bool::Bool->new(CORE::warn(@args, " în \Q$obj->{file}\E linia $obj->{line}\\n"))~;
+        }
+        elsif ($ref eq 'Corvinus::Object::Object') {
+            $code = $self->make_constant($ref, 'new', "Object$refaddr");
+        }
+        elsif ($ref eq 'Corvinus::Variable::LazyMethod') {
+            $code = $ref . '->new';
+        }
+        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
+            $code =
+                'for my '
+              . $self->deparse_expr({self => $obj->{var}}) . '(@{'
+              . $self->deparse_expr({self => $obj->{array}}) . '})'
+              . $self->deparse_bare_block($obj->{block}->{code});
         }
         elsif ($ref eq 'Corvinus::Types::Byte::Bytes') {
             $code = $self->_dump_array($ref, $obj);
@@ -1299,14 +1308,15 @@ HEADER
                         # Prefix ++ and -- operators on variables
                         elsif (exists $self->{inc_dec_ops}{$method}) {
                             my $var = $self->deparse_args(@{$call->{arg}});
-                            $code = "($var=$var\->$self->{inc_dec_ops}{$method})[0]";
+                            $code = "do{my\$ref=\\$var;\$\$ref=\$\$ref\->$self->{inc_dec_ops}{$method}}";
                             next;
                         }
                     }
 
                     # Postfix ++ and -- operators on variables
                     if (exists($self->{inc_dec_ops}{$method})) {
-                        $code = "do{my \$old=$code; $code=$code\->$self->{inc_dec_ops}{$method}; \$old}";
+                        $code =
+                          "do{my\$ref=\\$code;my\$value=\$\$ref;\$\$ref=\$value\->$self->{inc_dec_ops}{$method}; \$value}";
                         next;
                     }
 
@@ -1450,8 +1460,9 @@ HEADER
                 }
 
                 if (exists $call->{block}) {
-                    if ($ref eq 'Corvinus::Types::Block::Given'
-                        or ($ref eq 'Corvinus::Types::Block::If' and $i == $#{$expr->{call}})) {
+
+                    # TODO: move above the deparsing of `Block::If`
+                    if ($ref eq 'Corvinus::Types::Block::If' and $i == $#{$expr->{call}}) {
                         $code =
                           "do {\n" . (' ' x $Corvinus::SPACES) . $code . $self->deparse_bare_block(@{$call->{block}}) . '}';
                     }

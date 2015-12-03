@@ -16,7 +16,7 @@ name: Corvinus
 provides:
   Corvinus:
     file: lib/Corvinus.pm
-    version: '0.01'
+    version: '2.00'
   Corvinus::Convert::Convert:
     file: lib/Corvinus/Convert/Convert.pm
   Corvinus::Deparse::Corvinus:
@@ -73,6 +73,8 @@ provides:
     file: lib/Corvinus/Types/Black/Hole.pm
   Corvinus::Types::Block::Break:
     file: lib/Corvinus/Types/Block/Break.pm
+  Corvinus::Types::Block::Case:
+    file: lib/Corvinus/Types/Block/Case.pm
   Corvinus::Types::Block::Code:
     file: lib/Corvinus/Types/Block/Code.pm
   Corvinus::Types::Block::CodeInit:
@@ -222,5 +224,5 @@ requires:
   utf8: '0'
 resources:
   license: http://dev.perl.org/licenses/
-version: '0.01'
+version: '2.00'
 x_serialization_backend: 'CPAN::Meta::YAML version 0.016'

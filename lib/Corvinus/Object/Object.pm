@@ -5,17 +5,39 @@ package Corvinus::Object::Object {
 
     use overload
       q{~~}   => \&{__PACKAGE__ . '::' . '~~'},
-      q{bool} => sub { $_[0] },
-      q{0+}   => sub { $_[0] },
-      q{""}   => sub { $_[0] },
-      q{cmp}  => sub {
+      q{bool} => sub {
+        if (defined(my $sub = $_[0]->can('to_b') // $_[0]->can('ca_bool'))) {
+            $sub->($_[0]);
+        }
+        else {
+            $_[0];
+        }
+      },
+      q{0+} => sub {
+        if (defined(my $sub = $_[0]->can('to_n') // $_[0]->can('ca_num'))) {
+            $sub->($_[0]);
+        }
+        else {
+            $_[0];
+        }
+      },
+      q{""} => sub {
+        if (defined(my $sub = $_[0]->can('to_s') // $_[0]->can('ca_text'))) {
+            $sub->($_[0]);
+        }
+        else {
+            $_[0];
+        }
+      },
+      q{cmp} => sub {
         my ($obj1, $obj2, $first) = @_;
 
         if (CORE::ref($obj1) && $obj1->SUPER::isa(CORE::ref($obj2)) or CORE::ref($obj2) && $obj2->SUPER::isa(CORE::ref($obj1)))
         {
             if (defined(my $sub = $obj1->can('<=>'))) {
+                my $result = $sub->($obj1, $obj2);
                 local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
-                return $sub->($obj1, $obj2)->get_value;
+                return $result->get_value;
             }
         }
 

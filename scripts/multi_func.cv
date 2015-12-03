@@ -1,0 +1,20 @@
+#!/usr/bin/ruby
+
+#
+## Fibonacci nth term
+#
+
+func fib((0)) { 0 }
+func fib((1)) { 1 }
+func fib (n)  { fib(n-1) + fib(n-2) }
+
+say fib(12);        # 144
+
+#
+## Fibonacci nth term (#2)
+#
+
+func fib2 (Number n { _ <= 1 }) { n }
+func fib2 (Number n)            { fib2(n-1) + fib2(n-2) }
+
+say fib2(12);

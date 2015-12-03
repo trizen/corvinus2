@@ -1,7 +1,7 @@
 package Corvinus {
 
     use 5.014;
-    our $VERSION = '0.01';
+    our $VERSION = '2.00';
 
     our $SPACES      = 0;    # the current number of spaces
     our $SPACES_INCR = 4;    # the number of spaces incrementor
@@ -17,6 +17,42 @@ package Corvinus {
 
     sub new {
         bless {}, __PACKAGE__;
+    }
+
+    sub normalize_type {
+        my ($type) = @_;
+
+        state $trans = {
+                        Number    => 'Numar',
+                        String    => 'Text',
+                        Array     => 'Lista',
+                        Hash      => 'Dict',
+                        Pair      => 'Pereche',
+                        Pipe      => 'Proces',
+                        Byte      => 'Octet',
+                        Bytes     => 'Octeti',
+                        File      => 'Fisier',
+                        Dir       => 'Dosar',
+                        Backtick  => 'Comanda',
+                        Time      => 'Timp',
+                        Char      => 'Caracter',
+                        Chars     => 'Caractere',
+                        Grapheme  => 'Grafem',
+                        Graphemes => 'Grafeme',
+                       };
+
+        if (index($type, 'Corvinus::') == 0) {
+            $type = substr($type, rindex($type, '::') + 2);
+
+            if (exists $trans->{$type}) {
+                $type = $trans->{$type};
+            }
+        }
+        else {
+            $type =~ s/^_:://;
+        }
+
+        $type;
     }
 };
 

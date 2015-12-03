@@ -30,6 +30,7 @@ lib/Corvinus/Types/Array/MultiArray.pm
 lib/Corvinus/Types/Array/Pair.pm
 lib/Corvinus/Types/Black/Hole.pm
 lib/Corvinus/Types/Block/Break.pm
+lib/Corvinus/Types/Block/Case.pm
 lib/Corvinus/Types/Block/Code.pm
 lib/Corvinus/Types/Block/CodeInit.pm
 lib/Corvinus/Types/Block/Continue.pm
@@ -118,6 +119,7 @@ scripts/max.cv
 scripts/metaprog.cv
 scripts/metode.cv
 scripts/multi_arr.cv
+scripts/multi_func.cv
 scripts/paralel.cv
 scripts/pentru_in.cv
 scripts/pi.cv
