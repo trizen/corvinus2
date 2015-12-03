@@ -659,14 +659,6 @@ package Corvinus::Optimizer {
                 }
             }
         }
-        elsif ($ref eq 'Corvinus::Variable::ClassInit') {
-            if ($addr{refaddr($obj)}++) {
-                ## ok
-            }
-            else {
-                $obj->{block} = $self->optimize_expr({self => $obj->{block}});
-            }
-        }
         elsif ($ref eq 'Corvinus::Variable::Static') {
             if ($addr{refaddr($obj)}++) {
                 ## ok
@@ -687,25 +679,14 @@ package Corvinus::Optimizer {
                 }
             }
         }
-        elsif ($ref eq 'Corvinus::Types::Block::Do') {
-            if ($addr{refaddr($obj)}++) {
-                ## ok
-            }
-            else {
-                my %code = $self->optimize($obj->{block}{code});
-                $obj->{block}{code} = \%code;
-            }
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::ForArray') {
-            if ($addr{refaddr($obj)}++) {
-                ## ok
-            }
-            else {
-                my %code = $self->optimize($obj->{block}{code});
-                $obj->{block}{code} = \%code;
-            }
-        }
-        elsif ($ref eq 'Corvinus::Types::Block::Loop') {
+        elsif (   $ref eq 'Corvinus::Variable::ClassInit'
+               or $ref eq 'Corvinus::Types::Block::Do'
+               or $ref eq 'Corvinus::Types::Block::ForArray'
+               or $ref eq 'Corvinus::Types::Block::Loop'
+               or $ref eq 'Corvinus::Types::Block::Given'
+               or $ref eq 'Corvinus::Types::Block::When'
+               or $ref eq 'Corvinus::Types::Block::Case'
+               or $ref eq 'Corvinus::Types::Block::Default') {
             if ($addr{refaddr($obj)}++) {
                 ## ok
             }
