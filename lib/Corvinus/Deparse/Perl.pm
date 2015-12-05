@@ -1343,8 +1343,10 @@ HEADER
                     # != and == methods
                     if ($method eq '==' or $method eq '!=') {
                         $code =
-                          'Corvinus::Types::Bool::Bool->new(' . $code . 'eq' . $self->deparse_args(@{$call->{arg}}) . ')';
-                        $code .= '->not' if ($method eq '!=');
+                            'Corvinus::Types::Bool::Bool->new('
+                          . ($method eq '!=' ? 'CORE::not' : '') . '('
+                          . $code . 'eq'
+                          . $self->deparse_args(@{$call->{arg}}) . '))';
                         next;
                     }
 
