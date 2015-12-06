@@ -237,7 +237,7 @@ package Corvinus::Types::Array::Array {
     sub concat {
         my ($self, $arg) = @_;
 
-        defined($arg) && $arg->isa('ARRAY')
+        eval { $arg->isa('ARRAY') }
           ? $self->new(@{$self}, @{$arg})
           : $self->new(@{$self}, $arg);
     }
@@ -483,7 +483,7 @@ package Corvinus::Types::Array::Array {
 
         if (defined $arg) {
             if (ref($arg) eq 'Corvinus::Types::Block::Code') {
-                return return $self->find($arg);
+                return $self->first_by($arg);
             }
 
             my $max = $#{$self};
@@ -500,6 +500,11 @@ package Corvinus::Types::Array::Array {
         my ($self, $arg) = @_;
 
         if (defined $arg) {
+
+            if (ref($arg) eq 'Sidef::Types::Block::Code') {
+                return $self->last_by($arg);
+            }
+
             my $from = @{$self} - $arg->get_value;
             return $self->new(@{$self}[($from < 0 ? 0 : $from) .. $#{$self}]);
         }
@@ -714,7 +719,7 @@ package Corvinus::Types::Array::Array {
     *frequency = \&freq;
     *frecventa = \&freq;
 
-    sub find {
+    sub first_by {
         my ($self, $code) = @_;
         foreach my $val (@{$self}) {
             return $val if $code->run($val);
@@ -722,8 +727,19 @@ package Corvinus::Types::Array::Array {
         return;
     }
 
-    *first_by = \&find;
-    *gaseste  = \&find;
+    *find      = \&first_by;
+    *gaseste   = \&first_by;
+    *prim_dupa = \&first_by;
+
+    sub last_by {
+        my ($self, $code) = @_;
+        for (my $i = $#{$self} ; $i >= 0 ; --$i) {
+            return $self->[$i] if $code->run($self->[$i]);
+        }
+        return;
+    }
+
+    *ultim_dupa = \&last_by;
 
     sub any {
         my ($self, $code) = @_;
@@ -775,7 +791,7 @@ package Corvinus::Types::Array::Array {
     sub index {
         my ($self, $obj) = @_;
 
-        if (defined $obj) {
+        if (@_ > 1) {
 
             if (ref($obj) eq 'Corvinus::Types::Block::Code') {
                 foreach my $i (0 .. $#{$self}) {
@@ -802,7 +818,7 @@ package Corvinus::Types::Array::Array {
     sub rindex {
         my ($self, $obj) = @_;
 
-        if (defined $obj) {
+        if (@_ > 1) {
             if (ref($obj) eq 'Corvinus::Types::Block::Code') {
                 for (my $i = $#{$self} ; $i >= 0 ; $i--) {
                     $obj->run($self->[$i])
@@ -932,6 +948,7 @@ package Corvinus::Types::Array::Array {
     }
 
     *resize_to       = \&resize;
+    *redim           = \&resize;
     *redimensioneaza = \&resize;
 
     sub rand {
