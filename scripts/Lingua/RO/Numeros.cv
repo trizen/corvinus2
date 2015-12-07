@@ -108,7 +108,7 @@ clasa nou(diacritice            = adev,
           numar_invalid         = nul,
           semn_negativ          = 'minus',
           punct_decimal         = 'virgulă',
-          separator             = '',
+          separator_mii         = '',
           infinit               = 'infinit',
           nu_e_numar            = 'NaN') {
 
@@ -119,9 +119,9 @@ clasa nou(diacritice            = adev,
         # When text is not a string
         text.is_a(Text) || return;
 
-        # If a thousand separator is defined, remove it from text
-        daca ((separator != '') si (separator.len > 1)) {
-            text.gsub!(separator, ' ');
+        # If a thousand separator_mii is defined, remove it from text
+        daca ((separator_mii != '') si (separator_mii.len > 1)) {
+            text.gsub!(separator_mii, ' ');
         }
 
         # Split the text into words
@@ -331,7 +331,7 @@ clasa nou(diacritice            = adev,
 
                     daca(number > 0) {
                         BIGNUMS[j]{:num} > 1000 && (
-                            words[-1] += separator
+                            words[-1] += separator_mii
                         );
                         words.adauga(self._in_litere(number)...)
                     }

@@ -3,7 +3,7 @@
 include Lingua::RO::Numeros;
 
 var lingua = Lingua::RO::Numeros::nou(
-    separator: ','
+    separator_mii: ','
 );
 
 bucla {

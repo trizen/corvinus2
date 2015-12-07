@@ -56,23 +56,15 @@ package Corvinus::Deparse::Perl {
                                                  altfel   => 'else',
                                                 },
 
+                'Corvinus::Types::Block::For' => {
+                                                  pentru => 'for',
+                                                 },
+
                 'Corvinus::Perl::Builtin' => {
                                               sari_la => 'goto',
                                               eroare  => 'die',
                                               avert   => 'warn',
                                              },
-
-                'Corvinus::Types::Block::Given' => {
-                                                    dat => 'given',
-                                                   },
-
-                'Corvinus::Types::Block::When' => {
-                                                   cand => 'when',
-                                                  },
-
-                'Corvinus::Types::Block::Default' => {
-                                                      altfel => 'default',
-                                                     },
 
                 'Corvinus::Object::Unary' => {
                                               '>'     => 'say',

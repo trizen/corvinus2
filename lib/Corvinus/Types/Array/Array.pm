@@ -538,6 +538,8 @@ package Corvinus::Types::Array::Array {
         $self->new(@new_array);
     }
 
+    *plat = \&flatten;
+
     sub exists {
         my ($self, $index) = @_;
         Corvinus::Types::Bool::Bool->new(exists $self->[$index->get_value]);
@@ -1260,6 +1262,7 @@ package Corvinus::Types::Array::Array {
 
     *pop_at              = \&delete_index;
     *inlatura_la_pozitia = \&delete_index;
+    *inlatura_la         = \&delete_index;
 
     sub splice {
         my ($self, $offset, $length, @objects) = @_;
@@ -1403,7 +1406,8 @@ package Corvinus::Types::Array::Array {
         $self;
     }
 
-    *prepend = \&unshift;
+    *prepend        = \&unshift;
+    *adauga_inainte = \&unshift;
 
     sub rotate {
         my ($self, $num) = @_;
