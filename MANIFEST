@@ -1,6 +1,56 @@
 bin/corvin
 Build.PL
 Changes
+exemple/acc.cv
+'exemple/Algoritmi de sortare/bubble_sort.cv'
+'exemple/Algoritmi de sortare/cocktail_sort.cv'
+'exemple/Algoritmi de sortare/comb_sort.cv'
+'exemple/Algoritmi de sortare/counting_sort.cv'
+'exemple/Algoritmi de sortare/gnome_sort.cv'
+'exemple/Algoritmi de sortare/heapsort.cv'
+'exemple/Algoritmi de sortare/insertion_sort.cv'
+'exemple/Algoritmi de sortare/merge_sort.cv'
+'exemple/Algoritmi de sortare/quicksort.cv'
+'exemple/Algoritmi de sortare/radix_sort.cv'
+'exemple/Algoritmi de sortare/selection_sort.cv'
+'exemple/Algoritmi de sortare/shell_sort.cv'
+'exemple/Algoritmi de sortare/stooge_sort.cv'
+'exemple/Algoritmi de sortare/strand_sort.cv'
+exemple/avg.cv
+exemple/benford_law.cv
+exemple/bern.cv
+exemple/binary_search.cv
+exemple/cell_auto.cv
+exemple/cifre.cv
+exemple/citeste_dosar.cv
+exemple/closures.cv
+exemple/daca_cond.cv
+exemple/det_triunghi.cv
+exemple/fac_iter.cv
+exemple/fib_rec.cv
+exemple/fib_word.cv
+exemple/Lingua/RO/Numeros.cv
+exemple/lingua_ro.cv
+exemple/manbrot.cv
+exemple/max.cv
+exemple/metaprog.cv
+exemple/metode.cv
+exemple/multi_arr.cv
+exemple/multi_func.cv
+exemple/paralel.cv
+exemple/pentru_in.cv
+exemple/pi.cv
+exemple/redeschidere_clase.cv
+exemple/regex.cv
+exemple/s_carpet.cv
+exemple/s_triangle.cv
+exemple/set.cv
+exemple/struct.cv
+exemple/suma_cifrelor.cv
+exemple/text.cv
+exemple/turing.cv
+exemple/unicode.cv
+exemple/vm.cv
 lib/Corvinus.pm
 lib/Corvinus/Convert/Convert.pm
 lib/Corvinus/Deparse/Corvinus.pm
@@ -57,42 +107,6 @@ MANIFEST			This list of files
 META.json
 META.yml
 README.md
-scripts/acc.cv
-scripts/avg.cv
-scripts/benford_law.cv
-scripts/bern.cv
-scripts/binary_search.cv
-scripts/cell_auto.cv
-scripts/cifre.cv
-scripts/citeste_dosar.cv
-scripts/closures.cv
-scripts/daca_cond.cv
-scripts/det_triunghi.cv
-scripts/fac_iter.cv
-scripts/fib_rec.cv
-scripts/fib_word.cv
-scripts/Lingua/RO/Numeros.cv
-scripts/lingua_ro.cv
-scripts/manbrot.cv
-scripts/max.cv
-scripts/metaprog.cv
-scripts/metode.cv
-scripts/multi_arr.cv
-scripts/multi_func.cv
-scripts/paralel.cv
-scripts/pentru_in.cv
-scripts/pi.cv
-scripts/redeschidere_clase.cv
-scripts/regex.cv
-scripts/s_carpet.cv
-scripts/s_triangle.cv
-scripts/set.cv
-scripts/struct.cv
-scripts/suma_cifrelor.cv
-scripts/text.cv
-scripts/turing.cv
-scripts/unicode.cv
-scripts/vm.cv
 share/corvinus/bigint.cv
 share/corvinus/bigrat.cv
 share/corvinus/Memoize.cv

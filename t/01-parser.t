@@ -15,7 +15,7 @@ use File::Spec::Functions qw(catfile catdir);
 use lib 'lib';
 require Corvinus;
 
-my $scripts_dir = 'scripts';
+my $scripts_dir = 'exemple';
 
 my @scripts;
 find {
