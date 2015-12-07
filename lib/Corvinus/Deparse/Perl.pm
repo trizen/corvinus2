@@ -141,10 +141,10 @@ HEADER
 
         my $ref = ref($obj);
         $self->_dump_string(
-                              $ref eq 'Corvinus::Variable::ClassInit'    ? $self->_dump_class_name($obj)
-                            : $ref eq 'Corvinus::Variable::Ref'          ? 'REF'
-                            : $ref eq 'Corvinus::Types::Block::CodeInit' ? 'Corvinus::Types::Block::Code'
-                            :                                              $ref
+                              $ref eq 'Corvinus::Variable::ClassInit'     ? $self->_dump_class_name($obj)
+                            : $ref eq 'Corvinus::Variable::Ref'           ? 'REF'
+                            : $ref eq 'Corvinus::Types::Block::BlockInit' ? 'Corvinus::Types::Block::Block'
+                            :                                               $ref
                            );
     }
 
@@ -676,9 +676,9 @@ HEADER
                 $code .= '; ' . $self->_dump_string($package_name) . '}';
             }
         }
-        elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
+        elsif ($ref eq 'Corvinus::Types::Block::BlockInit') {
             if ($addr{$refaddr}++) {
-                $code = 'Corvinus::Types::Block::Code->new(code => __SUB__';
+                $code = 'Corvinus::Types::Block::Block->new(code => __SUB__';
 
                 if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
                     my @vars = @{$obj->{init_vars}{vars}};
@@ -723,7 +723,7 @@ HEADER
 
                             $code .=
                               (" " x $Corvinus::SPACES)
-                              . "\$new$refaddr = Corvinus::Types::Block::Code->new(code => sub {" . "\n";
+                              . "\$new$refaddr = Corvinus::Types::Block::Block->new(code => sub {" . "\n";
                             push @{$self->{function_declarations}}, [$refaddr, "my \$new$refaddr;"];
 
                             $Corvinus::SPACES += $Corvinus::SPACES_INCR;
@@ -764,7 +764,7 @@ HEADER
                         }
                     }
                     else {
-                        $code = 'Corvinus::Types::Block::Code->new(';
+                        $code = 'Corvinus::Types::Block::Block->new(';
                     }
 
                     if (not $is_class) {
@@ -857,7 +857,7 @@ HEADER
                     }
                 }
                 else {
-                    $code = 'Block';
+                    $code = q{'Sidef::Types::Block::Block'};
                 }
             }
         }
@@ -874,7 +874,7 @@ HEADER
                 $code =
                     "package $name {\n"
                   . (' ' x $Corvinus::SPACES)
-                  . "\$new$refaddr = Corvinus::Types::Block::Code->new(code => sub {" . "\n"
+                  . "\$new$refaddr = Corvinus::Types::Block::Block->new(code => sub {" . "\n"
                   . (' ' x $Corvinus::SPACES)
                   . $self->_dump_sub_init_vars(@{$obj->{vars}})
                   . (' ' x ($Corvinus::SPACES * 2))
@@ -1197,6 +1197,12 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Perl::Perl') {
             $code = $self->make_constant($ref, 'new', "Perl$refaddr");
+        }
+        elsif ($ref eq 'Corvinus::Meta::Unimplemented') {
+            $code =
+                qq{CORE::die "Cod neimplementat în " . }
+              . $self->_dump_string($obj->{file})
+              . qq{. " la linia $obj->{line}\\n"};
         }
 
         # Array indices

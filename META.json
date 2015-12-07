@@ -67,20 +67,8 @@
       "Corvinus::Deparse::Perl" : {
          "file" : "lib/Corvinus/Deparse/Perl.pm"
       },
-      "Corvinus::Eval::Eval" : {
-         "file" : "lib/Corvinus/Eval/Eval.pm"
-      },
       "Corvinus::Math::Math" : {
          "file" : "lib/Corvinus/Math/Math.pm"
-      },
-      "Corvinus::Meta::Assert" : {
-         "file" : "lib/Corvinus/Meta/Assert.pm"
-      },
-      "Corvinus::Meta::Error" : {
-         "file" : "lib/Corvinus/Meta/Error.pm"
-      },
-      "Corvinus::Meta::Warning" : {
-         "file" : "lib/Corvinus/Meta/Warning.pm"
       },
       "Corvinus::Module::Func" : {
          "file" : "lib/Corvinus/Module/Func.pm"
@@ -91,17 +79,11 @@
       "Corvinus::Object::Object" : {
          "file" : "lib/Corvinus/Object/Object.pm"
       },
-      "Corvinus::Object::Unary" : {
-         "file" : "lib/Corvinus/Object/Unary.pm"
-      },
       "Corvinus::Optimizer" : {
          "file" : "lib/Corvinus/Optimizer.pm"
       },
       "Corvinus::Parser" : {
          "file" : "lib/Corvinus/Parser.pm"
-      },
-      "Corvinus::Perl::Builtin" : {
-         "file" : "lib/Corvinus/Perl/Builtin.pm"
       },
       "Corvinus::Perl::Perl" : {
          "file" : "lib/Corvinus/Perl/Perl.pm"
@@ -124,86 +106,26 @@
       "Corvinus::Types::Array::Array" : {
          "file" : "lib/Corvinus/Types/Array/Array.pm"
       },
-      "Corvinus::Types::Array::HCArray" : {
-         "file" : "lib/Corvinus/Types/Array/HCArray.pm"
-      },
-      "Corvinus::Types::Array::List" : {
-         "file" : "lib/Corvinus/Types/Array/List.pm"
-      },
       "Corvinus::Types::Array::MultiArray" : {
          "file" : "lib/Corvinus/Types/Array/MultiArray.pm"
       },
       "Corvinus::Types::Array::Pair" : {
          "file" : "lib/Corvinus/Types/Array/Pair.pm"
       },
-      "Corvinus::Types::Black::Hole" : {
-         "file" : "lib/Corvinus/Types/Black/Hole.pm"
-      },
-      "Corvinus::Types::Block::Break" : {
-         "file" : "lib/Corvinus/Types/Block/Break.pm"
-      },
-      "Corvinus::Types::Block::Case" : {
-         "file" : "lib/Corvinus/Types/Block/Case.pm"
-      },
-      "Corvinus::Types::Block::Code" : {
-         "file" : "lib/Corvinus/Types/Block/Code.pm"
-      },
-      "Corvinus::Types::Block::CodeInit" : {
-         "file" : "lib/Corvinus/Types/Block/CodeInit.pm"
-      },
-      "Corvinus::Types::Block::Continue" : {
-         "file" : "lib/Corvinus/Types/Block/Continue.pm"
-      },
-      "Corvinus::Types::Block::Default" : {
-         "file" : "lib/Corvinus/Types/Block/Default.pm"
-      },
-      "Corvinus::Types::Block::Do" : {
-         "file" : "lib/Corvinus/Types/Block/Do.pm"
-      },
-      "Corvinus::Types::Block::For" : {
-         "file" : "lib/Corvinus/Types/Block/For.pm"
-      },
-      "Corvinus::Types::Block::ForArray" : {
-         "file" : "lib/Corvinus/Types/Block/ForArray.pm"
+      "Corvinus::Types::Block::Block" : {
+         "file" : "lib/Corvinus/Types/Block/Block.pm"
       },
       "Corvinus::Types::Block::Fork" : {
          "file" : "lib/Corvinus/Types/Block/Fork.pm"
       },
-      "Corvinus::Types::Block::Gather" : {
-         "file" : "lib/Corvinus/Types/Block/Gather.pm"
-      },
-      "Corvinus::Types::Block::Given" : {
-         "file" : "lib/Corvinus/Types/Block/Given.pm"
-      },
-      "Corvinus::Types::Block::If" : {
-         "file" : "lib/Corvinus/Types/Block/If.pm"
-      },
-      "Corvinus::Types::Block::Loop" : {
-         "file" : "lib/Corvinus/Types/Block/Loop.pm"
-      },
-      "Corvinus::Types::Block::Next" : {
-         "file" : "lib/Corvinus/Types/Block/Next.pm"
-      },
       "Corvinus::Types::Block::Return" : {
          "file" : "lib/Corvinus/Types/Block/Return.pm"
-      },
-      "Corvinus::Types::Block::Take" : {
-         "file" : "lib/Corvinus/Types/Block/Take.pm"
       },
       "Corvinus::Types::Block::Try" : {
          "file" : "lib/Corvinus/Types/Block/Try.pm"
       },
-      "Corvinus::Types::Block::When" : {
-         "file" : "lib/Corvinus/Types/Block/When.pm"
-      },
-      "Corvinus::Types::Block::While" : {
-         "file" : "lib/Corvinus/Types/Block/While.pm"
-      },
       "Corvinus::Types::Bool::Bool" : {
          "file" : "lib/Corvinus/Types/Bool/Bool.pm"
-      },
-      "Corvinus::Types::Bool::Ternary" : {
-         "file" : "lib/Corvinus/Types/Bool/Ternary.pm"
       },
       "Corvinus::Types::Byte::Byte" : {
          "file" : "lib/Corvinus/Types/Byte/Byte.pm"
@@ -253,9 +175,6 @@
       "Corvinus::Types::Hash::Hash" : {
          "file" : "lib/Corvinus/Types/Hash/Hash.pm"
       },
-      "Corvinus::Types::Nil::Nil" : {
-         "file" : "lib/Corvinus/Types/Nil/Nil.pm"
-      },
       "Corvinus::Types::Null::Null" : {
          "file" : "lib/Corvinus/Types/Null/Null.pm"
       },
@@ -280,53 +199,11 @@
       "Corvinus::Types::String::String" : {
          "file" : "lib/Corvinus/Types/String/String.pm"
       },
-      "Corvinus::Variable::ClassAttr" : {
-         "file" : "lib/Corvinus/Variable/ClassAttr.pm"
-      },
-      "Corvinus::Variable::ClassInit" : {
-         "file" : "lib/Corvinus/Variable/ClassInit.pm"
-      },
-      "Corvinus::Variable::Const" : {
-         "file" : "lib/Corvinus/Variable/Const.pm"
-      },
-      "Corvinus::Variable::ConstInit" : {
-         "file" : "lib/Corvinus/Variable/ConstInit.pm"
-      },
-      "Corvinus::Variable::Define" : {
-         "file" : "lib/Corvinus/Variable/Define.pm"
-      },
-      "Corvinus::Variable::Global" : {
-         "file" : "lib/Corvinus/Variable/Global.pm"
-      },
-      "Corvinus::Variable::Init" : {
-         "file" : "lib/Corvinus/Variable/Init.pm"
-      },
-      "Corvinus::Variable::Label" : {
-         "file" : "lib/Corvinus/Variable/Label.pm"
-      },
       "Corvinus::Variable::LazyMethod" : {
          "file" : "lib/Corvinus/Variable/LazyMethod.pm"
       },
-      "Corvinus::Variable::Local" : {
-         "file" : "lib/Corvinus/Variable/Local.pm"
-      },
-      "Corvinus::Variable::Magic" : {
-         "file" : "lib/Corvinus/Variable/Magic.pm"
-      },
       "Corvinus::Variable::NamedParam" : {
          "file" : "lib/Corvinus/Variable/NamedParam.pm"
-      },
-      "Corvinus::Variable::Ref" : {
-         "file" : "lib/Corvinus/Variable/Ref.pm"
-      },
-      "Corvinus::Variable::Static" : {
-         "file" : "lib/Corvinus/Variable/Static.pm"
-      },
-      "Corvinus::Variable::Struct" : {
-         "file" : "lib/Corvinus/Variable/Struct.pm"
-      },
-      "Corvinus::Variable::Variable" : {
-         "file" : "lib/Corvinus/Variable/Variable.pm"
       }
    },
    "release_status" : "stable",

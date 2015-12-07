@@ -522,7 +522,7 @@ package Corvinus::Types::String::String {
     sub sub {
         my ($self, $regex, $str) = @_;
 
-        ref($str) eq 'Corvinus::Types::Block::Code'
+        ref($str) eq 'Corvinus::Types::Block::Block'
           && return $self->esub($regex, $str);
 
         $str //= __PACKAGE__->new('');
@@ -539,7 +539,7 @@ package Corvinus::Types::String::String {
     sub gsub {
         my ($self, $regex, $str) = @_;
 
-        ref($str) eq 'Corvinus::Types::Block::Code'
+        ref($str) eq 'Corvinus::Types::Block::Block'
           && return $self->gesub($regex, $str);
 
         $str //= __PACKAGE__->new('');
@@ -560,7 +560,7 @@ package Corvinus::Types::String::String {
         $code //= __PACKAGE__->new('');
         my $search = $self->_string_or_regex($regex);
 
-        if (ref($code) eq 'Corvinus::Types::Block::Code') {
+        if (ref($code) eq 'Corvinus::Types::Block::Block') {
             return __PACKAGE__->new($$self =~ s{$search}{$code->run(_get_captures($$self))}er);
         }
 
@@ -573,7 +573,7 @@ package Corvinus::Types::String::String {
         $code //= __PACKAGE__->new('');
         my $search = $self->_string_or_regex($regex);
 
-        if (ref($code) eq 'Corvinus::Types::Block::Code') {
+        if (ref($code) eq 'Corvinus::Types::Block::Block') {
             my $value = $$self;
             return __PACKAGE__->new($value =~ s{$search}{$code->run(_get_captures($value))}ger);
         }
@@ -1040,7 +1040,7 @@ package Corvinus::Types::String::String {
             $counter += CORE::length($1) while $s =~ /($regex)/g;
             return Corvinus::Types::Number::Number->new($counter);
         }
-        elsif (ref($arg) eq 'Corvinus::Types::Block::Code') {
+        elsif (ref($arg) eq 'Corvinus::Types::Block::Block') {
             foreach my $char (split //, $s) {
                 ++$counter if $arg->run(__PACKAGE__->new($char));
             }

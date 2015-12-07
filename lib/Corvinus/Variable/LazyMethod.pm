@@ -31,7 +31,7 @@ package Corvinus::Variable::LazyMethod {
         my ($method) = ($AUTOLOAD =~ /^.*[^:]::(.*)$/);
         my $call = $self->{method};
 
-        if (ref($call) eq 'Corvinus::Types::Block::Code') {
+        if (ref($call) eq 'Corvinus::Types::Block::Block') {
             if ($method eq 'call') {
                 return $call->call($self->{obj}, @{$self->{args}}, @args);
             }

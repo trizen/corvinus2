@@ -21,7 +21,7 @@ package Corvinus::Types::Null::Null {
     }
 
     sub dump {
-        Corvinus::Types::String::String->new('Null');
+        Corvinus::Types::String::String->new('null');
     }
 };
 

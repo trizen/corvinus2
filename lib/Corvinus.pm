@@ -54,7 +54,15 @@ package Corvinus {
 
         $type;
     }
+
+    sub normalize_method {
+        my ($type, $method) = ($_[0] =~ /^(.*[^:])::(.*)$/);
+        normalize_type($type) . ".$method";
+    }
+
 };
+
+use utf8;
 
 #
 ## Some UNIVERSAL magic
@@ -72,7 +80,7 @@ package Corvinus {
     $self = ref($self) if ref($self);
 
     index($self, 'Corvinus::') == 0
-      or die("[AUTOLOAD] Undefined method: $AUTOLOAD");
+      or die("[EROARE] Metoda `" . Corvinus::normalize_method($AUTOLOAD) . qq{' nu este definită!\n});
 
     eval { require $self =~ s{::}{/}rg . '.pm' };
 
@@ -81,16 +89,15 @@ package Corvinus {
             main::__load_corvinus_module__($self);
         }
         else {
-            die "[AUTOLOAD] $@";
+            die "[EROARE] $@";
         }
     }
 
-    my $func = \&{$AUTOLOAD};
-    if (defined(&$func)) {
-        return $func->($self, @args);
+    if (defined(&$AUTOLOAD)) {
+        return $AUTOLOAD->($self, @args);
     }
 
-    die "[AUTOLOAD] Undefined method: $AUTOLOAD";
+    die("[EROARE] Metoda `" . Corvinus::normalize_method($AUTOLOAD) . qq{' nu este definită!\n});
     return;
 };
 

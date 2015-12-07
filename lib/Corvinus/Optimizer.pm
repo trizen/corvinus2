@@ -695,7 +695,7 @@ package Corvinus::Optimizer {
                 $obj->{block}{code} = \%code;
             }
         }
-        elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
+        elsif ($ref eq 'Corvinus::Types::Block::BlockInit') {
             if ($addr{refaddr($obj)}++) {
                 ## ok
             }

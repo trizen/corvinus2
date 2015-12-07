@@ -46,14 +46,14 @@ package Corvinus::Parser {
 
             static_obj_re => qr{\G
                 (?>
-                       (?:nul|nil)\b                             (?{ state $x = Corvinus::Types::Nil::Nil->new })
+                       (?:nul|nil)\b                             (?{ state $x = bless({}, 'Corvinus::Types::Nil::Nil') })
+                     | null\b                                    (?{ state $x = Corvinus::Types::Null::Null->new })
                      | (?:adev(?:arat)?+|true)\b                 (?{ state $x = Corvinus::Types::Bool::Bool->true })
                      | (?:false?+|Bool)\b                        (?{ state $x = Corvinus::Types::Bool::Bool->false })
-                     | (?:sari|next)\b                           (?{ state $x = Corvinus::Types::Block::Next->new })
-                     | (?:stop|break)\b                          (?{ state $x = Corvinus::Types::Block::Break->new })
-                     | continu[ae]\b                             (?{ state $x = Corvinus::Types::Block::Continue->new })
-                     | BlackHole\b                               (?{ state $x = Corvinus::Types::Black::Hole->new })
-                     | Block?+\b                                 (?{ state $x = Corvinus::Types::Block::CodeInit->new })
+                     | (?:sari|next)\b                           (?{ state $x = bless({}, 'Corvinus::Types::Block::Next') })
+                     | (?:stop|break)\b                          (?{ state $x = bless({}, 'Corvinus::Types::Block::Break') })
+                     | continu[ae]\b                             (?{ state $x = bless({}, 'Corvinus::Types::Block::Continue') })
+                     | Block?+\b                                 (?{ state $x = bless({}, 'Corvinus::Types::Block::BlockInit') })
                      | (?:Comanda|Backtick)\b                    (?{ state $x = Corvinus::Types::Glob::Backtick->new })
                      | ARGF\b                                    (?{ state $x = Corvinus::Types::Glob::FileHandle->new(fh => \*ARGV) })
                      | (?:STDIN|FileHandle)\b                    (?{ state $x = Corvinus::Types::Glob::FileHandle->stdin })
@@ -74,7 +74,7 @@ package Corvinus::Parser {
                      | Socket\b                                  (?{ state $x = Corvinus::Types::Glob::Socket->new })
                      | (?:Proces|Pipe)\b                         (?{ state $x = Corvinus::Types::Glob::Pipe->new })
                      | (?:Octet|Byte)\b                          (?{ state $x = Corvinus::Types::Byte::Byte->new })
-                     | Ref\b                                     (?{ state $x = Corvinus::Variable::Ref->new })
+                     | Ref\b                                     (?{ state $x = bless({}, 'Corvinus::Variable::Ref') })
                      | (?:Metoda|LazyMethod)\b                   (?{ state $x = Corvinus::Variable::LazyMethod->new })
                      | (?:Octeti|Bytes)\b                        (?{ state $x = Corvinus::Types::Byte::Bytes->new })
                      | (?:Timp|Time)\b                           (?{ state $x = Corvinus::Time::Time->new })
@@ -89,47 +89,47 @@ package Corvinus::Parser {
                      | Corvinus\b                                (?{ state $x = Corvinus->new })
                      | Ob[ij]ect\b                               (?{ state $x = Corvinus::Object::Object->new })
                      | Perl\b                                    (?{ state $x = Corvinus::Perl::Perl->new })
-                     | \$\.                                      (?{ state $x = Corvinus::Variable::Magic->new('$.') })
-                     | \$\?                                      (?{ state $x = Corvinus::Variable::Magic->new('$?') })
-                     | \$\$                                      (?{ state $x = Corvinus::Variable::Magic->new('$$') })
-                     | \$\^T\b                                   (?{ state $x = Corvinus::Variable::Magic->new('$^T') })
-                     | \$\|                                      (?{ state $x = Corvinus::Variable::Magic->new('$|') })
-                     | \$!                                       (?{ state $x = Corvinus::Variable::Magic->new('$!') })
-                     | \$"                                       (?{ state $x = Corvinus::Variable::Magic->new('$"') })
-                     | \$\\                                      (?{ state $x = Corvinus::Variable::Magic->new('$\\') })
-                     | \$@                                       (?{ state $x = Corvinus::Variable::Magic->new('$@') })
-                     | \$%                                       (?{ state $x = Corvinus::Variable::Magic->new('$%') })
-                     | \$~                                       (?{ state $x = Corvinus::Variable::Magic->new('$~') })
-                     | \$/                                       (?{ state $x = Corvinus::Variable::Magic->new('$/') })
-                     | \$&                                       (?{ state $x = Corvinus::Variable::Magic->new('$&') })
-                     | \$'                                       (?{ state $x = Corvinus::Variable::Magic->new('$\'') })
-                     | \$`                                       (?{ state $x = Corvinus::Variable::Magic->new('$`') })
-                     | \$:                                       (?{ state $x = Corvinus::Variable::Magic->new('$:') })
-                     | \$\]                                      (?{ state $x = Corvinus::Variable::Magic->new('$]') })
-                     | \$\[                                      (?{ state $x = Corvinus::Variable::Magic->new('$[') })
-                     | \$;                                       (?{ state $x = Corvinus::Variable::Magic->new('$;') })
-                     | \$,                                       (?{ state $x = Corvinus::Variable::Magic->new('$,') })
-                     | \$\^O\b                                   (?{ state $x = Corvinus::Variable::Magic->new('$^O') })
-                     | \$\^PERL\b                                (?{ state $x = Corvinus::Variable::Magic->new('$^X') })
-                     | (?:\$0|\$\^CORVIN)\b                      (?{ state $x = Corvinus::Variable::Magic->new('$0') })
-                     | \$\)                                      (?{ state $x = Corvinus::Variable::Magic->new('$)') })
-                     | \$\(                                      (?{ state $x = Corvinus::Variable::Magic->new('$(') })
-                     | \$<                                       (?{ state $x = Corvinus::Variable::Magic->new('$<') })
-                     | \$>                                       (?{ state $x = Corvinus::Variable::Magic->new('$>') })
+                     | \$\.                                      (?{ state $x = bless({name => '$.'}, 'Corvinus::Variable::Magic') })
+                     | \$\?                                      (?{ state $x = bless({name => '$?'}, 'Corvinus::Variable::Magic') })
+                     | \$\$                                      (?{ state $x = bless({name => '$$'}, 'Corvinus::Variable::Magic') })
+                     | \$\^T\b                                   (?{ state $x = bless({name => '$^T'}, 'Corvinus::Variable::Magic') })
+                     | \$\|                                      (?{ state $x = bless({name => '$|'}, 'Corvinus::Variable::Magic') })
+                     | \$!                                       (?{ state $x = bless({name => '$!'}, 'Corvinus::Variable::Magic') })
+                     | \$"                                       (?{ state $x = bless({name => '$"'}, 'Corvinus::Variable::Magic') })
+                     | \$\\                                      (?{ state $x = bless({name => '$\\'}, 'Corvinus::Variable::Magic') })
+                     | \$@                                       (?{ state $x = bless({name => '$@'}, 'Corvinus::Variable::Magic') })
+                     | \$%                                       (?{ state $x = bless({name => '$%'}, 'Corvinus::Variable::Magic') })
+                     | \$~                                       (?{ state $x = bless({name => '$~'}, 'Corvinus::Variable::Magic') })
+                     | \$/                                       (?{ state $x = bless({name => '$/'}, 'Corvinus::Variable::Magic') })
+                     | \$&                                       (?{ state $x = bless({name => '$&'}, 'Corvinus::Variable::Magic') })
+                     | \$'                                       (?{ state $x = bless({name => '$\''}, 'Corvinus::Variable::Magic') })
+                     | \$`                                       (?{ state $x = bless({name => '$`'}, 'Corvinus::Variable::Magic') })
+                     | \$:                                       (?{ state $x = bless({name => '$:'}, 'Corvinus::Variable::Magic') })
+                     | \$\]                                      (?{ state $x = bless({name => '$]'}, 'Corvinus::Variable::Magic') })
+                     | \$\[                                      (?{ state $x = bless({name => '$['}, 'Corvinus::Variable::Magic') })
+                     | \$;                                       (?{ state $x = bless({name => '$;'}, 'Corvinus::Variable::Magic') })
+                     | \$,                                       (?{ state $x = bless({name => '$,'}, 'Corvinus::Variable::Magic') })
+                     | \$\^O\b                                   (?{ state $x = bless({name => '$^O'}, 'Corvinus::Variable::Magic') })
+                     | \$\^PERL\b                                (?{ state $x = bless({name => '$^X'}, 'Corvinus::Variable::Magic') })
+                     | (?:\$0|\$\^SIDEF)\b                       (?{ state $x = bless({name => '$0'}, 'Corvinus::Variable::Magic') })
+                     | \$\)                                      (?{ state $x = bless({name => '$)'}, 'Corvinus::Variable::Magic') })
+                     | \$\(                                      (?{ state $x = bless({name => '$('}, 'Corvinus::Variable::Magic') })
+                     | \$<                                       (?{ state $x = bless({name => '$<'}, 'Corvinus::Variable::Magic') })
+                     | \$>                                       (?{ state $x = bless({name => '$>'}, 'Corvinus::Variable::Magic') })
                      | ∞                                         (?{ state $x = Corvinus::Types::Number::Number->new->inf })
                 ) (?!::)
             }x,
             prefix_obj_re => qr{\G
               (?:
-                  (?:daca|if)\b                                        (?{ Corvinus::Types::Block::If->new })
-                | (?:cat_timp|while)\b                                 (?{ Corvinus::Types::Block::While->new })
+                  (?:daca|if)\b                                        (?{ state $x = bless({}, 'Corvinus::Types::Block::If') })
+                | (?:cat_timp|while)\b                                 (?{ state $x = bless({}, 'Corvinus::Types::Block::While') })
                 | (?:incearca|try)\b                                   (?{ Corvinus::Types::Block::Try->new })
-                | (?:pentru|for)\b                                     (?{ Corvinus::Types::Block::For->new })
+                | (?:pentru|for)\b                                     (?{ state $x = bless({}, 'Corvinus::Types::Block::For') })
                 | return(?:eaza)?+\b                                   (?{ Corvinus::Types::Block::Return->new })
                 | (?:definit|citeste|defined|read)\b                   (?{ state $x = Corvinus::Sys::Sys->new })
-                | (?:sari_la|goto)\b                                   (?{ state $x = Corvinus::Perl::Builtin->new })
-                | (?:[*\\&]|\+\+|--)                                   (?{ state $x = Corvinus::Variable::Ref->new })
-                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)          (?{ state $x = Corvinus::Object::Unary->new })
+                | (?:sari_la|goto)\b                                   (?{ state $x = bless({}, 'Corvinus::Perl::Builtin') })
+                | (?:[*\\&]|\+\+|--)                                   (?{ state $x = bless({}, 'Corvinus::Variable::Ref') })
+                | (?:>>?|[√+~!-]|(?:spune|scrie|print|say)\b)          (?{ state $x = bless({}, 'Corvinus::Object::Unary') })
                 | :                                                    (?{ state $x = Corvinus::Types::Hash::Hash->new })
               )
             }x,
@@ -207,13 +207,12 @@ package Corvinus::Parser {
                   Obiect Object
                   Parser
                   Bloc Block
-                  BlackHole
                   Comanda Backtick
                   Metoda
 
                   adev adevarat true
                   fals false
-                  nul nil
+                  nul nil null
                   )
             },
             keywords => {
@@ -244,7 +243,7 @@ package Corvinus::Parser {
                   const
                   func
                   enum
-                  class
+                  clasa class
                   static
                   define
                   struct
@@ -733,17 +732,20 @@ package Corvinus::Parser {
                 }
             }
 
-            my $obj = Corvinus::Variable::Variable->new(
-                                       name => $name,
-                                       type => $opt{type},
-                                       (defined($ref_type) ? (ref_type => $ref_type) : ()),
-                                       class => $class_name,
-                                       defined($value) ? (value => $value, has_value => 1) : (),
-                                       $attr eq '*' ? (array => 1, slurpy => 1) : $attr eq ':' ? (hash => 1, slurpy => 1) : (),
-                                       defined($where_block) ? (where_block => $where_block) : (),
-                                       defined($where_expr)  ? (where_expr  => $where_expr)  : (),
-                                       $opt{in_use}          ? (in_use      => 1)            : (),
-            );
+            my $obj = bless(
+                            {
+                             name => $name,
+                             type => $opt{type},
+                             (defined($ref_type) ? (ref_type => $ref_type) : ()),
+                             class => $class_name,
+                             defined($value) ? (value => $value, has_value => 1) : (),
+                             $attr eq '*' ? (array => 1, slurpy => 1) : $attr eq ':' ? (hash => 1, slurpy => 1) : (),
+                             defined($where_block) ? (where_block => $where_block) : (),
+                             defined($where_expr)  ? (where_expr  => $where_expr)  : (),
+                             $opt{in_use}          ? (in_use      => 1)            : (),
+                            },
+                            'Corvinus::Variable::Variable'
+                           );
 
             if (!$opt{private}) {
                 unshift @{$self->{vars}{$class_name}},
@@ -957,14 +959,14 @@ package Corvinus::Parser {
             # Array as object
             if (/\G(?=\[)/) {
 
-                my $array = Corvinus::Types::Array::HCArray->new();
+                my @array;
                 my $obj = $self->parse_array(code => $opt{code});
 
                 if (ref $obj->{$self->{class}} eq 'ARRAY') {
-                    push @{$array}, (@{$obj->{$self->{class}}});
+                    push @array, @{$obj->{$self->{class}}};
                 }
 
-                return $array;
+                return bless(\@array, 'Corvinus::Types::Array::HCArray');
             }
 
             # Bareword followed by a fat comma or preceded by a colon
@@ -989,7 +991,7 @@ package Corvinus::Parser {
             if (/\Gvar\b\h*/gc) {
                 my $type     = 'var';
                 my $vars     = $self->parse_init_vars(code => $opt{code}, type => $type);
-                my $init_obj = Corvinus::Variable::Init->new(vars => $vars);
+                my $init_obj = bless({vars => $vars}, 'Corvinus::Variable::Init');
 
                 if (/\G\h*=\h*/gc) {
                     my $args = (
@@ -1040,7 +1042,7 @@ package Corvinus::Parser {
                                                );
                 }
 
-                my $obj = Corvinus::Variable::ClassAttr->new(vars => $vars, defined($args) ? (args => $args) : ());
+                my $obj = bless {vars => $vars, defined($args) ? (args => $args) : ()}, 'Corvinus::Variable::ClassAttr';
                 push @{$self->{current_class}{attributes}}, $obj;
                 return $obj;
             }
@@ -1077,11 +1079,11 @@ package Corvinus::Parser {
 
                     my $var =
                       $type eq 'define'
-                      ? Corvinus::Variable::Define->new(init => 1, name => $name, class => $class_name, expr => $obj)
+                      ? bless({init => 1, name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Define')
                       : $type eq 'static'
-                      ? Corvinus::Variable::Static->new(init => 1, name => $name, class => $class_name, expr => $obj)
+                      ? bless({init => 1, name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Static')
                       : $type eq 'const'
-                      ? Corvinus::Variable::Const->new(init => 1, name => $name, class => $class_name, expr => $obj)
+                      ? bless({init => 1, name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Const')
                       : die "[PARSER ERROR] Invalid variable type: $type";
 
                     unshift @{$self->{vars}{$class_name}},
@@ -1103,11 +1105,15 @@ package Corvinus::Parser {
                     my $name       = $v->{name};
                     my $class_name = $v->{class};
 
-                    my $var =
-                        $type eq 'define' ? Corvinus::Variable::Define->new(name => $name, class => $class_name, expr => $obj)
-                      : $type eq 'static' ? Corvinus::Variable::Static->new(name => $name, class => $class_name, expr => $obj)
-                      : $type eq 'const' ? Corvinus::Variable::Const->new(name => $name, class => $class_name, expr => $obj)
-                      :                    die "[PARSER ERROR] Invalid variable type: $type";
+                    my $var = (
+                               $type eq 'define'
+                               ? bless({name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Define')
+                               : $type eq 'static'
+                               ? bless({name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Static')
+                               : $type eq 'const'
+                               ? bless({name => $name, class => $class_name, expr => $obj}, 'Corvinus::Variable::Const')
+                               : die "[PARSER ERROR] Invalid variable type: $type"
+                              );
 
                     push @var_objs, $var;
 
@@ -1122,7 +1128,7 @@ package Corvinus::Parser {
 
                 }
 
-                return Corvinus::Variable::ConstInit->new(vars => \@var_objs);
+                return bless({vars => \@var_objs}, 'Corvinus::Variable::ConstInit');
             }
 
             # Struct declaration
@@ -1150,11 +1156,14 @@ package Corvinus::Parser {
                                          type      => 'var',
                                         );
 
-                my $struct = Corvinus::Variable::Struct->new(
-                                                             name  => $name,
-                                                             class => $class_name,
-                                                             vars  => $vars,
-                                                            );
+                my $struct = bless(
+                                   {
+                                    name  => $name,
+                                    class => $class_name,
+                                    vars  => $vars,
+                                   },
+                                   'Corvinus::Variable::Struct'
+                                  );
 
                 if (defined $name) {
                     unshift @{$self->{vars}{$class_name}},
@@ -1246,7 +1255,7 @@ package Corvinus::Parser {
             # Local variables
             if (/\Glocal\b\h*/gc) {
                 my $expr = $self->parse_obj(code => $opt{code});
-                return Corvinus::Variable::Local->new(expr => $expr);
+                return bless({expr => $expr}, 'Corvinus::Variable::Local');
             }
 
             # Declaration of local variables, classes, methods and functions
@@ -1336,11 +1345,11 @@ package Corvinus::Parser {
                 }
 
                 my $obj =
-                    $type eq 'func'   ? Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class_name)
-                  : $type eq 'method' ? Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class_name)
+                  ($type eq 'func' or $type eq 'method')
+                  ? bless({name => $name, type => $type, class => $class_name}, 'Corvinus::Variable::Variable')
                   : $type eq 'class'
-                  ? Corvinus::Variable::ClassInit->new(name => ($built_in_obj // $name), class => $class_name)
-                  : $type eq 'global' ? Corvinus::Variable::Global->new(name => $name, class => $class_name)
+                  ? bless({name => ($built_in_obj // $name), class => $class_name}, 'Corvinus::Variable::ClassInit')
+                  : $type eq 'global' ? bless({name => $name, class => $class_name}, 'Corvinus::Variable::Global')
                   : $self->fatal_error(
                                        error    => "invalid type",
                                        expected => "expected a magic thing to happen",
@@ -1401,7 +1410,8 @@ package Corvinus::Parser {
                                                              },
                                             );
 
-                    $obj->set_params($var_names);
+                    # Set the class parameters
+                    $obj->{vars} = $var_names;
 
                     # Class inheritance (class Name(...) << Name1, Name2)
                     if (/\G\h*<<?\h*/gc) {
@@ -1455,7 +1465,8 @@ package Corvinus::Parser {
                     local $self->{current_class} = $built_in_obj // $obj;
                     my $block = $self->parse_block(code => $opt{code});
 
-                    $obj->set_block($block);
+                    # Set the block of the class
+                    $obj->{block} = $block;
                 }
 
                 if ($type eq 'func' or $type eq 'method') {
@@ -1557,11 +1568,8 @@ package Corvinus::Parser {
                     my $block = $self->parse_block(code => \$code);
                     pos($_) += pos($code) - length($args) - 1;
 
+                    # Set the block of the function/method
                     $obj->{value} = $block;
-
-                    #if (not $has_kids) {
-                    #    $self->{current_class}->add_method($name, $block) if $type eq 'method';
-                    #}
                 }
 
                 return $obj;
@@ -1582,7 +1590,7 @@ package Corvinus::Parser {
                                             pos      => pos($_),
                                            );
 
-                my $given_obj = Corvinus::Types::Block::Given->new(expr => $expr);
+                my $given_obj = bless({expr => $expr}, 'Corvinus::Types::Block::Given');
                 local $self->{current_given} = $given_obj;
                 my $block = (
                              /\G\h*(?=\{)/gc
@@ -1626,7 +1634,7 @@ package Corvinus::Parser {
                                                  )
                             );
 
-                return Corvinus::Types::Block::When->new(expr => $expr, block => $block);
+                return bless({expr => $expr, block => $block}, 'Corvinus::Types::Block::When');
             }
 
             # "case(expr) {...}" construct
@@ -1655,30 +1663,30 @@ package Corvinus::Parser {
                                                  )
                             );
 
-                return Corvinus::Types::Block::Case->new(expr => $expr, block => $block);
+                return bless({expr => $expr, block => $block}, 'Corvinus::Types::Block::Case');
             }
 
             # "default {...}" construct
             if (exists($self->{current_given}) && /\G(?:default|altfel)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
-                return Corvinus::Types::Block::Default->new(block => $block);
+                return bless({block => $block}, 'Corvinus::Types::Block::Default');
             }
 
             # "do {...}" construct
             if (/\G(?:exec(?:uta)?+|do)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
-                return Corvinus::Types::Block::Do->new(block => $block);
+                return bless({block => $block}, 'Corvinus::Types::Block::Do');
             }
 
             # "loop {...}" construct
             if (/\G(?:loop|bucla)\h*(?=\{)/gc) {
                 my $block = $self->parse_block(code => $opt{code});
-                return Corvinus::Types::Block::Loop->new(block => $block);
+                return bless({block => $block}, 'Corvinus::Types::Block::Loop');
             }
 
             # "gather/take" construct
             if (/\G(?:gather|aduna)\h*(?=\{)/gc) {
-                my $obj = Corvinus::Types::Block::Gather->new();
+                my $obj = bless({}, 'Corvinus::Types::Block::Gather');
 
                 local $self->{current_gather} = $obj;
 
@@ -1696,7 +1704,7 @@ package Corvinus::Parser {
                            : $self->parse_obj(code => $opt{code})
                           );
 
-                return Corvinus::Types::Block::Take->new(expr => $obj, gather => $self->{current_gather});
+                return bless({expr => $obj, gather => $self->{current_gather}}, 'Corvinus::Types::Block::Take');
             }
 
             # Binary, hexdecimal and octal numbers
@@ -1713,6 +1721,18 @@ package Corvinus::Parser {
             # Integer or float number
             if (/\G([+-]?+(?=\.?[0-9])[0-9_]*+(?:\.[0-9_]++)?(?:[Ee](?:[+-]?+[0-9_]+))?)/gc) {
                 return Corvinus::Types::Number::Number->new($1 =~ tr/_//dr);
+            }
+
+            # Prefix `...`
+            if (/\G\.\.\./gc) {
+                return
+                  bless(
+                        {
+                         line => $self->{line},
+                         file => $self->{file_name},
+                        },
+                        'Corvinus::Meta::Unimplemented'
+                       );
             }
 
             # Implicit method call on special variable: _
@@ -1763,7 +1783,7 @@ package Corvinus::Parser {
 
                 return (
                         $inline_expression
-                        ? Corvinus::Types::Array::HCArray->new(map { {self => $_} } @objs)
+                        ? bless([map { {self => $_} } @objs], 'Corvinus::Types::Array::HCArray')
                         : Corvinus::Types::Array::Array->new(@objs)
                        );
             }
@@ -1787,12 +1807,15 @@ package Corvinus::Parser {
                           );
 
                 return
-                  Corvinus::Meta::Assert->new(
-                                              arg  => $arg,
-                                              act  => $action,
-                                              line => $self->{line},
-                                              file => $self->{file_name},
-                                             );
+                  bless(
+                        {
+                         arg  => $arg,
+                         act  => $action,
+                         line => $self->{line},
+                         file => $self->{file_name},
+                        },
+                        'Corvinus::Meta::Assert'
+                       );
             }
 
             # die/warn
@@ -1812,16 +1835,16 @@ package Corvinus::Parser {
                            : $self->parse_obj(code => $opt{code})
                           );
 
-                return (
-                        (
-                         $action eq 'die'
-                         ? "Corvinus::Meta::Error"
-                         : "Corvinus::Meta::Warning"
-                        )->new(
-                               arg  => $arg,
-                               line => $self->{line},
-                               file => $self->{file_name},
-                              )
+                return
+                  bless(
+                        {
+                         arg  => $arg,
+                         line => $self->{line},
+                         file => $self->{file_name},
+                        },
+                        $action eq 'die'
+                        ? "Corvinus::Meta::Error"
+                        : "Corvinus::Meta::Warning"
                        );
             }
 
@@ -1834,11 +1857,14 @@ package Corvinus::Parser {
                           );
 
                 return
-                  Corvinus::Eval::Eval->new(
-                                            expr          => $obj,
-                                            vars          => {$self->{class} => [@{$self->{vars}{$self->{class}}}]},
-                                            ref_vars_refs => {$self->{class} => [@{$self->{ref_vars_refs}{$self->{class}}}]},
-                                           );
+                  bless(
+                        {
+                         expr          => $obj,
+                         vars          => {$self->{class} => [@{$self->{vars}{$self->{class}}}]},
+                         ref_vars_refs => {$self->{class} => [@{$self->{ref_vars_refs}{$self->{class}}}]},
+                        },
+                        'Corvinus::Eval::Eval'
+                       );
             }
 
             if (/\GParser\b/gc) {
@@ -1965,7 +1991,7 @@ package Corvinus::Parser {
 
                     my $type = 'var';
                     my $variable =
-                      Corvinus::Variable::Variable->new(name => $name, type => $type, class => $class, in_use => 1);
+                      bless({name => $name, type => $type, class => $class, in_use => 1}, 'Corvinus::Variable::Variable');
 
                     unshift @{$self->{vars}{$class}},
                       {
@@ -2013,7 +2039,7 @@ package Corvinus::Parser {
 
                 if (/\G(?=\h*:?=(?![=~>]))/) {
 
-                    my $var = Corvinus::Variable::Global->new(name => $name, class => $class);
+                    my $var = bless({name => $name, class => $class}, 'Corvinus::Variable::Global');
 
                     if (not $self->{interactive}) {
                         warn "[WARN] Implicit declaration of global variable '$name', at line $self->{line}\n";
@@ -2046,22 +2072,25 @@ package Corvinus::Parser {
                     )
                   ) {
                     return
-                      Corvinus::Variable::Static->new(
-                                                      name => '__CONST__',
-                                                      expr => {
-                                                               $self->{class} => [
-                                                                     {
-                                                                      self => $obj,
-                                                                      call => [
-                                                                          {
-                                                                           method => 'get_constant',
-                                                                           arg => [Corvinus::Types::String::String->new($name)]
-                                                                          }
-                                                                      ]
-                                                                     }
-                                                               ]
-                                                              }
-                                                     );
+                      bless(
+                            {
+                             name => '__CONST__',
+                             expr => {
+                                      $self->{class} => [
+                                                         {
+                                                          self => $obj,
+                                                          call => [
+                                                                   {
+                                                                    method => 'get_constant',
+                                                                    arg    => [Corvinus::Types::String::String->new($name)]
+                                                                   }
+                                                                  ]
+                                                         }
+                                                        ]
+                                     }
+                            },
+                            'Corvinus::Variable::Static'
+                           );
                 }
 
                 # Method call in functional style
@@ -2138,8 +2167,6 @@ package Corvinus::Parser {
                                    pos   => (pos($_) - length($1)),
                                    error => "variabila \$$1 nu este validă",
                                   );
-
-                #return $self->{regexp_vars}{$1} //= Corvinus::Variable::Variable->new(name => $1, type => 'var');
             }
 
             /\G\$/gc && redo;
@@ -2231,7 +2258,7 @@ package Corvinus::Parser {
 
             $self->{vars}{$self->{class}} = $self->{vars}{$self->{class}}[0];
 
-            my $block = Corvinus::Types::Block::CodeInit->new({});
+            my $block = bless({}, 'Corvinus::Types::Block::BlockInit');
             local $self->{current_block} = $block;
 
             # Parse whitespace (if any)
@@ -2245,7 +2272,7 @@ package Corvinus::Parser {
             }
 
             {    # special '_' variable
-                my $var_obj = Corvinus::Variable::Variable->new(name => '_', type => 'var', class => $self->{class});
+                my $var_obj = bless({name => '_', type => 'var', class => $self->{class}}, 'Corvinus::Variable::Variable');
                 push @{$var_objs}, $var_obj;
 
                 my (undef, $code) = $self->find_var('_', $self->{class});
@@ -2275,7 +2302,7 @@ package Corvinus::Parser {
           #    grep { ref($_) eq 'HASH' and ref($_->{obj}) eq 'Corvinus::Variable::Variable' } @{$self->{vars}{$self->{class}}}
           #];
 
-            $block->{init_vars} = Corvinus::Variable::Init->new(vars => $var_objs);
+            $block->{init_vars} = bless({vars => $var_objs}, 'Corvinus::Variable::Init');
 
             $block->{code} = $obj;
             splice @{$self->{ref_vars_refs}{$self->{class}}}, 0, $count;
@@ -2455,7 +2482,7 @@ package Corvinus::Parser {
             push @{$struct{$self->{class}}}, {self => $obj};
 
             # for var in array { ... }
-            if (ref($obj) eq 'Corvinus::Types::Block::For' and /\G($self->{var_name_re})\h+in\h+/gc) {
+            if (ref($obj) eq 'Corvinus::Types::Block::For' and /\G($self->{var_name_re})\h+d?in\h+/gc) {
                 my ($var_name, $class_name) = $self->get_name_and_class($1);
 
                 my $array = (
@@ -2464,12 +2491,14 @@ package Corvinus::Parser {
                              : $self->parse_obj(code => $opt{code})
                             );
 
-                my $variable =
-                  Corvinus::Variable::Variable->new(
-                                                    class => $class_name,
-                                                    name  => $var_name,
-                                                    type  => 'var',
-                                                   );
+                my $variable = bless(
+                                     {
+                                      class => $class_name,
+                                      name  => $var_name,
+                                      type  => 'var',
+                                     },
+                                     'Corvinus::Variable::Variable'
+                                    );
 
                 my $vars_len = $#{$self->{vars}{$class_name}} + 1;
 
@@ -2497,11 +2526,14 @@ package Corvinus::Parser {
 
                 # Replace the old Block::For object with Block::ForArray
                 $struct{$self->{class}}[-1]{self} =
-                  Corvinus::Types::Block::ForArray->new(
-                                                        var   => $variable,
-                                                        block => $block,
-                                                        array => $array,
-                                                       );
+                  bless(
+                        {
+                         var   => $variable,
+                         block => $block,
+                         array => $array,
+                        },
+                        'Corvinus::Types::Block::ForArray'
+                       );
             }
             elsif ($obj_key) {
                 my $arg = (
@@ -2802,7 +2834,7 @@ package Corvinus::Parser {
             }
 
             if (/\G\@:([\pL_][\pL\pN_]*)/gc) {
-                push @{$struct{$self->{class}}}, {self => Corvinus::Variable::Label->new(name => $1)};
+                push @{$struct{$self->{class}}}, {self => bless({name => $1}, 'Corvinus::Variable::Label')};
                 redo;
             }
 
@@ -2971,11 +3003,14 @@ package Corvinus::Parser {
                              : $self->parse_obj(code => $opt{code})
                             );
 
-                my $tern = Corvinus::Types::Bool::Ternary->new(
-                                                           cond => scalar {$self->{class} => [pop @{$struct{$self->{class}}}]},
-                                                           true => $true,
-                                                           false => $false
-                );
+                my $tern = bless(
+                                 {
+                                  cond  => scalar {$self->{class} => [pop @{$struct{$self->{class}}}]},
+                                  true  => $true,
+                                  false => $false
+                                 },
+                                 'Corvinus::Types::Bool::Ternary'
+                                );
 
                 push @{$struct{$self->{class}}}, {self => $tern};
                 redo MAIN;

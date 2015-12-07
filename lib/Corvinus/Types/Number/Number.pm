@@ -609,7 +609,7 @@ package Corvinus::Types::Number::Number {
     sub of {
         my ($self, $obj) = @_;
 
-        if (ref($obj) eq 'Corvinus::Types::Block::Code') {
+        if (ref($obj) eq 'Corvinus::Types::Block::Block') {
             return Corvinus::Types::Array::Array->new(map { $obj->run($self->new($_)) } 1 .. $$self);
         }
 

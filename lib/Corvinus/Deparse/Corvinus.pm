@@ -69,9 +69,9 @@ package Corvinus::Deparse::Corvinus {
 
         my $ref = ref($obj);
 
-            $ref eq 'Corvinus::Variable::ClassInit'    ? $obj->{name}
-          : $ref eq 'Corvinus::Types::Block::CodeInit' ? 'Bloc'
-          :                                              substr($ref, rindex($ref, '::') + 2);
+            $ref eq 'Corvinus::Variable::ClassInit'     ? $obj->{name}
+          : $ref eq 'Corvinus::Types::Block::BlockInit' ? 'Bloc'
+          :                                               substr($ref, rindex($ref, '::') + 2);
     }
 
     sub _dump_vars {
@@ -277,7 +277,7 @@ package Corvinus::Deparse::Corvinus {
                 }
             }
         }
-        elsif ($ref eq 'Corvinus::Types::Block::CodeInit') {
+        elsif ($ref eq 'Corvinus::Types::Block::BlockInit') {
             if ($addr{refaddr($obj)}++) {
                 $code = keys(%{$obj}) ? '__BLOC__' : 'Bloc';
             }
@@ -335,6 +335,9 @@ package Corvinus::Deparse::Corvinus {
         }
         elsif ($ref eq 'Corvinus::Meta::Warning') {
             $code = 'avert' . $self->deparse_args($obj->{arg});
+        }
+        elsif ($ref eq 'Corvinus::Meta::Unimplemented') {
+            $code = '...';
         }
         elsif ($ref eq 'Corvinus::Eval::Eval') {
             $code = 'eval' . $self->deparse_args($obj->{expr});
@@ -621,7 +624,7 @@ package Corvinus::Deparse::Corvinus {
                     }
                     elsif ($method =~ /^[\pL_]/) {
 
-                        if ($ref eq 'Corvinus::Types::Block::CodeInit' and ($method eq 'loop' or $method eq 'bucla')) {
+                        if ($ref eq 'Corvinus::Types::Block::BlockInit' and ($method eq 'loop' or $method eq 'bucla')) {
                             $code = "bucla $code";
                         }
                         else {

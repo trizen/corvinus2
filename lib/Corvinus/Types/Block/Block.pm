@@ -1,4 +1,4 @@
-package Corvinus::Types::Block::Code {
+package Corvinus::Types::Block::Block {
 
     use utf8;
     use 5.014;
@@ -17,6 +17,8 @@ package Corvinus::Types::Block::Code {
         $self->{code}->(@args);
     }
 
+    *do = \&run;
+    *exec = \&run;
     *executa = \&run;
 
     sub _multiple_dispatch {
@@ -272,22 +274,16 @@ package Corvinus::Types::Block::Code {
         ref($result) eq 'Corvinus::Types::Block::Return' ? $result : ();
     }
 
-    sub exec {
-        my ($self) = @_;
-
-        for (1) {
-            $self->run;
-            return $self;
-        }
-
-        Corvinus::Types::Black::Hole->new;
-    }
-
-    *do = \&exec;
-
     sub while {
         my ($self, $condition) = @_;
-        Corvinus::Types::Block::While->new->while($condition, $self);
+
+        while ($condition->run) {
+            if (defined(my $res = $self->_run_code)) {
+                return $res;
+            }
+        }
+
+        $self;
     }
 
     *cat_timp = \&while;
@@ -371,8 +367,21 @@ package Corvinus::Types::Block::Code {
 
     sub for {
         my ($self, @args) = @_;
-        Corvinus::Types::Block::For->new->for(@args, $self);
+
+        if (@args == 1 and eval { $args[0]->can('each') }) {
+            $args[0]->each($self);
     }
+        else {
+            foreach my $item (@args) {
+                if (defined(my $res = $self->_run_code($item))) {
+                    return $res;
+                }
+            }
+            $self;
+        }
+    }
+
+    *foreach = \&for;
 
     sub dump {
         $_[0];
