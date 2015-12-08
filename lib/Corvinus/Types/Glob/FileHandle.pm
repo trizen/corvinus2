@@ -31,6 +31,8 @@ package Corvinus::Types::Glob::FileHandle {
         Corvinus::Types::Bool::Bool->new(-t $_[0]{fh});
     }
 
+    *e_interactiv = \&is_on_tty;
+
     sub stdout {
         __PACKAGE__->new(fh => \*STDOUT);
     }

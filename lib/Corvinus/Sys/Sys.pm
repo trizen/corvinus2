@@ -14,10 +14,14 @@ package Corvinus::Sys::Sys {
         exit($code // 0);
     }
 
+    *iesire = \&exit;
+
     sub wait {
         my ($self) = @_;
         Corvinus::Types::Number::Number->new(CORE::wait);
     }
+
+    *asteapta = \&wait;
 
     sub fork {
         my ($self) = @_;
@@ -30,6 +34,8 @@ package Corvinus::Sys::Sys {
         state $x = require Time::HiRes;
         Corvinus::Types::Bool::Bool->new(Time::HiRes::alarm($sec->get_value));
     }
+
+    *alarma = \&alarm;
 
     sub ualarm {
         my ($self, $sec) = @_;
@@ -260,6 +266,7 @@ package Corvinus::Sys::Sys {
     }
 
     *clone = \&copy;
+    *copiaza = \&copy;
 
     sub select {
         my ($self, $fh) = @_;
