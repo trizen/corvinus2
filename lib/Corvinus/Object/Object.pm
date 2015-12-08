@@ -79,6 +79,8 @@ package Corvinus::Object::Object {
         Corvinus::Variable::LazyMethod->new(obj => $self, method => $method, args => \@args);
     }
 
+    *metoda = \&method;
+
     sub object_id {
         my ($self) = @_;
         Corvinus::Types::Number::Number->new(Scalar::Util::refaddr($self));
@@ -91,6 +93,8 @@ package Corvinus::Object::Object {
         my $rindex = rindex($ref, '::');
         Corvinus::Types::String::String->new($rindex == -1 ? $ref : substr($ref, $rindex + 2));
     }
+
+    *clasa = \&class;
 
     sub ref {
         my ($obj) = @_;
@@ -200,6 +204,8 @@ package Corvinus::Object::Object {
 
             Corvinus::Types::Hash::Hash->new(%methods);
         }
+
+        *metode = \&methods;
 
         # Logical AND
         *{__PACKAGE__ . '::' . '&&'} = sub {

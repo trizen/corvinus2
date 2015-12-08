@@ -265,6 +265,7 @@ package Corvinus::Types::String::String {
     *lower          = \&lc;
     *litere_mici    = \&lc;
     *in_litere_mici = \&lc;
+    *cu_litere_mici = \&lc;
 
     sub uc {
         my ($self) = @_;
@@ -274,6 +275,7 @@ package Corvinus::Types::String::String {
     *upcase         = \&uc;
     *upper          = \&uc;
     *in_litere_mari = \&uc;
+    *cu_litere_mari = \&uc;
 
     sub fc {
         my ($self) = @_;
