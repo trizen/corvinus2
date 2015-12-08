@@ -413,13 +413,12 @@ sub code_interactive {
     require Encode;
     require Term::ReadLine;
 
-    my $term = Term::ReadLine->new("$name $version -- interactive mode");
+    my $term = Term::ReadLine->new("$name $version -- mod interactiv");
 
     my $parser = new_parser(name => '-i');
     $parser->{interactive} = 1;
 
-    print qq{$name $version on $^O\n};
-    print qq{Type "help", "copyright" or "license" for more information.\n};
+    print qq{$name $version pe $^O\n};
 
     my $last_line = '';
     {

@@ -160,6 +160,7 @@ package Corvinus::Types::Hash::Hash {
         $self->new(%hash);
     }
 
+    *alege      = \&grep;
     *filter     = \&grep;
     *grep       = \&select;
     *selecteaza = \&grep;

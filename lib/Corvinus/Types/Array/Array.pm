@@ -683,6 +683,7 @@ package Corvinus::Types::Array::Array {
         $self->new(grep { scalar $code->run($_) } @{$self});
     }
 
+    *alege      = \&grep;
     *filter     = \&grep;
     *select     = \&grep;
     *selecteaza = \&grep;

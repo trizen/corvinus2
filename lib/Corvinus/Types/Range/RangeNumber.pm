@@ -45,6 +45,8 @@ package Corvinus::Types::Range::RangeNumber {
         $self;
     }
 
+    *dupa = \&by;
+
     sub reverse {
         my ($self) = @_;
 
@@ -53,6 +55,8 @@ package Corvinus::Types::Range::RangeNumber {
 
         $self;
     }
+
+    *inverseaza = \&reverse;
 
     sub min {
         my ($self) = @_;
@@ -74,6 +78,8 @@ package Corvinus::Types::Range::RangeNumber {
         ($self->min, $self->max);
     }
 
+    *capete = \&bounds;
+
     sub contains {
         my ($self, $num) = @_;
 
@@ -82,16 +88,18 @@ package Corvinus::Types::Range::RangeNumber {
         my $step = $self->{step};
 
         Corvinus::Types::Bool::Bool->new(
-                                      $value >= $min and $value <= $max
-                                        and (
-                                               $step == 1 ? 1
-                                             : $step > 0 ? (int(($value - $min) / $step) * $step == ($value - $min))
-                                             :             (int(($value - $max) / $step) * $step == ($value - $max))
-                                            )
-                                     );
+                                         $value >= $min and $value <= $max
+                                           and (
+                                                  $step == 1 ? 1
+                                                : $step > 0 ? (int(($value - $min) / $step) * $step == ($value - $min))
+                                                :             (int(($value - $max) / $step) * $step == ($value - $max))
+                                               )
+                                        );
     }
 
     *includes = \&contains;
+    *contine  = \&contains;
+    *include  = \&contains;
 
     sub each {
         my ($self, $code) = @_;
@@ -164,6 +172,8 @@ package Corvinus::Types::Range::RangeNumber {
         $self;
     }
 
+    *fiecare = \&each;
+
     sub map {
         my ($self, $code) = @_;
 
@@ -202,6 +212,10 @@ package Corvinus::Types::Range::RangeNumber {
 
         Corvinus::Types::Array::Array->new(@values);
     }
+
+    *mapeaza    = \&map;
+    *colecteaza = \&map;
+    *colect     = \&map;
 
     sub grep {
         my ($self, $code) = @_;
@@ -245,6 +259,10 @@ package Corvinus::Types::Range::RangeNumber {
         Corvinus::Types::Array::Array->new(@values);
     }
 
+    *alege     = \&grep;
+    *filtreaza = \&grep;
+    *select    = \&grep;
+
     our $AUTOLOAD;
     sub DESTROY { }
 
@@ -269,7 +287,7 @@ package Corvinus::Types::Range::RangeNumber {
         my $to   = $self->{to};
 
         $array = Corvinus::Types::Number::Number->new($from)->$method(Corvinus::Types::Number::Number->new($to),
-                                                         abs($step) != 1 ? Corvinus::Types::Number::Number->new(abs($step)) : ());
+                                                      abs($step) != 1 ? Corvinus::Types::Number::Number->new(abs($step)) : ());
 
         $name eq '' ? $array : $array->$name(@args);
     }
@@ -279,9 +297,9 @@ package Corvinus::Types::Range::RangeNumber {
         *{__PACKAGE__ . '::' . '=='} = sub {
             my ($r1, $r2) = @_;
             Corvinus::Types::Bool::Bool->new(    ref($r1) eq ref($r2)
-                                          and $r1->{from} == $r2->{from}
-                                          and $r1->{to} == $r2->{to}
-                                          and $r1->{step} == $r2->{step});
+                                             and $r1->{from} == $r2->{from}
+                                             and $r1->{to} == $r2->{to}
+                                             and $r1->{step} == $r2->{step});
         };
     }
 
