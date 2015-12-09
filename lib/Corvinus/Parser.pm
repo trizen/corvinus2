@@ -111,7 +111,7 @@ package Corvinus::Parser {
                      | \$,                                       (?{ state $x = bless({name => '$,'}, 'Corvinus::Variable::Magic') })
                      | \$\^O\b                                   (?{ state $x = bless({name => '$^O'}, 'Corvinus::Variable::Magic') })
                      | \$\^PERL\b                                (?{ state $x = bless({name => '$^X'}, 'Corvinus::Variable::Magic') })
-                     | (?:\$0|\$\^SIDEF)\b                       (?{ state $x = bless({name => '$0'}, 'Corvinus::Variable::Magic') })
+                     | (?:\$0|\$\^CORVIN)\b                      (?{ state $x = bless({name => '$0'}, 'Corvinus::Variable::Magic') })
                      | \$\)                                      (?{ state $x = bless({name => '$)'}, 'Corvinus::Variable::Magic') })
                      | \$\(                                      (?{ state $x = bless({name => '$('}, 'Corvinus::Variable::Magic') })
                      | \$<                                       (?{ state $x = bless({name => '$<'}, 'Corvinus::Variable::Magic') })

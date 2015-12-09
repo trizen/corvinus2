@@ -62,8 +62,6 @@ package Corvinus::Deparse::Perl {
 
                 'Corvinus::Perl::Builtin' => {
                                               sari_la => 'goto',
-                                              eroare  => 'die',
-                                              avert   => 'warn',
                                              },
 
                 'Corvinus::Object::Unary' => {
@@ -849,7 +847,7 @@ HEADER
                     }
                 }
                 else {
-                    $code = q{'Sidef::Types::Block::Block'};
+                    $code = q{'Corvinus::Types::Block::Block'};
                 }
             }
         }

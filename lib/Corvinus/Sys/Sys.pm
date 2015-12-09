@@ -97,6 +97,8 @@ package Corvinus::Sys::Sys {
         Corvinus::Types::Bool::Bool->new(defined $obj);
     }
 
+    *definit = \&defined;
+
     sub class_name {
         my ($self, $obj) = @_;
         my $ref = CORE::ref($obj);
@@ -265,7 +267,7 @@ package Corvinus::Sys::Sys {
         Storable::dclone($obj);
     }
 
-    *clone = \&copy;
+    *clone   = \&copy;
     *copiaza = \&copy;
 
     sub select {

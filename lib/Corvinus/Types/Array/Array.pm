@@ -501,7 +501,7 @@ package Corvinus::Types::Array::Array {
 
         if (defined $arg) {
 
-            if (ref($arg) eq 'Sidef::Types::Block::Block') {
+            if (ref($arg) eq 'Corvinus::Types::Block::Block') {
                 return $self->last_by($arg);
             }
 
