@@ -23,18 +23,18 @@ Temperatura:
     420 K in F          : transforma Kelvin in Fahrenheit
 
 Lungime:
-    21.1 inch in cm     : transforma inch in centimetrii
-    5.6 picioare in m   : transforma picioare in metrii
+    21.1 inch in cm     : transforma inch in centimetri
+    5.6 picioare in m   : transforma picioare in metri
     4 ani lumina in km  : transforma ani-lumina in km
 
-Viteză:
+Viteza:
     4444 mph in km/s            : transforma mile/h in km/s
     50 m/s in km/h              : transforma m/s in km/h
     viteza sunetului in mile/s  : transforma viteza sunetului in mile/s
 
 Timp:
     2 ore in sec      : transforma ore in secunde
-    3 ani in luni     : transforma ani ni luni
+    3 ani in luni     : transforma ani in luni
     4 zile in ore     : transforma zile in ore
 
 Informatie:
@@ -42,7 +42,7 @@ Informatie:
     32MB in KB         : transforma megabytes in kilobytes
     3 TB in GB         : transforma terabytes in gigabytes
 
-...și altele care sunt lăsate utilizatorului să le descopere. :-)
+...si altele care sunt lasate utilizatorului sa le descopere. :-)
 AJUTOR
 }
 
