@@ -671,14 +671,7 @@ HEADER
                 $code = 'Corvinus::Types::Block::Block->new(code => __SUB__';
 
                 if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
-                    my @vars = @{$obj->{init_vars}{vars}};
-
-                    # Remove the underscore (_) variable
-                    if (@vars > 1 or (@vars == 1 and $vars[0]{name} eq '_')) {
-                        pop @vars;
-                    }
-
-                    $code .= ', ' . $self->_dump_var_attr(@vars);
+                    $code .= ', ' . $self->_dump_var_attr(@{$obj->{init_vars}{vars}});
                 }
 
                 $code .= ')';
@@ -762,18 +755,11 @@ HEADER
                         $code .= "\n" . (" " x ($Corvinus::SPACES - $Corvinus::SPACES_INCR)) . "code => sub {\n";
 
                         if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
-                            my @vars = @{$obj->{init_vars}{vars}};
+                            $code .= $self->_dump_sub_init_vars(@{$obj->{init_vars}{vars}});
+                        }
 
-                            # Remove the underscore (_) variable
-                            if (@vars > 1) {
-                                pop @vars;
-                            }
-
-                            $code .= $self->_dump_sub_init_vars(@vars);
-
-                            if ($is_function) {
-                                $code .= (' ' x $Corvinus::SPACES) . 'my @return;' . "\n";
-                            }
+                        if ($is_function) {
+                            $code .= (' ' x $Corvinus::SPACES) . 'my @return;' . "\n";
                         }
                     }
 
@@ -834,14 +820,7 @@ HEADER
                         }
 
                         if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
-                            my @vars = @{$obj->{init_vars}{vars}};
-
-                            # Remove the underscore (_) variable
-                            if (@vars > 1 or (@vars == 1 and $vars[0]{name} eq '_')) {
-                                pop @vars;
-                            }
-
-                            $code .= ', ' . $self->_dump_var_attr(@vars);
+                            $code .= ', ' . $self->_dump_var_attr(@{$obj->{init_vars}{vars}});
                         }
                         $code .= ')';
                     }
@@ -961,7 +940,12 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Types::Block::Given') {
             $self->top_add(qq{use experimental 'smartmatch';\n});
-            $code = 'do{given ' . $self->deparse_args($obj->{expr}) . $self->deparse_bare_block($obj->{block}{code}) . '}';
+            my $dvar = $self->_dump_var($obj->{block}{init_vars}->{vars}[0]);
+            $code =
+                'do{given (my '
+              . $dvar . '='
+              . $self->deparse_args($obj->{expr}) . ')'
+              . $self->deparse_bare_block($obj->{block}{code}) . '}';
         }
         elsif ($ref eq 'Corvinus::Types::Block::When') {
             $code = 'when($_ ~~ ' . $self->deparse_args($obj->{expr}) . ')' . $self->deparse_bare_block($obj->{block}{code});

@@ -166,7 +166,7 @@ package Corvinus::Deparse::Corvinus {
                     my $var_obj = delete $block->{init_vars};
 
                     $code .= '('
-                      . $self->_dump_vars(@{$var_obj->{vars}}[($obj->{type} eq 'method' ? 1 : 0) .. $#{$var_obj->{vars}} - 1])
+                      . $self->_dump_vars(@{$var_obj->{vars}}[($obj->{type} eq 'method' ? 1 : 0) .. $#{$var_obj->{vars}}])
                       . ') ';
 
                     if (exists $obj->{cached}) {
@@ -263,9 +263,8 @@ package Corvinus::Deparse::Corvinus {
                 }
 
                 local $self->{class} = $obj->{class};
-                $code .= "clasa " . $self->_dump_class_name($obj->{name});
-                my $vars = $obj->{vars};
-                $code .= '(' . $self->_dump_vars(@{$vars}) . ')';
+                $code .= "class " . $self->_dump_class_name($obj->{name});
+                $code .= '(' . $self->_dump_vars(@{$obj->{vars}}) . ')';
                 if (exists $obj->{inherit}) {
                     $code .= ' << ' . join(', ', map { $_->{name} } @{$obj->{inherit}}) . ' ';
                 }
@@ -286,7 +285,6 @@ package Corvinus::Deparse::Corvinus {
                     $code = '{';
                     if (exists($obj->{init_vars}) and @{$obj->{init_vars}{vars}}) {
                         my @vars = @{$obj->{init_vars}{vars}};
-                        pop @vars;
                         if (@vars) {
                             $code .= '| ' . $self->_dump_vars(@vars) . ' |';
                         }

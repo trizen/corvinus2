@@ -618,7 +618,7 @@ package Corvinus::Parser {
 
                 if (/\G(?=\{)/) {
                     my $code = substr($_, pos);
-                    $self->parse_block(code => \$code);
+                    $self->parse_block(code => \$code, topic_var => 1);
                     $vars[-1] .= substr($_, pos($_), pos($code));
                     pos($_) += pos($code);
                 }
@@ -716,7 +716,7 @@ package Corvinus::Parser {
             if (defined($end_delim)) {
 
                 if (/\G\h*(?=\{)/gc) {
-                    $where_block = $self->parse_block(code => $opt{code});
+                    $where_block = $self->parse_block(code => $opt{code}, topic_var => 1);
                 }
                 elsif (/\G\h*(?=\()/gc) {
                     $where_expr = $self->parse_arguments(code => $opt{code});
@@ -952,7 +952,7 @@ package Corvinus::Parser {
 
             # Block as object
             if (/\G(?=\{)/) {
-                my $obj = $self->parse_block(code => $opt{code});
+                my $obj = $self->parse_block(code => $opt{code}, topic_var => 1);
                 return $obj;
             }
 
@@ -1594,7 +1594,7 @@ package Corvinus::Parser {
                 local $self->{current_given} = $given_obj;
                 my $block = (
                              /\G\h*(?=\{)/gc
-                             ? $self->parse_block(code => $opt{code})
+                             ? $self->parse_block(code => $opt{code}, topic_var => 1)
                              : $self->fatal_error(
                                                   error    => "este necesar un bloc după expresia: `dat(...)`",
                                                   expected => "sintaxa este: „dat (...) {...}",
@@ -2112,7 +2112,7 @@ package Corvinus::Parser {
                     /\G\h*/gc;    # remove any horizontal whitespace
                     my $arg = (
                                  /\G(?=\()/ ? $self->parse_arguments(code => $opt{code})
-                               : /\G(?=\{)/ ? $self->parse_block(code => $opt{code})
+                               : /\G(?=\{)/ ? $self->parse_block(code => $opt{code}, topic_var => 1)
                                :              $self->parse_obj(code => $opt{code})
                               );
 
@@ -2276,28 +2276,27 @@ package Corvinus::Parser {
             # Parse whitespace (if any)
             $self->parse_whitespace(code => $opt{code});
 
+            my $has_vars;
             my $var_objs = [];
             if (/\G(?=\|)/) {
-                $var_objs =
-                  $self->parse_init_vars(code => $opt{code},
-                                         type => 'var');
+                $has_vars = 1;
+                $var_objs = $self->parse_init_vars(code => $opt{code},
+                                                   type => 'var',);
             }
 
-            {    # special '_' variable
+            # Special '_' variable
+            if ($opt{topic_var} and not $has_vars) {
                 my $var_obj = bless({name => '_', type => 'var', class => $self->{class}}, 'Corvinus::Variable::Variable');
-                push @{$var_objs}, $var_obj;
 
-                my (undef, $code) = $self->find_var('_', $self->{class});
-                if (not defined($code) or $code == 0) {
-                    unshift @{$self->{vars}{$self->{class}}},
-                      {
-                        obj   => $var_obj,
-                        name  => '_',
-                        count => 0,
-                        type  => 'var',
-                        line  => $self->{line},
-                      };
-                }
+                push @{$var_objs}, $var_obj;
+                unshift @{$self->{vars}{$self->{class}}},
+                  {
+                    obj   => $var_obj,
+                    name  => '_',
+                    count => 0,
+                    type  => 'var',
+                    line  => $self->{line},
+                  };
             }
 
             my $obj = $self->parse_script(code => $opt{code});
@@ -2366,7 +2365,7 @@ package Corvinus::Parser {
                         my $arg = (
                                      /\G(?=\()/ ? $self->parse_arguments(code => \$code)
                                    : ($req_arg || exists($self->{binpost_ops}{$method})) ? $self->parse_obj(code => \$code)
-                                   : /\G(?=\{)/ ? $self->parse_block(code => \$code)
+                                   : /\G(?=\{)/ ? $self->parse_block(code => \$code, topic_var => 1)
                                    :              die "[PARSING ERROR] Something is wrong in the if condition"
                                   );
 
@@ -2612,18 +2611,20 @@ package Corvinus::Parser {
                     and exists $self->{special_constructs}{ref($obj)}
                     and /\G\h*(?=\{)/gc) {
 
-                    my $arg = $self->parse_block(code => $opt{code});
-
                     if (ref($obj) eq 'Corvinus::Types::Block::For') {
                         if ($#{$struct{$self->{class}}[-1]{call}[-1]{arg}} == 0) {
+                            my $arg = $self->parse_block(code => $opt{code}, topic_var => 1);
                             $struct{$self->{class}}[-1]{self} = shift @{delete $struct{$self->{class}}[-1]{call}[-1]{arg}};
                             push @{$struct{$self->{class}}[-1]{call}[-1]{arg}}, $arg;
                         }
                         else {
+                            my $arg = $self->parse_block(code => $opt{code});
                             push @{$struct{$self->{class}}[-1]{call}[-1]{block}}, $arg->{code};
                         }
                     }
                     else {
+
+                        my $arg = $self->parse_block(code => $opt{code});
 
                         push @{$struct{$self->{class}}[-1]{call}[-1]{block}}, $arg->{code};
 
