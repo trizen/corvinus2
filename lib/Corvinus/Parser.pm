@@ -2019,6 +2019,12 @@ package Corvinus::Parser {
                   ) {
                     if (exists $self->{current_method}) {
                         if (defined(my $var = $self->find_var('self', $class))) {
+
+                            if ($self->{opt}{k}) {
+                                print STDERR
+"[INFO] `$name` este interpretat ca `self.$name` în $self->{file_name} la linia $self->{line}\n";
+                            }
+
                             $var->{count}++;
                             $var->{obj}{in_use} = 1;
                             return
@@ -2042,7 +2048,8 @@ package Corvinus::Parser {
                     my $var = bless({name => $name, class => $class}, 'Corvinus::Variable::Global');
 
                     if (not $self->{interactive}) {
-                        warn "[WARN] Implicit declaration of global variable '$name', at line $self->{line}\n";
+                        warn
+"[WARN] Declarare globală implicită a variabilei `$name` în $self->{file_name} la linia $self->{line}\n";
                     }
 
                     unshift @{$self->{vars}{$class}},
@@ -2095,6 +2102,11 @@ package Corvinus::Parser {
 
                 # Method call in functional style
                 if (not $self->{_want_name} and ($class eq $self->{class} or $class eq 'CORE')) {
+
+                    if ($self->{opt}{k}) {
+                        print STDERR
+"[INFO] `$name` este interpretat ca metodă de tip prefix în $self->{file_name} la linia $self->{line}\n";
+                    }
 
                     my $pos = pos($_);
                     /\G\h*/gc;    # remove any horizontal whitespace
@@ -2751,8 +2763,11 @@ package Corvinus::Parser {
                                         pos      => pos($_)
                                        );
 
-                my $parser = __PACKAGE__->new(file_name   => $self->{file_name},
-                                              script_name => $self->{script_name},);
+                my $parser = __PACKAGE__->new(
+                                              opt         => $self->{opt},
+                                              file_name   => $self->{file_name},
+                                              script_name => $self->{script_name},
+                                             );
                 local $parser->{line}  = $self->{line};
                 local $parser->{class} = $name;
                 local $parser->{ref_vars}{$name} = $self->{ref_vars}{$name} if exists($self->{ref_vars}{$name});
@@ -2947,8 +2962,11 @@ package Corvinus::Parser {
                     my $content = do { local $/; <$fh> };
                     close $fh;
 
-                    my $parser = __PACKAGE__->new(file_name   => $full_path,
-                                                  script_name => $self->{script_name},);
+                    my $parser = __PACKAGE__->new(
+                                                  opt         => $self->{opt},
+                                                  file_name   => $full_path,
+                                                  script_name => $self->{script_name},
+                                                 );
 
                     local $parser->{class} = $name if defined $name;
                     if (defined $name and $name ne 'main' and not grep $_ eq $name, @Corvinus::NAMESPACES) {

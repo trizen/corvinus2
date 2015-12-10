@@ -32,7 +32,7 @@ sub NATIVE () { 0 }
 my %args;
 if ($#ARGV != -1 and chr ord $ARGV[0] eq '-') {
     require Getopt::Std;
-    Getopt::Std::getopts('e:E:d:Dho:ivHn:WwbcrR:ts:CO:', \%args);
+    Getopt::Std::getopts('e:E:d:Dho:ivHn:WwbcrR:ts:CO:k', \%args);
 }
 
 # Help
@@ -223,8 +223,11 @@ sub read_script {
 
 sub new_parser {
     my (%opt) = @_;
-    Corvinus::Parser->new(file_name   => $opt{name},
-                          script_name => $opt{name},);
+    Corvinus::Parser->new(
+                          opt         => \%args,
+                          file_name   => $opt{name},
+                          script_name => $opt{name},
+                         );
 }
 
 sub optimize_struct {
@@ -258,6 +261,7 @@ sub parse_code {
             local @Corvinus::NAMESPACES;
 
             $struct = Corvinus::Parser->new(
+                                            opt         => \%args,
                                             file_name   => $parser->{file_name},
                                             script_name => $parser->{script_name},
                                            )->parse_script(code => \$code);
@@ -291,23 +295,24 @@ sub execute_struct {
 
 sub output_usage {
     my %switches = (
-                    '-i'         => 'interactive mode',
-                    '-c'         => 'compile the code as a stand-alone Perl program',
-                    '-C'         => 'check syntax only',
-                    '-d file'    => 'load a dumped syntax tree',
-                    '-D'         => 'dump the syntax tree of a program',
-                    '-o file'    => 'file where to dump the output',
-                    '-O level'   => ['perform code optimizations before execution', 'valid levels: 0, 1, 2'],
-                    '-E program' => 'one line of program',
-                    '-H'         => 'interactive help',
-                    '-n type'    => ['try to use a specific backend for Math::BigInt', 'valid types: GMP, Pari, FastCalc'],
-                    '-s int'     => 'the number of spaces used in code indentation',
-                    '-v'         => 'print version number and exit',
-                    '-t'         => 'treat all command-line arguments as scripts',
-                    '-r'         => 'parse and deparse a Corvinus program',
-                    '-R lang' => ['parse and deparse a Corvinus program to a given language', 'valid values: corvinus, perl'],
-                    '-w'      => 'enable warnings with stack backtrace',
-                    '-W'      => 'make warnings fatal (with stack backtrace)',
+                    '-i'         => 'mod interactiv',
+                    '-c'         => 'compilează într-un program Perl',
+                    '-C'         => 'verifică sintaxa programului',
+                    '-d file'    => 'încarcă un fișier de sintaxă depozitat',
+                    '-D'         => 'depozitează sintaxa unui program',
+                    '-o file'    => 'fișierul de ieșire',
+                    '-O level'   => ['optimizează codul înainte de execuție', 'nivele valide: 0, 1, 2'],
+                    '-E program' => 'o linie de program',
+                    '-H'         => 'ajutor interactiv',
+                    '-k'         => 'arată transformările nesigure făcute de parser',
+                    '-n type'    => ['încearcă alt backend pentru Math::BigInt', 'tipuri valide: GMP, Pari, FastCalc'],
+                    '-s int'     => 'numărul de spații folosite în indentare',
+                    '-v'         => 'arată numărul de versiune și ieși',
+                    '-t'         => 'tratează toate argumentele ca programe',
+                    '-r'         => 'parsează și deparsează un program',
+                    '-R lang'    => ['parsează și deparsează un program în alt limbaj', 'valori valide: corvinus, perl'],
+                    '-w'         => 'arată avertizări detaliate',
+                    '-W'         => 'tratează avertizările ca erori',
                    );
 
     require File::Basename;
@@ -634,7 +639,7 @@ HEAD
 
                  close $fh;
              }
-         }
+           }
         } => $path
     );
 
