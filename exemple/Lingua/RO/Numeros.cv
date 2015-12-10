@@ -250,7 +250,7 @@ clasa nou(diacritice            = adev,
             # Special case -- check for leading zeros
             var zeros = '';
             cat_timp ((decs.lungime > 0) && (decs[0] == 0)) {
-                zeros += decs.shift.ca_text;
+                zeros += decs.inlatura_primul.ca_text;
             }
 
             num += ('.' + zeros + uneste_numerele(decs).ca_text);
@@ -264,118 +264,134 @@ clasa nou(diacritice            = adev,
         return num;
     }
 
-    metoda _in_litere(number) {
-
-        var words = [];
-        daca (DIGITS.contine(number)) {
-            words.adauga(DIGITS{number});
-        }
-        sau (number.to_num! -> is_nan) {
-            return [nu_e_numar];
-        }
-        sau (number.is_negative) {
-            words.adauga(semn_negativ);
-            words.adauga(self._in_litere(number.abs)...);
-        }
-        sau (!(number.is_int)) {
-
-            words.adauga(self._in_litere(number.int)...);
-            words.adauga(punct_decimal);
-
-            number -= number.int;
-
-            cat_timp (number != number.int) {
-                number *= 10 < 1 && (words.adauga(DIGITS{0}));
-            }
-
-            words.adauga(self._in_litere(number.int)...);
-        }
-        sau (number >= BIGNUMS[0]{:num}) {
-            0 ... BIGNUMS.end-1 -> each { |i|
-                var j = BIGNUMS.end-i;
-
-                daca (number >= BIGNUMS[j-1]{:num} && (number < BIGNUMS[j]{:num})) {
-                    var cat = (number / BIGNUMS[j-1]{:num} -> int);
-                    number -= (BIGNUMS[j-1]{:num} * (number / BIGNUMS[j-1]{:num} -> int));
-
-                    var of = [];
-                    daca (DIGITS.contine(cat)) {
-                        of = [DIGITS{cat}];
-                    }
-                    altfel {
-                        var w = (self._in_litere(cat) + ['de']);
-                        daca ((w.lungime > 2) si (w[-2] == DIGITS{2})) {
-                            w[-2] = 'două';
-                        }
-                        of = w;
-                    }
-
-                    daca (cat >= 100 && (cat < 1000)) {
-                        var rest = (cat - (100 * (cat / 100 -> int)));
-                        daca ((of.len != 0) si (rest != 0 && (DIGITS.contine(rest)))) {
-                            of.pop;
-                        }
-                    }
-
-                    dat(cat) {
-                        cand(1) {
-                            words += [BIGNUMS[j-1]{:fem} ? 'o' : 'un', BIGNUMS[j-1]{:sg}];
-                        }
-                        cand(2) {
-                            words += ['două', BIGNUMS[j-1]{:pl}];
-                        }
-                        altfel {
-                            words += (of + [BIGNUMS[j-1]{:pl}]);
-                        }
-                    }
-
-                    daca(number > 0) {
-                        BIGNUMS[j]{:num} > 1000 && (
-                            words[-1] += separator_mii
-                        );
-                        words.adauga(self._in_litere(number)...)
-                    }
-
-                    stop;
-                }
-            }
-        }
-        sau ((number > 19) si (number < 100)) {
-            var cat = (number / 10 -> int);
-
-            dat(cat) {
-                cand(2) {
-                    words.adauga('douăzeci');
-                }
-                cand(6) {
-                    words.adauga('șaizeci');
-                }
-                altfel {
-                    words.adauga(DIGITS{cat} + 'zeci');
-                }
-            }
-
-            daca (number % 10 != 0) {
-                words.adauga('și', DIGITS{number % 10 -> intreg});
-            }
-        }
-        sau (number.e_infinit) {
-            return [infinit];
-        }
-        altfel {
-            return([numar_invalid]);
-        }
-
-        return(words);
-    }
-
     metoda in_litere(num) {
-        var word = self._in_litere(num).join(" ");
+
+        var word = [self.num2ro(num.to_num)].join(" ")
 
         daca (!diacritice) {
             word = sterge_diacritice(word);
         }
 
         return word;
+    }
+
+    metoda num2ro(n { DIGITS.contine(_) }) {
+        DIGITS{n}
+    }
+
+    metoda num2ro({ .nu_e_numar }) {
+        self.nu_e_numar
+    }
+
+    metoda num2ro(n { .e_negativ }) {
+        (self.semn_negativ, self.num2ro(n.absolut))
+    }
+
+    metoda num2ro(n { !_.e_intreg }) {
+        var temp = [];
+
+        temp.adauga(self.num2ro(n.intreg))
+        temp += self.punct_decimal
+
+        n -= n.intreg
+
+        cat_timp (n != n.intreg) {
+            n *= 10;
+            daca (n < 1) {
+                temp.adauga(DIGITS{"0"})
+            }
+        }
+
+        (@temp, self.num2ro(n.intreg))
+    }
+
+    metoda num2ro(n { _ >= BIGNUMS[0]{:num} }) {
+
+        var temp = [];
+        var limita = BIGNUMS.sfarsit
+
+        sir(0, limita-1).fiecare { |i|
+            var j = (limita - i)
+
+            daca ((n >= BIGNUMS[j-1]{:num}) si (n < BIGNUMS[j]{:num})) {
+                var cat = intreg(n / BIGNUMS[j-1]{:num});
+                n -= (BIGNUMS[j-1]{:num} * intreg(n / BIGNUMS[j-1]{:num}));
+
+                var sep = []
+                daca (DIGITS.contine(cat)) {
+                    sep = [DIGITS{cat}]
+                }
+                altfel {
+                    var w = [];
+                    w.adauga(self.num2ro(cat), 'de');
+                    daca ((w.lungime > 2) si (w[-2] == DIGITS{2})) {
+                        w[-2] = 'două';
+                    }
+                    sep = w;
+                }
+
+                daca ((cat >= 100) si (cat < 1000)) {
+                    var rest = (cat - (100 * intreg(cat / 100)));
+                    daca ((sep.lungime != 0) si (rest != 0 && (DIGITS.contine(rest)))) {
+                        sep.inlatura_ultimul
+                    }
+                }
+
+                dat(cat) {
+                    cand(1) {
+                        temp += [BIGNUMS[j-1]{:fem} ? 'o' : 'un', BIGNUMS[j-1]{:sg}];
+                    }
+                    cand(2) {
+                        temp += ['două', BIGNUMS[j-1]{:pl}];
+                    }
+                    altfel {
+                        temp += (sep + [BIGNUMS[j-1]{:pl}]);
+                    }
+                }
+
+                daca(n > 0) {
+                    BIGNUMS[j]{:num} > 1000 && (
+                        temp[-1] += separator_mii
+                    );
+                    temp.adauga(self.num2ro(n))
+                }
+
+                stop
+            }
+        }
+
+        @temp
+    }
+
+    metoda num2ro(n { (_ > 19) si (_ < 100) }) {
+
+        var temp = []
+        var cat = intreg(n / 10)
+
+        dat(cat) {
+            cand(2) {
+                temp.adauga('douăzeci');
+            }
+            cand(6) {
+                temp.adauga('șaizeci');
+            }
+            altfel {
+                temp.adauga(DIGITS{cat} + 'zeci');
+            }
+        }
+
+        daca (n % 10 != 0) {
+            temp.adauga('și', DIGITS{n % 10 -> intreg});
+        }
+
+        @temp
+    }
+
+    metoda num2ro({ .e_infinit }) {
+        infinit
+    }
+
+    metoda num2ro(_) {
+        numar_invalid
     }
 }

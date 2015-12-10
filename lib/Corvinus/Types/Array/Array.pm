@@ -970,6 +970,8 @@ package Corvinus::Types::Array::Array {
         Corvinus::Types::Range::RangeNumber->__new__(from => 0, to => $#{$self}, step => 1);
     }
 
+    *sir = \&range;
+
     sub pairs {
         my ($self) = @_;
         __PACKAGE__->new(map { Corvinus::Types::Array::Pair->new(Corvinus::Types::Number::Number->new($_), $self->[$_]) }
