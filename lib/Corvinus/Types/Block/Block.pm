@@ -17,8 +17,8 @@ package Corvinus::Types::Block::Block {
         $self->{code}->(@args);
     }
 
-    *do = \&run;
-    *exec = \&run;
+    *do      = \&run;
+    *exec    = \&run;
     *executa = \&run;
 
     sub _multiple_dispatch {
@@ -212,7 +212,7 @@ package Corvinus::Types::Block::Block {
                 local *UNIVERSAL::AUTOLOAD = $ref;
                 if (defined($a) || defined($b)) { push @args, $a, $b }
                 elsif (defined($_)) { unshift @args, $_ }
-                $self->call(@args);
+                $self->run(map { Corvinus::Perl::Perl->to_corvinus($_) } @args);
             };
         }
     }
@@ -370,7 +370,7 @@ package Corvinus::Types::Block::Block {
 
         if (@args == 1 and eval { $args[0]->can('each') }) {
             $args[0]->each($self);
-    }
+        }
         else {
             foreach my $item (@args) {
                 if (defined(my $res = $self->_run_code($item))) {
