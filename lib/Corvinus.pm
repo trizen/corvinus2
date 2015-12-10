@@ -49,7 +49,8 @@ package Corvinus {
             }
         }
         else {
-            $type =~ s/^_:://;
+            $type =~ s/^(?:_::)?main:://
+              or $type =~ s/^_:://;
         }
 
         $type;
