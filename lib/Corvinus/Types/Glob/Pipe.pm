@@ -13,7 +13,7 @@ package Corvinus::Types::Glob::Pipe {
     }
 
     *call = \&new;
-    *nou = \&new;
+    *nou  = \&new;
     *noua = \&new;
 
     sub get_value {
@@ -53,7 +53,7 @@ package Corvinus::Types::Glob::Pipe {
         $self->open('-|:utf8', $var_ref);
     }
 
-    *open_read = \&open_r;
+    *open_read  = \&open_r;
     *deschide_c = \&open_r;
 
     sub open_w {
@@ -67,7 +67,7 @@ package Corvinus::Types::Glob::Pipe {
     sub dump {
         my ($self) = @_;
         Corvinus::Types::String::String->new(
-                          'Pipe(' . join(', ', map { Corvinus::Types::String::String->new($_)->dump->get_value } @{$self}) . ')');
+                     'Proces(' . join(', ', map { Corvinus::Types::String::String->new($_)->dump->get_value } @{$self}) . ')');
     }
 }
 

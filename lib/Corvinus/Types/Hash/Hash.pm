@@ -362,7 +362,7 @@ package Corvinus::Types::Hash::Hash {
         my @keys = sort { (lc($a) cmp lc($b)) || ($a cmp $b) } CORE::keys(%$self);
 
         my $str = Corvinus::Types::String::String->new(
-            "Hash(" . (
+            "Dict(" . (
                 @keys
                 ? (
                    (@keys > 1 ? "\n" : '') . join(

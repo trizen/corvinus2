@@ -20,7 +20,7 @@ package Corvinus::Types::Glob::Dir {
     }
 
     *call = \&new;
-    *nou = \&new;
+    *nou  = \&new;
 
     sub get_value { ${$_[0]} }
     sub to_dir    { $_[0] }
@@ -56,7 +56,7 @@ package Corvinus::Types::Glob::Dir {
         __PACKAGE__->new(File::Spec->tmpdir);
     }
 
-    *temp = \&tmp;
+    *temp     = \&tmp;
     *temporar = \&tmp;
 
     sub cwd {
@@ -75,7 +75,8 @@ package Corvinus::Types::Glob::Dir {
         my ($self) = @_;
         @_ == 2 && ($self = $_[1]);
         state $x = require File::Spec;
-        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) } File::Spec->splitdir($self->get_value));
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::String::String->new($_) }
+                                           File::Spec->splitdir($self->get_value));
     }
 
     *imparte = \&split;
@@ -118,8 +119,8 @@ package Corvinus::Types::Glob::Dir {
         Corvinus::Types::Bool::Bool->new(mkdir($self->get_value));
     }
 
-    *make  = \&create;
-    *mkdir = \&create;
+    *make    = \&create;
+    *mkdir   = \&create;
     *creeaza = \&create;
 
     # Create the directory (with parents, if needed)
@@ -133,10 +134,10 @@ package Corvinus::Types::Glob::Dir {
           : Corvinus::Types::Bool::Bool->new(File::Path::make_path($path));
     }
 
-    *make_tree = \&create_tree;
-    *mktree    = \&create_tree;
-    *make_path = \&create_tree;
-    *mkpath    = \&create_tree;
+    *make_tree   = \&create_tree;
+    *mktree      = \&create_tree;
+    *make_path   = \&create_tree;
+    *mkpath      = \&create_tree;
     *creeaza_tot = \&create_tree;
 
     sub open {
@@ -160,7 +161,7 @@ package Corvinus::Types::Glob::Dir {
         $success ? $dir_obj : ();
     }
 
-    *open_r = \&open;
+    *open_r   = \&open;
     *deschide = \&open;
 
     sub open_w  { ... }
@@ -192,7 +193,7 @@ package Corvinus::Types::Glob::Dir {
     }
 
     *catfile = \&concat;
-    *uneste = \&concat;
+    *uneste  = \&concat;
 
     sub is_empty {
         my ($self) = @_;
@@ -209,7 +210,7 @@ package Corvinus::Types::Glob::Dir {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('Dir(' . ${Corvinus::Types::String::String->new($self->get_value)->dump} . ')');
+        Corvinus::Types::String::String->new('Dosar(' . ${Corvinus::Types::String::String->new($self->get_value)->dump} . ')');
     }
 
     {

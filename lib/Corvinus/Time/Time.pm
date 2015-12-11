@@ -68,7 +68,7 @@ package Corvinus::Time::Time {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('Time(' . $self->get_value . ')');
+        Corvinus::Types::String::String->new('Timp(' . $self->get_value . ')');
     }
 
 };

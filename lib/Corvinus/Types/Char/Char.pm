@@ -19,7 +19,7 @@ package Corvinus::Types::Char::Char {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new(q{Char(} . $self->to_s->dump->get_value . q{)});
+        Corvinus::Types::String::String->new(q{Caracter(} . $self->to_s->dump->get_value . q{)});
     }
 };
 

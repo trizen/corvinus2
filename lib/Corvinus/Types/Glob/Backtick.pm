@@ -30,7 +30,7 @@ package Corvinus::Types::Glob::Backtick {
     sub dump {
         my ($self) = @_;
         Corvinus::Types::String::String->new(
-                                     'Backtick(' . Corvinus::Types::String::String->new($self->get_value)->dump->get_value . ')');
+                                   'Comanda(' . Corvinus::Types::String::String->new($self->get_value)->dump->get_value . ')');
     }
 };
 

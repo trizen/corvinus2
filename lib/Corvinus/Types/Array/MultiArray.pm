@@ -80,8 +80,8 @@ package Corvinus::Types::Array::MultiArray {
     sub dump {
         my ($self) = @_;
         Corvinus::Types::String::String->new(
-            'MultiArr(' . join(
-                ",\n\t     ",
+            'MultiLista(' . join(
+                ",\n\t      ",
                 map {
                     '[' . join(
                         ", ",

@@ -14,7 +14,7 @@ package Corvinus::Types::Byte::Byte {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('Byte(' . $self->get_value . ')');
+        Corvinus::Types::String::String->new('Octet(' . $self->get_value . ')');
     }
 };
 

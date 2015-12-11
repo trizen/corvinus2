@@ -19,7 +19,7 @@ package Corvinus::Types::Grapheme::Grapheme {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new(q{Grapheme(} . $self->to_s->dump->get_value . q{)});
+        Corvinus::Types::String::String->new(q{Grafem(} . $self->to_s->dump->get_value . q{)});
     }
 };
 

@@ -55,7 +55,7 @@ package Corvinus::Types::Byte::Bytes {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('Bytes(' . CORE::join(', ', map { $_->dump->get_value } @{$self}) . ')');
+        Corvinus::Types::String::String->new('Octeti(' . CORE::join(', ', map { $_->dump->get_value } @{$self}) . ')');
     }
 };
 

@@ -20,7 +20,7 @@ package Corvinus::Types::Glob::File {
     }
 
     *call = \&new;
-    *nou = \&new;
+    *nou  = \&new;
 
     sub get_value { ${$_[0]} }
     sub to_file   { $_[0] }
@@ -51,9 +51,9 @@ package Corvinus::Types::Glob::File {
         $self->open('>>', @args);
     }
 
-    *make   = \&touch;
-    *mkfile = \&touch;
-    *create = \&touch;
+    *make    = \&touch;
+    *mkfile  = \&touch;
+    *create  = \&touch;
     *creeaza = \&touch;
 
     sub size {
@@ -98,7 +98,7 @@ package Corvinus::Types::Glob::File {
     }
 
     *e_dosar = \&is_directory;
-    *is_dir = \&is_directory;
+    *is_dir  = \&is_directory;
 
     sub is_link {
         my ($self) = @_;
@@ -113,8 +113,8 @@ package Corvinus::Types::Glob::File {
         Corvinus::Types::String::String->new(CORE::readlink($self->get_value));
     }
 
-    *read_link = \&readlink;
-*citeste_link = \&readlink;
+    *read_link    = \&readlink;
+    *citeste_link = \&readlink;
 
     sub is_socket {
         my ($self) = @_;
@@ -279,8 +279,8 @@ package Corvinus::Types::Glob::File {
         Corvinus::Types::String::String->new(File::Basename::basename($self->get_value));
     }
 
-    *base      = \&basename;
-    *base_name = \&basename;
+    *base         = \&basename;
+    *base_name    = \&basename;
     *nume_de_baza = \&basename;
 
     sub dirname {
@@ -293,7 +293,7 @@ package Corvinus::Types::Glob::File {
 
     *dir      = \&dirname;
     *dir_name = \&dirname;
-*dosar = \&dirname;
+    *dosar    = \&dirname;
 
     sub is_absolute {
         my ($self) = @_;
@@ -312,11 +312,11 @@ package Corvinus::Types::Glob::File {
         $self->new(File::Spec->rel2abs($self->get_value));
     }
 
-    *abs     = \&abs_name;
-    *absname = \&abs_name;
-    *rel2abs = \&abs_name;
-*cale_absoluta = \&abs_name;
-*nume_absolut = \&abs_name;
+    *abs           = \&abs_name;
+    *absname       = \&abs_name;
+    *rel2abs       = \&abs_name;
+    *cale_absoluta = \&abs_name;
+    *nume_absolut  = \&abs_name;
 
     sub rel_name {
         my ($self, $base) = @_;
@@ -324,11 +324,11 @@ package Corvinus::Types::Glob::File {
         $self->new(File::Spec->rel2abs($self->get_value, defined($base) ? $base->get_value : ()));
     }
 
-    *rel     = \&rel_name;
-    *relname = \&rel_name;
-    *abs2rel = \&rel_name;
-*cale_relativa = \&rel_name;
-*nume_relativ = \&rel_name;
+    *rel           = \&rel_name;
+    *relname       = \&rel_name;
+    *abs2rel       = \&rel_name;
+    *cale_relativa = \&rel_name;
+    *nume_relativ  = \&rel_name;
 
     sub rename {
         my ($self, $file) = @_;
@@ -353,8 +353,8 @@ package Corvinus::Types::Glob::File {
         Corvinus::Types::Bool::Bool->new(File::Copy::move($self->get_value, $file->get_value));
     }
 
-    *mv = \&move;
-*muta = \&move;
+    *mv   = \&move;
+    *muta = \&move;
 
     sub copy {
         my ($self, $file) = @_;
@@ -367,8 +367,8 @@ package Corvinus::Types::Glob::File {
         Corvinus::Types::Bool::Bool->new(File::Copy::copy($self->get_value, $file->get_value));
     }
 
-    *cp = \&copy;
- *copiaza = \&copy;
+    *cp      = \&copy;
+    *copiaza = \&copy;
 
     sub edit {
         my ($self, $code) = @_;
@@ -437,27 +437,27 @@ package Corvinus::Types::Glob::File {
         $self->open('<:utf8', @rest);
     }
 
-    *open_read = \&open_r;
-*deschide_citire = \&open_r;
-*deschide_c = \&open_r;
+    *open_read       = \&open_r;
+    *deschide_citire = \&open_r;
+    *deschide_c      = \&open_r;
 
     sub open_w {
         my ($self, @rest) = @_;
         $self->open('>:utf8', @rest);
     }
 
-    *open_write = \&open_w;
- *deschide_scriere = \&open_w;
-*deschide_s = \&open_w;
+    *open_write       = \&open_w;
+    *deschide_scriere = \&open_w;
+    *deschide_s       = \&open_w;
 
     sub open_a {
         my ($self, @rest) = @_;
         $self->open('>>:utf8', @rest);
     }
 
-    *open_append = \&open_a;
-*deschide_adaugare = \&open_a;
-*deschide_a = \&open_a;
+    *open_append       = \&open_a;
+    *deschide_adaugare = \&open_a;
+    *deschide_a        = \&open_a;
 
     sub open_rw {
         my ($self, @rest) = @_;
@@ -465,15 +465,15 @@ package Corvinus::Types::Glob::File {
     }
 
     *open_read_write = \&open_rw;
-*deschide_cs = \&open_rw;
+    *deschide_cs     = \&open_rw;
 
     sub opendir {
         my ($self, @rest) = @_;
         Corvinus::Types::Glob::Dir->new($self->get_value)->open(@rest);
     }
 
- *deschide_dosar = \&opendir;
-*deschide_ca_dosar = \&opendir;
+    *deschide_dosar    = \&opendir;
+    *deschide_ca_dosar = \&opendir;
 
     sub sysopen {
         my ($self, $var_ref, $mode, $perm) = @_;
@@ -553,7 +553,8 @@ package Corvinus::Types::Glob::File {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('File(' . ${Corvinus::Types::String::String->new($self->get_value)->dump} . ')');
+        Corvinus::Types::String::String->new(
+                                            'Fisier(' . ${Corvinus::Types::String::String->new($self->get_value)->dump} . ')');
     }
 
     # Path split

@@ -18,7 +18,7 @@ package Corvinus::Types::Grapheme::Graphemes {
 
     sub dump {
         my ($self) = @_;
-        Corvinus::Types::String::String->new('Graphemes(' . join(', ', map { $_->dump->get_value } @{$self}) . ')');
+        Corvinus::Types::String::String->new('Grafeme(' . join(', ', map { $_->dump->get_value } @{$self}) . ')');
     }
 };
 

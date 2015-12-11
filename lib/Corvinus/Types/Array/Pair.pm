@@ -66,7 +66,7 @@ package Corvinus::Types::Array::Pair {
         my ($self) = @_;
 
         Corvinus::Types::String::String->new(
-            "Pair(" . "\n" . join(
+            "Pereche(" . "\n" . join(
                 ",\n",
 
                 (' ' x ($Corvinus::SPACES += $Corvinus::SPACES_INCR)) . join(
