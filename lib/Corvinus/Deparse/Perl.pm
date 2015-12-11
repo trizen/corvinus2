@@ -1223,12 +1223,11 @@ HEADER
             }
         }
 
-        my $old_code = $code;
-
         # Method call on the self obj (+optional arguments)
         if (exists $expr->{call}) {
 
-            foreach my $i (0 .. $#{$expr->{call}}) {
+            my $end = $#{$expr->{call}};
+            foreach my $i (0 .. $end) {
 
                 my $call   = $expr->{call}[$i];
                 my $method = $call->{method};
@@ -1446,7 +1445,7 @@ HEADER
                 if (exists $call->{block}) {
 
                     # TODO: move above the deparsing of `Block::If`
-                    if ($ref eq 'Corvinus::Types::Block::If' and $i == $#{$expr->{call}}) {
+                    if ($ref eq 'Corvinus::Types::Block::If' and $i == $end) {
                         $code =
                           "do {\n" . (' ' x $Corvinus::SPACES) . $code . $self->deparse_bare_block(@{$call->{block}}) . '}';
                     }
