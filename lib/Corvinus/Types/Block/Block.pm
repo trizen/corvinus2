@@ -25,6 +25,7 @@ package Corvinus::Types::Block::Block {
         my ($self, @args) = @_;
 
       OUTER: foreach my $method ($self, (exists($self->{kids}) ? @{$self->{kids}} : ())) {
+
             my $table = $self->{table};
 
             my %seen;
@@ -115,7 +116,7 @@ package Corvinus::Types::Block::Block {
                 }
             }
 
-            return ($method, $method->{code}(@pos_args));
+            return ($method, $method->{code}->(@pos_args));
         }
 
         my $name = Corvinus::normalize_type($self->{name} // '__ANON__');
@@ -168,6 +169,11 @@ package Corvinus::Types::Block::Block {
     sub call {
         my ($block, @args) = @_;
 
+        # Handle block calls
+        if ($block->{type} eq 'block') {
+            return $block->{code}->(@args);
+        }
+
         my ($self, @objs) = $block->_multiple_dispatch(@args);
 
         # Unpack 'return'ed values from bare-blocks
@@ -212,7 +218,7 @@ package Corvinus::Types::Block::Block {
                 local *UNIVERSAL::AUTOLOAD = $ref;
                 if (defined($a) || defined($b)) { push @args, $a, $b }
                 elsif (defined($_)) { unshift @args, $_ }
-                $self->run(map { Corvinus::Perl::Perl->to_corvinus($_) } @args);
+                $self->call(map { Corvinus::Perl::Perl->to_corvinus($_) } @args);
             };
         }
     }
@@ -227,7 +233,7 @@ package Corvinus::Types::Block::Block {
 
         open my $str_h, '>:utf8', \my $str;
         if (defined(my $old_h = select($str_h))) {
-            $self->run;
+            $self->{code}->();
             close $str_h;
             select $old_h;
         }
@@ -270,14 +276,14 @@ package Corvinus::Types::Block::Block {
 
     sub _run_code {
         my ($self, @args) = @_;
-        my $result = $self->run(@args);
+        my $result = $self->{code}->(@args);
         ref($result) eq 'Corvinus::Types::Block::Return' ? $result : ();
     }
 
     sub while {
         my ($self, $condition) = @_;
 
-        while ($condition->run) {
+        while ($condition->{code}->()) {
             if (defined(my $res = $self->_run_code)) {
                 return $res;
             }
@@ -306,7 +312,7 @@ package Corvinus::Types::Block::Block {
         my ($self, $bool) = @_;
 
         if ($bool) {
-            return $self->run;
+            return $self->{code}->();
         }
 
         $bool;
@@ -324,7 +330,7 @@ package Corvinus::Types::Block::Block {
         my $pid = fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
-            my $obj = $self->run;
+            my $obj = $self->{code}->();
             ref($obj) && Storable::store_fd($obj, $fh);
             exit 0;
         }
@@ -344,7 +350,7 @@ package Corvinus::Types::Block::Block {
         my $pid = CORE::fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
-            $self->run;
+            $self->{code}->();
             exit 0;
         }
 
@@ -360,7 +366,7 @@ package Corvinus::Types::Block::Block {
             *threads::wait = \&threads::join;
             1;
         };
-        threads->create(sub { $self->run });
+        threads->create(sub { $self->{code}->() });
     }
 
     *thr = \&thread;

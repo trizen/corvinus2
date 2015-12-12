@@ -2021,8 +2021,8 @@ package Corvinus::Parser {
                         if (defined(my $var = $self->find_var('self', $class))) {
 
                             if ($self->{opt}{k}) {
-                                print STDERR
-"[INFO] `$name` este interpretat ca `self.$name` în $self->{file_name} la linia $self->{line}\n";
+                                print STDERR "[INFO] `$name` este interpretat ca `self.$name` "
+                                  . "în $self->{file_name} la linia $self->{line}\n";
                             }
 
                             $var->{count}++;
@@ -2031,8 +2031,8 @@ package Corvinus::Parser {
                               scalar {
                                       $self->{class} => [
                                                          {
-                                                          self   => $var->{obj},
-                                                          lookup => [[$name]],
+                                                          self => $var->{obj},
+                                                          ind  => [{hash => [$name]}],
                                                          }
                                                         ]
                                      };
@@ -2414,9 +2414,9 @@ package Corvinus::Parser {
 
         my $parsed = 0;
 
-        {
-            if (/\G(?=\{)/) {
-                $struct->{$self->{class}}[-1]{self} = {
+        if (/\G(?=[\{\[])/) {
+
+            $struct->{$self->{class}}[-1]{self} = {
                         $self->{class} => [
                             {
                              self => $struct->{$self->{class}}[-1]{self},
@@ -2424,16 +2424,16 @@ package Corvinus::Parser {
                              : (),
                              exists($struct->{$self->{class}}[-1]{ind}) ? (ind => delete $struct->{$self->{class}}[-1]{ind})
                              : (),
-                             exists($struct->{$self->{class}}[-1]{lookup})
-                             ? (lookup => delete $struct->{$self->{class}}[-1]{lookup})
-                             : (),
                             }
                         ]
-                };
+            };
+        }
 
+        {
+            if (/\G(?=\{)/) {
                 while (/\G(?=\{)/) {
                     my $lookup = $self->parse_lookup(code => $opt{code});
-                    push @{$struct->{$self->{class}}[-1]{lookup}}, $lookup->{$self->{class}};
+                    push @{$struct->{$self->{class}}[-1]{ind}}, {hash => $lookup->{$self->{class}}};
                 }
 
                 $parsed ||= 1;
@@ -2441,6 +2441,17 @@ package Corvinus::Parser {
             }
 
             if (/\G(?=\[)/) {
+                while (/\G(?=\[)/) {
+                    my ($ind) = $self->parse_expr(code => $opt{code});
+                    push @{$struct->{$self->{class}}[-1]{ind}}, {array => $ind};
+                }
+
+                $parsed ||= 1;
+                redo;
+            }
+
+            if (/\G\h*(?=\()/gc) {
+
                 $struct->{$self->{class}}[-1]{self} = {
                         $self->{class} => [
                             {
@@ -2449,23 +2460,10 @@ package Corvinus::Parser {
                              : (),
                              exists($struct->{$self->{class}}[-1]{ind}) ? (ind => delete $struct->{$self->{class}}[-1]{ind})
                              : (),
-                             exists($struct->{$self->{class}}[-1]{lookup})
-                             ? (lookup => delete $struct->{$self->{class}}[-1]{lookup})
-                             : (),
                             }
                         ]
                 };
 
-                while (/\G(?=\[)/) {
-                    my ($ind) = $self->parse_expr(code => $opt{code});
-                    push @{$struct->{$self->{class}}[-1]{ind}}, $ind;
-                }
-
-                $parsed ||= 1;
-                redo;
-            }
-
-            if (/\G\h*(?=\()/gc) {
                 my $arg = $self->parse_arguments(code => $opt{code});
 
                 push @{$struct->{$self->{class}}[-1]{call}},
