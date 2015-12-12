@@ -464,7 +464,7 @@ package Corvinus::Deparse::Corvinus {
         elsif ($ref eq 'Corvinus::Time::Time') {
             $code = 'Timp';
         }
-        elsif ($ref eq 'Corvinus::Sys::SIG') {
+        elsif ($ref eq 'Corvinus::Sys::Sig') {
             $code = 'Semnal';
         }
         elsif ($ref eq 'Corvinus::Types::Number::Number') {

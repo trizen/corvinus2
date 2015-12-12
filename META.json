@@ -88,8 +88,8 @@
       "Corvinus::Perl::Perl" : {
          "file" : "lib/Corvinus/Perl/Perl.pm"
       },
-      "Corvinus::Sys::SIG" : {
-         "file" : "lib/Corvinus/Sys/SIG.pm"
+      "Corvinus::Sys::Sig" : {
+         "file" : "lib/Corvinus/Sys/Sig.pm"
       },
       "Corvinus::Sys::Sys" : {
          "file" : "lib/Corvinus/Sys/Sys.pm"

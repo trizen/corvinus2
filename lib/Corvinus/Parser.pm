@@ -79,7 +79,7 @@ package Corvinus::Parser {
                      | (?:Octeti|Bytes)\b                        (?{ state $x = Corvinus::Types::Byte::Bytes->new })
                      | (?:Timp|Time)\b                           (?{ state $x = Corvinus::Time::Time->new })
                      | Complex\b                                 (?{ state $x = Corvinus::Types::Number::Complex->new })
-                     | (?:Semnal|Sig|SIG)\b                      (?{ state $x = Corvinus::Sys::SIG->new })
+                     | (?:Semnal|Sig)\b                          (?{ state $x = Corvinus::Sys::Sig->new })
                      | (?:Caractere|Chars)\b                     (?{ state $x = Corvinus::Types::Char::Chars->new })
                      | (?:Caracter|Char)\b                       (?{ state $x = Corvinus::Types::Char::Char->new })
                      | (?:Grafeme|Graphemes)\b                   (?{ state $x = Corvinus::Types::Grapheme::Graphemes->new })

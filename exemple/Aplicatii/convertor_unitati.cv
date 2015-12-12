@@ -115,8 +115,8 @@ clasa Unitati(Numar precizie = 2) {
             ),
         ),
         lungime => Dict(   # relativ la 1 metru
-            kilometri    => Dict(re => /^ k(ilo)?m(et(er|r[ieu])s?)? $/inx,   factor => 1e3),
-            metri        => Dict(re => /^(met(er|r[ieu])s?|(?-i:m))$/in,      factor => 1),
+            kilometri    => Dict(re => /^k(ilo)?m(et(er|r[ieu])s?)?$/in,      factor => 1e3),
+            metri        => Dict(re => /^m(et(er|re|r[iu])s?)?$/in,           factor => 1),
             centimetri   => Dict(re => /^(centimet(er|r[ieu])s?|cm)$/in,      factor => 1e-2),
             milimetri    => Dict(re => /^(millimet(er|r[ieu])s?|mm)$/in,      factor => 1e-3),
             micrometri   => Dict(re => /^(micromet(er|r[ieu])s?|um)$/in,      factor => 1e-6),

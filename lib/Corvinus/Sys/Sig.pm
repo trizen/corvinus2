@@ -1,4 +1,4 @@
-package Corvinus::Sys::SIG {
+package Corvinus::Sys::Sig {
 
     sub new {
         bless {}, __PACKAGE__;

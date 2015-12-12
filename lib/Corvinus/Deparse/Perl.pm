@@ -1046,7 +1046,7 @@ HEADER
         elsif ($ref eq 'Corvinus::Time::Time') {
             $code = $ref . '->new';
         }
-        elsif ($ref eq 'Corvinus::Sys::SIG') {
+        elsif ($ref eq 'Corvinus::Sys::Sig') {
             $code = $self->make_constant($ref, 'new', "Sig$refaddr");
         }
         elsif ($ref eq 'Corvinus::Types::Number::Complex') {

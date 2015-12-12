@@ -63,7 +63,7 @@ lib/Corvinus/Object/Object.pm
 lib/Corvinus/Optimizer.pm
 lib/Corvinus/Parser.pm
 lib/Corvinus/Perl/Perl.pm
-lib/Corvinus/Sys/SIG.pm
+lib/Corvinus/Sys/Sig.pm
 lib/Corvinus/Sys/Sys.pm
 lib/Corvinus/Time/Gmtime.pm
 lib/Corvinus/Time/Localtime.pm

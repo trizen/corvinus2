@@ -37,8 +37,8 @@ provides:
     file: lib/Corvinus/Parser.pm
   Corvinus::Perl::Perl:
     file: lib/Corvinus/Perl/Perl.pm
-  Corvinus::Sys::SIG:
-    file: lib/Corvinus/Sys/SIG.pm
+  Corvinus::Sys::Sig:
+    file: lib/Corvinus/Sys/Sig.pm
   Corvinus::Sys::Sys:
     file: lib/Corvinus/Sys/Sys.pm
   Corvinus::Time::Gmtime:
@@ -143,4 +143,4 @@ requires:
 resources:
   license: http://dev.perl.org/licenses/
 version: '2.00'
-x_serialization_backend: 'CPAN::Meta::YAML version 0.016'
+x_serialization_backend: 'CPAN::Meta::YAML version 0.018'
