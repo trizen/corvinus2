@@ -962,8 +962,9 @@ package Corvinus::Types::Array::Array {
         $self->[CORE::rand(scalar @{$self})];
     }
 
-    *pick   = \&rand;
-    *sample = \&rand;
+    *pick      = \&rand;
+    *sample    = \&rand;
+    *aleatoriu = \&rand;
 
     sub range {
         my ($self) = @_;
