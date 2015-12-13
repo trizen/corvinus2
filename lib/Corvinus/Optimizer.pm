@@ -216,6 +216,7 @@ package Corvinus::Optimizer {
                    round roundf
                    digit
                    nok
+                   modinv
                    rdiv
                    is_div
 
@@ -720,15 +721,14 @@ package Corvinus::Optimizer {
             }
         }
 
-        if (not exists($expr->{ind}) and not exists($expr->{lookup}) and not exists($expr->{call})) {
+        if (not exists($expr->{ind}) and not exists($expr->{call})) {
             return (ref($obj) eq 'HASH' ? {self => $obj} : $obj);
         }
 
         $obj = {
                 self => $obj,
-                (exists($expr->{ind})    ? (ind    => []) : ()),
-                (exists($expr->{lookup}) ? (lookup => []) : ()),
-                (exists($expr->{call})   ? (call   => []) : ()),
+                (exists($expr->{ind})  ? (ind  => []) : ()),
+                (exists($expr->{call}) ? (call => []) : ()),
                };
 
         # Array and hash indices
@@ -792,7 +792,6 @@ package Corvinus::Optimizer {
                 if (    defined($ref_obj)
                     and exists($rules{$ref_obj})
                     and not exists($expr->{ind})
-                    and not exists($expr->{lookup})
                     and ref($method) eq '') {
 
                     my $code = $ref_obj->SUPER::can($method);
@@ -848,7 +847,7 @@ package Corvinus::Optimizer {
 
             if ($count > 0) {
                 if ($count == @{$obj->{call}}) {
-                    if (not exists $expr->{ind} and not exists $expr->{lookup}) {
+                    if (not exists $expr->{ind}) {
                         return $obj->{self};
                     }
                     else {
