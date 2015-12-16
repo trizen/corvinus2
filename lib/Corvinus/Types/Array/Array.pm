@@ -271,27 +271,69 @@ package Corvinus::Types::Array::Array {
     *lev   = \&levenshtein;
     *leven = \&levenshtein;
 
-    sub _combinations {
-        my ($n, @set) = @_;
-
-        @set || return;
-        $n == 1 && return map { [$_] } @set;
-
-        my $head = shift @set;
-        my @result = _combinations($n - 1, @set);
-        foreach my $subarray (@result) {
-            CORE::unshift @{$subarray}, $head;
-        }
-        @result, _combinations($n, @set);
-    }
-
     sub combinations {
-        my ($self, $n) = @_;
-        Corvinus::Types::Array::Array->new(map { Corvinus::Types::Array::Array->new(@{$_}) }
-                                           _combinations($n->get_value, @{$self}));
+        my ($self, $k, $block) = @_;
+
+        do {
+            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            $k = $k->get_value;
+        };
+
+        if (defined($block)) {
+
+            if ($k == 0) {
+                $block->run($self->new);
+                return $self;
+            }
+
+            return if $k < 0;
+
+            my $n = @{$self};
+            return $self if ($k > $n or $n == 0);
+
+            my @c = (0 .. $k - 1);
+
+            while (1) {
+
+                if (defined(my $res = $block->_run_code($self->new(@{$self}[@c])))) {
+                    return $res;
+                }
+
+                next if ($c[$k - 1]++ < $n - 1);
+                my $i = $k - 2;
+                $i-- while ($i >= 0 && $c[$i] >= $n - ($k - $i));
+                last if $i < 0;
+                $c[$i]++;
+                while (++$i < $k) { $c[$i] = $c[$i - 1] + 1; }
+            }
+
+            return $self;
+        }
+
+        return $self->new($self->new) if $k == 0;
+        return if $k < 0;
+
+        my $n = @{$self};
+        return $self->new if ($k > $n or $n == 0);
+
+        my @c = (0 .. $k - 1);
+        my @result;
+
+        while (1) {
+            push @result, $self->new(@{$self}[@c]);
+            next if ($c[$k - 1]++ < $n - 1);
+            my $i = $k - 2;
+            $i-- while ($i >= 0 && $c[$i] >= $n - ($k - $i));
+            last if $i < 0;
+            $c[$i]++;
+            while (++$i < $k) { $c[$i] = $c[$i - 1] + 1; }
+        }
+
+        $self->new(@result);
     }
 
     *combination = \&combinations;
+    *combinatii  = \&combinations;
 
     sub count {
         my ($self, $obj) = @_;
@@ -563,6 +605,23 @@ package Corvinus::Types::Array::Array {
     sub item {
         my ($self, $index) = @_;
         exists($self->[$index]) ? $self->[$index] : ();
+    }
+
+    sub fetch {
+        my ($self, $index, $default) = @_;
+        exists($self->[$index]) ? $self->[$index] : $default;
+    }
+
+    sub dig {
+        my ($self, $key, @keys) = @_;
+
+        my $value = $self->fetch($key) // return;
+
+        foreach my $key (@keys) {
+            $value = $value->fetch($key) // return;
+        }
+
+        $value;
     }
 
     sub _slice {
@@ -989,7 +1048,7 @@ package Corvinus::Types::Array::Array {
 
     sub insert {
         my ($self, $index, @objects) = @_;
-        splice(@{$self}, $index->get_value, 0, @{__PACKAGE__->new(@objects)});
+        splice(@{$self}, $index->get_value, 0, @objects);
         $self;
     }
 
@@ -1280,11 +1339,7 @@ package Corvinus::Types::Array::Array {
         $offset = defined($offset) ? $offset->get_value : 0;
         $length = defined($length) ? $length->get_value : scalar(@{$self});
 
-        if (@objects) {
-            return $self->new(CORE::splice(@{$self}, $offset, $length, @{__PACKAGE__->new(@objects)}));
-        }
-
-        $self->new(CORE::splice(@{$self}, $offset, $length));
+        $self->new(CORE::splice(@{$self}, $offset, $length, @objects));
     }
 
     sub take_right {
