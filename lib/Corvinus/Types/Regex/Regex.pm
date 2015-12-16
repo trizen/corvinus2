@@ -14,20 +14,16 @@ package Corvinus::Types::Regex::Regex {
     sub new {
         my (undef, $regex, $mode) = @_;
 
-        if (ref($mode) eq 'Corvinus::Types::String::String') {
-            $mode = $mode->get_value;
-        }
+        $regex = defined($regex) ? ref($regex) ? $regex->get_value : $regex : '';
+        $mode  = defined($mode)  ? ref($mode)  ? $mode->get_value  : $mode  : '';
 
-        my $global_mode = defined($mode) && $mode =~ tr/g//d;
-
-        if (not defined $mode or $mode eq '') {
-            $mode = q{^};
-        }
-
-        my $compiled_re = qr{(?$mode:$regex)};
+        my $global_mode = $mode =~ tr/g//d;
+        my $compiled_re = $mode eq '' ? qr{$regex} : qr{(?$mode:$regex)};
 
         bless {
                regex  => $compiled_re,
+               raw    => $regex,
+               flags  => $mode,
                global => $global_mode,
                pos    => 0,
               },
@@ -44,7 +40,7 @@ package Corvinus::Types::Regex::Regex {
     sub match {
         my ($self, $object, $pos) = @_;
 
-        $object //= Corvinus::Types::String::String->new('');
+        $object //= do { state $x = Corvinus::Types::String::String->new('') };
 
         if ($object->SUPER::isa('ARRAY')) {
             my $match;
@@ -56,10 +52,10 @@ package Corvinus::Types::Regex::Regex {
         }
 
         Corvinus::Types::Regex::Match->new(
-                                        obj  => $object->get_value,
-                                        self => $self,
-                                        pos  => defined($pos) ? $pos->get_value : undef,
-                                       );
+                                           obj  => $object->get_value,
+                                           self => $self,
+                                           pos  => defined($pos) ? $pos->get_value : undef,
+                                          );
     }
 
     sub gmatch {
@@ -71,14 +67,8 @@ package Corvinus::Types::Regex::Regex {
     sub dump {
         my ($self) = @_;
 
-        my $str = "$self->{regex}";
-
-        my $flags = '';
-        if ($str =~ s/\(\?\^u:\(\?(?:\^|(.*?))://) {
-            $flags = $1 // '';
-            chop $str;
-            chop $str;
-        }
+        my $str   = $self->{raw};
+        my $flags = $self->{flags};
 
         Corvinus::Types::String::String->new('/' . $str =~ s{/}{\\/}gr . '/' . $flags . ($self->{global} ? 'g' : ''));
     }

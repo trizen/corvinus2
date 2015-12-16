@@ -13,7 +13,7 @@ package Corvinus::Convert::Convert {
           : $self;
     }
 
-    *to_str = \&to_s;
+    *to_str  = \&to_s;
     *ca_text = \&to_s;
 
     sub to_obj {
@@ -28,16 +28,16 @@ package Corvinus::Convert::Convert {
         Corvinus::Types::Number::Number->new(Math::BigFloat->new($_[0]->get_value)->as_int);
     }
 
-    *ca_int = \&to_i;
+    *ca_int    = \&to_i;
     *ca_intreg = \&to_i;
-    *to_int = \&to_i;
+    *to_int    = \&to_i;
 
     sub to_rat {
         Corvinus::Types::Number::Number->new(Math::BigRat->new($_[0]->get_value));
     }
 
     *ca_rational = \&to_rat;
-    *ca_rat = \&to_rat;
+    *ca_rat      = \&to_rat;
     *to_rational = \&to_rat;
     *to_r        = \&to_rat;
 
@@ -46,19 +46,20 @@ package Corvinus::Convert::Convert {
     }
 
     *ca_complex = \&to_complex;
-    *to_c = \&to_complex;
+    *to_c       = \&to_complex;
 
     sub to_n {
         Corvinus::Types::Number::Number->new($_[0]->get_value);
     }
 
-    *ca_num = \&to_n;
-    *ca_numar = \&to_n;
+    *ca_num    = \&to_n;
+    *ca_numar  = \&to_n;
     *to_num    = \&to_n;
     *to_number = \&to_n;
 
     sub to_float {
-        Corvinus::Types::Number::Number->new(Math::BigFloat->new($_[0]->get_value));
+        my ($value) = $_[0]->get_value;
+        Corvinus::Types::Number::Number->new(ref($value) eq 'Math::BigRat' ? $value->as_float : Math::BigFloat->new($value));
     }
 
     *to_f = \&to_float;
@@ -85,8 +86,8 @@ package Corvinus::Convert::Convert {
         Corvinus::Types::Regex::Regex->new($_[0]->get_value);
     }
 
-    *to_re = \&to_regex;
-    *ca_re = \&to_regex;
+    *to_re    = \&to_regex;
+    *ca_re    = \&to_regex;
     *ca_regex = \&to_regex;
 
     sub to_byte {
@@ -118,14 +119,14 @@ package Corvinus::Convert::Convert {
     }
 
     *ca_grafem = \&to_grapheme;
-    *to_graph = \&to_grapheme;
+    *to_graph  = \&to_grapheme;
 
     sub to_graphemes {
         Corvinus::Types::Grapheme::Graphemes->call($_[0]);
     }
 
     *ca_grafeme = \&to_graphemes;
-    *to_graphs = \&to_graphemes;
+    *to_graphs  = \&to_graphemes;
 
     sub to_array {
         Corvinus::Types::Array::Array->new($_[0]);

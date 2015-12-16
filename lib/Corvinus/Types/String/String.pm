@@ -101,13 +101,30 @@ package Corvinus::Types::String::String {
     *sterge   = \&subtract;
 
     sub match {
-        my ($self, $regex, @rest) = @_;
-        $regex->match($self, @rest);
+        my ($self, $regex, $pos) = @_;
+
+        $regex = $regex->to_re
+          if ref($regex) ne 'Corvinus::Types::Regex::Regex';
+
+        Corvinus::Types::Regex::Match->new(
+                                           obj  => $$self,
+                                           self => $regex,
+                                           pos  => defined($pos) ? $pos->get_value : undef,
+                                          );
     }
 
     sub gmatch {
-        my ($self, $regex, @rest) = @_;
-        $regex->gmatch($self, @rest);
+        my ($self, $regex, $pos) = @_;
+
+        $regex = $regex->to_re
+          if ref($regex) ne 'Corvinus::Types::Regex::Regex';
+
+        local $regex->{global} = 1;
+        Corvinus::Types::Regex::Match->new(
+                                           obj  => $$self,
+                                           self => $regex,
+                                           pos  => defined($pos) ? $pos->get_value : undef,
+                                          );
     }
 
     sub array_to {
@@ -290,18 +307,20 @@ package Corvinus::Types::String::String {
     }
 
     sub first {
-        my ($self) = @_;
-        __PACKAGE__->new(CORE::substr($$self, 0, 1));
+        my ($self, $obj) = @_;
+        __PACKAGE__->new(CORE::substr($$self, 0, defined($obj) ? $obj->get_value : 1));
     }
 
-    *primul = \&first;
+    *primul  = \&first;
+    *primele = \&first;
 
     sub last {
-        my ($self) = @_;
-        __PACKAGE__->new(CORE::substr($$self, -1));
+        my ($self, $obj) = @_;
+        __PACKAGE__->new(CORE::substr($$self, defined($obj) ? -$obj->get_value : -1));
     }
 
-    *ultimul = \&last;
+    *ultimul  = \&last;
+    *ultimele = \&last;
 
     sub char {
         my ($self, $pos) = @_;
