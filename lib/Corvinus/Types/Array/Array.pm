@@ -648,6 +648,10 @@ package Corvinus::Types::Array::Array {
         $self;
     }
 
+    *each_kv          = \&each_with_index;
+    *fiecare_cv       = \&each_with_index;
+    *fiecare_cu_index = \&each_with_index;
+
     sub map {
         my ($self, $code) = @_;
         $self->new(map { $code->run($_) } @{$self});
@@ -671,7 +675,9 @@ package Corvinus::Types::Array::Array {
 
     *collect_with_index = \&map_with_index;
     *mapeaza_cu_index   = \&map_with_index;
+    *mapeaza_cv         = \&map_with_index;
     *colect_cu_index    = \&map_with_index;
+    *map_kv             = \&map_with_index;
 
     sub flat_map {
         my ($self, $code) = @_;
