@@ -33,14 +33,17 @@ package Corvinus::Types::Array::Pair {
         \@array;
     }
 
-    {
-        no strict 'refs';
-        foreach my $pair ([first => 0], [second => 1]) {
-            *{__PACKAGE__ . '::' . $pair->[0]} = sub {
-                $_[0]->[$pair->[1]];
-            };
-        }
+    sub first : lvalue {
+        $_[0][0];
     }
+
+    *primul = \&first;
+
+    sub second : lvalue {
+        $_[0][1];
+    }
+
+    *ultimul = \&second;
 
     sub swap {
         my ($self) = @_;
