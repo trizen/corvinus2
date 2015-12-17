@@ -1192,11 +1192,8 @@ HEADER
                     if (substr($code, -1) eq '@') {
                         $code .= $self->_dump_unpacked_indices($pos);
                     }
-                    elsif ($#{$pos} > 0) {
-                        $code = '@{' . $code . '}' . $self->_dump_indices($pos);
-                    }
                     else {
-                        $code .= '->' . $self->_dump_indices($pos);
+                        $code = '@{' . $code . '}' . $self->_dump_indices($pos);
                     }
                 }
                 else {
@@ -1206,11 +1203,8 @@ HEADER
                     if (substr($code, -1) eq '@') {
                         $code .= $self->_dump_unpacked_lookups($key);
                     }
-                    elsif ($#{$key} > 0) {
-                        $code = '@{' . $code . '}' . $self->_dump_lookups($key);
-                    }
                     else {
-                        $code .= '->' . $self->_dump_lookups($key);
+                        $code = '@{' . $code . '}' . $self->_dump_lookups($key);
                     }
                 }
 
@@ -1326,16 +1320,20 @@ HEADER
                     if ($method eq '==' or $method eq '!=') {
                         $code =
                             'Corvinus::Types::Bool::Bool->new('
-                          . ($method eq '!=' ? 'CORE::not' : '') . '('
-                          . $code . 'eq'
-                          . $self->deparse_args(@{$call->{arg}}) . '))';
+                          . ($method eq '!=' ? 'CORE::not ' : '') . 'do{'
+                          . $code
+                          . '} eq do{'
+                          . $self->deparse_args(@{$call->{arg}}) . '})';
                         next;
                     }
 
                     # <=> method
                     if ($method eq '<=>') {
                         $code =
-                          'Corvinus::Types::Number::Number->new(' . $code . 'cmp' . $self->deparse_args(@{$call->{arg}}) . ')';
+                            'Corvinus::Types::Number::Number->new(do{'
+                          . $code
+                          . '} cmp do{'
+                          . $self->deparse_args(@{$call->{arg}}) . '})';
                         next;
                     }
 
@@ -1343,15 +1341,18 @@ HEADER
                     if ($method eq '~~' or $method eq '!~') {
                         $self->top_add(qq{use experimental 'smartmatch';\n});
                         $code =
-                          'Corvinus::Types::Bool::Bool->new(' . $code . '~~' . $self->deparse_args(@{$call->{arg}}) . ')';
-                        $code .= '->not' if ($method eq '!~');
+                            'Corvinus::Types::Bool::Bool->new('
+                          . ($method eq '!~' ? 'CORE::not ' : '') . 'do{'
+                          . $code
+                          . '} ~~ do{'
+                          . $self->deparse_args(@{$call->{arg}}) . '})';
                         next;
                     }
 
                     # ! prefix-unary
                     if ($ref eq 'Corvinus::Object::Unary') {
                         if ($method eq '!') {
-                            $code = 'Corvinus::Types::Bool::Bool->new(!' . $self->deparse_args(@{$call->{arg}}) . ')';
+                            $code = 'Corvinus::Types::Bool::Bool->new(!do{' . $self->deparse_args(@{$call->{arg}}) . '})';
                             next;
                         }
 
