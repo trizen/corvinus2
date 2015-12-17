@@ -101,6 +101,11 @@ package Corvinus::Object::Object {
         Corvinus::Types::String::String->new(CORE::ref($obj) || $obj);
     }
 
+    sub bless {
+        my ($obj, $arg) = @_;
+        bless($arg, (CORE::ref($obj) || $obj));
+    }
+
     sub respond_to {
         my ($self, $method) = @_;
         Corvinus::Types::Bool::Bool->new($self->can($method));
