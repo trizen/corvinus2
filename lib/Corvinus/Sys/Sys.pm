@@ -166,12 +166,8 @@ package Corvinus::Sys::Sys {
 
     sub scanln {
         my ($self, $text) = @_;
-
-        if (defined($text)) {
-            $text->print;
-        }
-
-        Corvinus::Types::String::String->new(scalar unpack("A*", scalar <STDIN>));
+        CORE::print $text;
+        Corvinus::Types::String::String->new(scalar unpack("A*", scalar(<STDIN>) // return));
     }
 
     *readln        = \&scanln;
