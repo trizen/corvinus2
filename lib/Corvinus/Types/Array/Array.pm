@@ -275,7 +275,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $k, $block) = @_;
 
         do {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $k = $k->get_value;
         };
 
