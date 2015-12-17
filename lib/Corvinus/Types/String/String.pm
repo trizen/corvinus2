@@ -913,14 +913,16 @@ package Corvinus::Types::String::String {
     *len             = \&chars_length;
     *length          = \&chars_length;
     *chars_len       = \&chars_length;
+    *lungime         = \&chars_length;
     *numar_caractere = \&chars_length;
 
     sub graphs_length {
         Corvinus::Types::Number::Number->new(scalar(() = ${$_[0]} =~ /\X/g));
     }
 
-    *graphs_len    = \&graphs_length;
-    *numar_grafeme = \&graphs_length;
+    *graphs_len      = \&graphs_length;
+    *lungime_grafeme = \&graphs_length;
+    *numar_grafeme   = \&graphs_length;
 
     sub bytes_length {
         my ($self) = @_;
@@ -929,8 +931,9 @@ package Corvinus::Types::String::String {
         Corvinus::Types::Number::Number->new(bytes::length($$self));
     }
 
-    *bytes_len    = \&bytes_length;
-    *numar_octeti = \&bytes_length;
+    *bytes_len      = \&bytes_length;
+    *lungime_octeti = \&bytes_length;
+    *numar_octeti   = \&bytes_length;
 
     sub levenshtein {
         my ($self, $arg) = @_;
