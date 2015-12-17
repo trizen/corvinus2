@@ -280,7 +280,7 @@ package Corvinus::Types::Number::Number {
 
         defined($to)
           ? $self->to($to, $step)
-          : $from->to($self);
+          : $from->to($self->dec);
     }
 
     *sir = \&range;
