@@ -798,6 +798,26 @@ package Corvinus::Types::Array::Array {
     *selecteaza = \&grep;
     *filtreaza  = \&grep;
 
+    sub grep_kv {
+        my ($self, $code) = @_;
+
+        my @arr;
+        foreach my $i (0 .. $#{$self}) {
+            push(@arr, $self->[$i]) if $code->run(Corvinus::Types::Number::Number->new($i), $self->[$i]);
+        }
+
+        $self->new(@arr);
+    }
+
+    *filter_kv           = \&grep_kv;
+    *select_kv           = \&grep_kv;
+    *alege_cv            = \&grep_kv;
+    *alege_cu_index      = \&grep_kv;
+    *selecteaza_cv       = \&grep_kv;
+    *selecteaza_cu_index = \&grep_kv;
+    *filtreaza_cv        = \&grep_kv;
+    *filtreaza_cu_index  = \&grep_kv;
+
     sub group_by {
         my ($self, $code) = @_;
 
@@ -1693,9 +1713,9 @@ package Corvinus::Types::Array::Array {
     *remove_last_if      = \&delete_last_if;
     *sterge_ultimul_daca = \&delete_last_if;
 
-    sub to_list {
-        @{$_[0]};
-    }
+    sub to_list { @{$_[0]} }
+    *as_list  = \&to_list;
+    *ca_lista = \&to_lista;
 
     sub dump {
         my ($self) = @_;

@@ -314,14 +314,12 @@ package Corvinus::Types::Hash::Hash {
 
         my @array;
         foreach my $key (CORE::keys %$self) {
-            push @array, [$key, $code->run(Corvinus::Types::String::String->new($key), $self->{$key})];
+            my $str = Corvinus::Types::String::String->new($key);
+            push @array, [$key, $str, $code->run($str, $self->{$key})];
         }
 
-        Corvinus::Types::Array::Array->new(
-            map {
-                Corvinus::Types::Array::Array->new(Corvinus::Types::String::String->new($_->[0]), $self->{$_->[0]})
-              } (sort { $a->[1] cmp $b->[1] } @array)
-        );
+        Corvinus::Types::Array::Array->new(map { Corvinus::Types::Array::Array->new($_->[1], $self->{$_->[0]}) }
+                                           (sort { $a->[2] cmp $b->[2] } @array));
     }
 
     *sorteaza_dupa = \&sort_by;
@@ -353,8 +351,8 @@ package Corvinus::Types::Hash::Hash {
         my ($self) = @_;
 
         my $new_hash = $self->new();
-        @{$new_hash}{map { $_->get_value } CORE::values %$self} =
-          (map           { Corvinus::Types::String::String->new($_) } CORE::keys %$self);
+        @{$new_hash}{CORE::values %$self} =
+          (map { Corvinus::Types::String::String->new($_) } CORE::keys %$self);
 
         $new_hash;
     }
@@ -369,6 +367,14 @@ package Corvinus::Types::Hash::Hash {
     }
 
     *copiaza = \&copy;
+
+    sub to_list {
+        my ($self) = @_;
+        map { (Corvinus::Types::String::String->new($_), $self->{$_}) } keys %$self;
+    }
+
+    *as_list  = \&to_list;
+    *ca_lista = \&to_list;
 
     sub dump {
         my ($self) = @_;
