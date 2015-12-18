@@ -170,7 +170,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $num) = @_;
 
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $num = $num->get_value;
         }
 
@@ -188,7 +188,7 @@ package Corvinus::Types::Array::Array {
 
         my @array;
         my $len = @obj / do {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $num->get_value;
         };
 
@@ -284,7 +284,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $k, $block) = @_;
 
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $k = $k->get_value;
         }
 
@@ -430,7 +430,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $size, $type) = @_;
         $self->new(
             ($type) x do {
-                local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+                local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
                 $size->get_value;
               }
         );
@@ -703,7 +703,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $n, $code) = @_;
 
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $n = $n->get_value;
         }
 
@@ -1045,7 +1045,7 @@ package Corvinus::Types::Array::Array {
 
     sub resize {
         my ($self, $num) = @_;
-        local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+        local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
         $#{$self} = $num->get_value;
         $num;
     }
@@ -1322,7 +1322,7 @@ package Corvinus::Types::Array::Array {
                     @{$self},
                     0,
                     do {
-                        local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+                        local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
                         $num->get_value;
                       }
                 )
@@ -1342,7 +1342,7 @@ package Corvinus::Types::Array::Array {
 
         if (defined $num) {
             {
-                local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+                local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
                 $num = $num->get_value;
             }
 
@@ -1371,7 +1371,7 @@ package Corvinus::Types::Array::Array {
         CORE::splice(
             @{$self},
             do {
-                local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+                local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
                 $offset->get_value;
             },
             1
@@ -1386,7 +1386,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $offset, $length, @objects) = @_;
 
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $offset = defined($offset) ? $offset->get_value : 0;
             $length = defined($length) ? $length->get_value : scalar(@{$self});
         }
@@ -1399,7 +1399,7 @@ package Corvinus::Types::Array::Array {
 
         my $end = $#{$self};
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $amount = $amount->get_value;
             $amount = $end > ($amount - 1) ? $amount - 1 : $end;
         }
@@ -1413,7 +1413,7 @@ package Corvinus::Types::Array::Array {
 
         my $end = $#{$self};
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $amount = $amount->get_value;
             $amount = $end > ($amount - 1) ? $amount - 1 : $end;
         }
@@ -1539,7 +1539,7 @@ package Corvinus::Types::Array::Array {
         my ($self, $num) = @_;
 
         {
-            local $Sidef::Types::Number::Number::GET_PERL_VALUE = 1;
+            local $Corvinus::Types::Number::Number::GET_PERL_VALUE = 1;
             $num = $num->get_value;
         }
 
