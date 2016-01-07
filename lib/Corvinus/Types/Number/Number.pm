@@ -32,7 +32,7 @@ package Corvinus::Types::Number::Number {
             : (
                $cache{$num} //= (
                    bless \do {
-                       eval { Math::BigFloat->new($num) } // Math::BigFloat->new(Math::BigInt->new($num));
+                       eval { Math::BigFloat->new($num // 0) } // Math::BigFloat->new(Math::BigInt->new($num));
                      }
                      => __PACKAGE__
                )
