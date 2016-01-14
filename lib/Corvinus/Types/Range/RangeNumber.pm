@@ -5,7 +5,9 @@ package Corvinus::Types::Range::RangeNumber {
       Corvinus::Object::Object
       );
 
-    use overload '@{}' => \&to_a;
+    use overload
+      '@{}' => \&to_a,
+      q{""} => \&dump;
 
     sub new {
         my (undef, $from, $to, $step) = @_;
@@ -301,6 +303,11 @@ package Corvinus::Types::Range::RangeNumber {
                                              and $r1->{to} == $r2->{to}
                                              and $r1->{step} == $r2->{step});
         };
+    }
+
+    sub dump {
+        my ($self) = @_;
+        Corvinus::Types::String::String->new("SirNum($self->{from}, $self->{to}, $self->{step})");
     }
 
 }

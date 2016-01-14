@@ -5,7 +5,9 @@ package Corvinus::Types::Range::RangeString {
       Corvinus::Object::Object
       );
 
-    use overload '@{}' => \&to_a;
+    use overload
+      '@{}' => \&to_a,
+      q{""} => \&dump;
 
     sub new {
         my (undef, $from, $to, $direction) = @_;
@@ -137,7 +139,8 @@ package Corvinus::Types::Range::RangeString {
         my $array;
         my $method = $self->{asc} ? 'array_to' : 'array_downto';
 
-        $array = Corvinus::Types::String::String->new($self->{from})->$method(Corvinus::Types::String::String->new($self->{to}));
+        $array =
+          Corvinus::Types::String::String->new($self->{from})->$method(Corvinus::Types::String::String->new($self->{to}));
         $name eq '' ? $array : $array->$name(@args);
     }
 
@@ -146,10 +149,23 @@ package Corvinus::Types::Range::RangeString {
         *{__PACKAGE__ . '::' . '=='} = sub {
             my ($r1, $r2) = @_;
             Corvinus::Types::Bool::Bool->new(    ref($r1) eq ref($r2)
-                                          and $r1->{from} eq $r2->{from}
-                                          and $r1->{to} eq $r2->{to}
-                                          and $r1->{asc} eq $r2->{asc});
+                                             and $r1->{from} eq $r2->{from}
+                                             and $r1->{to} eq $r2->{to}
+                                             and $r1->{asc} eq $r2->{asc});
         };
+    }
+
+    sub dump {
+        my ($self) = @_;
+        Corvinus::Types::String::String->new(
+                                             "SirText("
+                                               . join(', ',
+                                                      ${Corvinus::Types::String::String->new($self->{from})->dump},
+                                                      ${Corvinus::Types::String::String->new($self->{to})->dump},
+                                                      Corvinus::Types::Bool::Bool->new($self->{asc}),
+                                                     )
+                                               . ")"
+                                            );
     }
 }
 

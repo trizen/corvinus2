@@ -13,7 +13,7 @@ bucla {
     var numar = citeste(">> ", String)
 
     daca(!definit(numar) sau numar=="q") {
-    stop
+        stop
     }
 
     daca (numar.arata_ca_numar) {
