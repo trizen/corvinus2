@@ -2675,12 +2675,13 @@ package Corvinus::Parser {
                     my $has_arg;
                     if ($req_arg or exists $self->{binpost_ops}{$method}) {
                         my $lonely_obj = /\G\h*(?=\()/gc;
+                        my $is_binpost = exists($self->{binpost_ops}{$method});
 
                         my $code = substr($_, pos);
                         my $arg = (
-                                     $lonely_obj
-                                   ? $self->parse_arguments(code => \$code)
-                                   : $self->parse_obj(code => \$code)
+                                     $is_binpost && /\G(?=\h*(?:\R|#))/ ? ()
+                                   : $lonely_obj ? $self->parse_arguments(code => \$code)
+                                   :               $self->parse_obj(code => \$code)
                                   );
 
                         if (defined $arg) {
@@ -2704,7 +2705,7 @@ package Corvinus::Parser {
                                                  op_type => $op_type,
                                                 );
                         }
-                        elsif (exists $self->{binpost_ops}{$method}) {
+                        elsif ($is_binpost) {
                             ## it's a postfix operator
                         }
                         else {
