@@ -557,6 +557,12 @@ HEADER
                               . "\$$obj->{name}$refaddr->call(\$self, Corvinus::Types::String::String->new(\$class), Corvinus::Types::String::String->new(\$method), \@_) }";
                         }
 
+                        # Anonymous method
+                        elsif ($obj->{name} eq '__ANON__') {
+                            ## don't add anonymous methods to the class,
+                            ## but allow them to be defined and used freely
+                        }
+
                         # Other methods
                         else {
                             $code .= ";\n"

@@ -276,7 +276,8 @@ package Corvinus::Sys::Sys {
         Corvinus::Types::Number::Number->new(CORE::system(@args));
     }
 
-    *run = \&system;
+    *run     = \&system;
+    *ruleaza = \&system;
 
     sub exec {
         my ($self, @args) = @_;
