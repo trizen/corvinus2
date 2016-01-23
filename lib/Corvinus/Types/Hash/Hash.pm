@@ -305,6 +305,7 @@ package Corvinus::Types::Hash::Hash {
         Corvinus::Types::Array::Array->new(Corvinus::Types::String::String->new($key), $value);
     }
 
+    *each_kv         = \&each;
     *each_pair       = \&each;
     *fiecare         = \&each;
     *fiecare_pereche = \&each;

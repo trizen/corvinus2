@@ -68,6 +68,7 @@ package Corvinus::Parser {
                      | (?:Hash|Dict(?:ionar)?+)\b                (?{ state $x = Corvinus::Types::Hash::Hash->new })
                      | (?:Text|Str(?:ing)?+)\b                   (?{ state $x = Corvinus::Types::String::String->new })
                      | Num(?:ar|ber)?+\b                         (?{ state $x = Corvinus::Types::Number::Number->new })
+                     | Inf\b                                     (?{ state $x = Corvinus::Types::Number::Number->inf })
                      | (?:RangeNum(?:ber)?+|SirNum(?:ar)?+)\b    (?{ state $x = Corvinus::Types::Range::RangeNumber->new })
                      | (?:RangeStr(?:ing)?+|SirText)\b           (?{ state $x = Corvinus::Types::Range::RangeString->new })
                      | Mat[eh]\b                                 (?{ state $x = Corvinus::Math::Math->new })
