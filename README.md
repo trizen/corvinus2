@@ -17,14 +17,14 @@ The Corvinus programming language
 /                 ^^^^^^                 \
 ```
 
-The syntax of the language is in two human languages: English and Romanian,
-blending them together in harmony, making programming available for anyone.
+The syntax of Corvinus is in two natural languages: English and Romanian,
+blending them together in harmony, making programming available for everyone.
 
 The language Corvinus was created for educational purposes only.
 
 **LICENSE AND COPYRIGHT**
 
-* Copyright (C) 2015 Daniel Șuteu
+* Copyright (C) 2015-2016 Daniel Șuteu
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of the *Artistic License (2.0)*. You may obtain a copy
