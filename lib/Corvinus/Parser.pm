@@ -377,10 +377,10 @@ package Corvinus::Parser {
         my $error_line = (split(/\R/, substr($opt{code}, $start, $line_length)))[0];
 
         my @lines = (
-                     "am identificat o erorare în programul dvs.",
-                     "ceva este greșit în programul dvs.",
-                     "ceva este scris greșit; vă rugăm să verificăți programul cu atenție",
-                     "nu mai pot continua; mă opresc aici",
+                     "am identificat o erorare in programul dvs.",
+                     "ceva este gresit in programul dvs.",
+                     "ceva este scris gresit; va rugam sa verificati programul cu atentie",
+                     "nu mai pot continua; ma opresc aici",
                     );
 
         state $x = require File::Basename;
@@ -495,7 +495,7 @@ package Corvinus::Parser {
         }
         else {
             $self->fatal_error(
-                               error => qq{nu pot găsi punctul unde începe delimitarea},
+                               error => qq{nu pot gasi punctul unde incepe delimitarea},
                                code  => $_,
                                pos   => pos($_),
                               );
@@ -518,7 +518,7 @@ package Corvinus::Parser {
 
         (defined($pair_delim) ? /\G(?<=\Q$pair_delim\E)/ : /\G$beg_delim/gc)
           || $self->fatal_error(
-                                error => sprintf(qq{nu pot găsi delimitatorul final: <%s>}, $pair_delim // $delim),
+                                error => sprintf(qq{nu pot gasi delimitatorul final: <%s>}, $pair_delim // $delim),
                                 code  => $_,
                                 pos   => pos($_)
                                );
@@ -659,7 +659,7 @@ package Corvinus::Parser {
               || $self->fatal_error(
                                     code  => $_,
                                     pos   => pos,
-                                    error => "nu pot găsi delimitatorul final: '$end_delim'",
+                                    error => "nu pot gasi delimitatorul final: '$end_delim'",
                                    )
              );
 
@@ -692,7 +692,7 @@ package Corvinus::Parser {
                     $self->fatal_error(
                                        code     => $_,
                                        pos      => pos,
-                                       error    => "tip invalid („$type”) specificat pentru variabila '$name'",
+                                       error    => "tip invalid ('$type') specificat pentru variabila '$name'",
                                        expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
                                       );
                 }
@@ -707,8 +707,8 @@ package Corvinus::Parser {
                 $self->fatal_error(
                                    code  => $_,
                                    pos   => $-[2],
-                                   error => "'$name' nu poate fi folosit în acest context pentru că este "
-                                     . "un cuvânt cheie sau o variabilă predefinită!",
+                                   error => "'$name' nu poate fi folosit in acest context pentru ca este "
+                                     . "un cuvant cheie sau o variabila predefinita!",
                                   );
             }
 
@@ -772,7 +772,7 @@ package Corvinus::Parser {
               || $self->fatal_error(
                                     code  => $_,
                                     pos   => pos,
-                                    error => "nu pot găsi delimitatorul final: '$end_delim'",
+                                    error => "nu pot gasi delimitatorul final: '$end_delim'",
                                    )
              );
 
@@ -826,7 +826,7 @@ package Corvinus::Parser {
 
                             /\G\R/gc
                               ? ++$self->{line}
-                              : die sprintf(qq{%s:%s: nu pot gasi textul terminator "%s" niciunde în fișier.\n},
+                              : die sprintf(qq{%s:%s: nu pot gasi textul terminator "%s" niciunde in fisier.\n},
                                             $self->{file_name}, $beg_line, $name);
                         }
 
@@ -1026,8 +1026,8 @@ package Corvinus::Parser {
                         $self->fatal_error(
                                            code  => $_,
                                            pos   => (pos($_) - length($name)),
-                                           error => "'$name' nu poate fi folosit în acest context pentru că "
-                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                           error => "'$name' nu poate fi folosit in acest context pentru ca "
+                                             . "este un cuvant cheie sau o variabila predefinita!",
                                           );
                     }
                 }
@@ -1038,7 +1038,7 @@ package Corvinus::Parser {
                     $args // $self->fatal_error(
                                                 code  => $_,
                                                 pos   => pos($_) - 2,
-                                                error => qq{este necesară o expresie după `=` în declararea }
+                                                error => qq{este necesara o expresie dupa `=` in declararea }
                                                   . qq{atributurilor clasei `$self->{current_class}{name}`},
                                                );
                 }
@@ -1059,8 +1059,8 @@ package Corvinus::Parser {
                         $self->fatal_error(
                                            code  => $_,
                                            pos   => (pos($_) - length($name)),
-                                           error => "'$name' nu poate fi folosit în acest context pentru că "
-                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                           error => "'$name' nu poate fi folosit in acest context pentru ca "
+                                             . "este un cuvant cheie sau o variabila predefinita!",
                                           );
                     }
                 }
@@ -1073,9 +1073,9 @@ package Corvinus::Parser {
 
                     my $obj = $self->parse_obj(code => $opt{code});
                     $obj // $self->fatal_error(
-                                     code  => $_,
-                                     pos   => pos($_) - 2,
-                                     error => qq{este necesară o expresie care să poată fi evaluată pentru numele "$name"},
+                                         code  => $_,
+                                         pos   => pos($_) - 2,
+                                         error => qq{este necesara o expresie care sa poata fi evaluata pentru numele "$name"},
                     );
 
                     my $var =
@@ -1144,8 +1144,8 @@ package Corvinus::Parser {
                     $self->fatal_error(
                                        code  => $_,
                                        pos   => (pos($_) - length($name)),
-                                       error => "'$name' nu poate fi folosit în acest context pentru că "
-                                         . "este un cuvânt cheie sau o variabilă predefinită!",
+                                       error => "'$name' nu poate fi folosit in acest context pentru ca "
+                                         . "este un cuvant cheie sau o variabila predefinita!",
                                       );
                 }
 
@@ -1192,10 +1192,10 @@ package Corvinus::Parser {
 
                 @{$vars}
                   || $self->fatal_error(
-                                      code  => $_,
-                                      pos   => pos,
-                                      error => q{este necesară specificarea a unuia sau mai multor identificatori }
-                                        . q{după cuvântul cheie „enumera”, urmând sintaxa: „enumera(a, b, c, ...)”},
+                                        code  => $_,
+                                        pos   => pos,
+                                        error => q{este necesara specificarea a unuia sau mai multor identificatori }
+                                          . q{dupa cuvantul cheie 'enumera', urmand sintaxa: 'enumera(a, b, c, ...)'},
                                        );
 
                 my $value = Corvinus::Types::Number::Number->new(-1);
@@ -1216,8 +1216,8 @@ package Corvinus::Parser {
                         $self->fatal_error(
                                            code  => $_,
                                            pos   => (pos($_) - length($name)),
-                                           error => "'$name' nu poate fi folosit în acest context pentru că "
-                                             . "este un cuvânt cheie sau o variabilă predefinită!",
+                                           error => "'$name' nu poate fi folosit in acest context pentru ca "
+                                             . "este un cuvant cheie sau o variabila predefinita!",
                                           );
                     }
 
@@ -1340,8 +1340,8 @@ package Corvinus::Parser {
                     $self->fatal_error(
                                        code  => $_,
                                        pos   => $-[0],
-                                       error => "'$name' nu poate fi folosit în acest context pentru că "
-                                         . "este un cuvânt cheie sau o variabilă predefinită!",
+                                       error => "'$name' nu poate fi folosit in acest context pentru ca "
+                                         . "este un cuvant cheie sau o variabila predefinita!",
                                       );
                 }
 
@@ -1370,8 +1370,8 @@ package Corvinus::Parser {
                             $self->fatal_error(
                                                code  => $_,
                                                pos   => $-[0],
-                                               error => "redeclarare invalidă ca funcție sau metodă a identificatorului"
-                                                 . " '$var->{obj}{name}' (declarat inițial la linia $var->{line})",
+                                               error => "redeclarare invalida ca functie sau metoda a identificatorului"
+                                                 . " '$var->{obj}{name}' (declarat initial la linia $var->{line})",
                                               );
                         }
 
@@ -1528,7 +1528,7 @@ package Corvinus::Parser {
                                 /\G\s*\)/gc && last;
                                 /\G\s*,\s*/gc
                                   || $self->fatal_error(
-                                                        error => "tip invalid de returnare specificat pentru funcția '$name'",
+                                                        error => "tip invalid de returnare specificat pentru functia '$name'",
                                                         expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
                                                         code     => $_,
                                                         pos      => pos($_),
@@ -1543,7 +1543,7 @@ package Corvinus::Parser {
                         foreach my $ref (@ref) {
                             if (ref($ref) eq 'HASH') {
                                 $self->fatal_error(
-                                                   error    => "tip invalid de returnare specificat pentru funcția '$name'",
+                                                   error    => "tip invalid de returnare specificat pentru functia '$name'",
                                                    expected => "exemplu de tipuri valide: Text, Numar, Lista, etc...",
                                                    code     => $_,
                                                    pos      => pos($_),
@@ -1556,8 +1556,8 @@ package Corvinus::Parser {
 
                     /\G\h*\{\h*/gc
                       || $self->fatal_error(
-                                            error    => "declarare invalidă pentru '$type'",
-                                            expected => "sintaxa este: „$type $name(...){...}”",
+                                            error    => "declarare invalida pentru '$type'",
+                                            expected => "sintaxa este: $type $name(...){...}",
                                             code     => $_,
                                             pos      => pos($_)
                                            );
@@ -1585,8 +1585,8 @@ package Corvinus::Parser {
                            );
 
                 $expr // $self->fatal_error(
-                                            error    => "declarare invalidă pentru `dat`",
-                                            expected => "sintaxa este: „dat (...) {...}”",
+                                            error    => "declarare invalida pentru `dat`",
+                                            expected => "sintaxa este: dat (...) {...}",
                                             code     => $_,
                                             pos      => pos($_),
                                            );
@@ -1597,8 +1597,8 @@ package Corvinus::Parser {
                              /\G\h*(?=\{)/gc
                              ? $self->parse_block(code => $opt{code}, topic_var => 1)
                              : $self->fatal_error(
-                                                  error    => "este necesar un bloc după expresia: `dat(...)`",
-                                                  expected => "sintaxa este: „dat (...) {...}",
+                                                  error    => "este necesar un bloc dupa expresia: `dat(...)`",
+                                                  expected => "sintaxa este: dat (...) {...}",
                                                   code     => $_,
                                                   pos      => pos($_),
                                                  )
@@ -1618,8 +1618,8 @@ package Corvinus::Parser {
                            );
 
                 $expr // $self->fatal_error(
-                                            error    => "declarare invalidă pentru `cand`",
-                                            expected => "sintaxa este: „cand (...) {...}”",
+                                            error    => "declarare invalida pentru `cand`",
+                                            expected => "sintaxa este: cand (...) {...}",
                                             code     => $_,
                                             pos      => pos($_),
                                            );
@@ -1628,8 +1628,8 @@ package Corvinus::Parser {
                              /\G\h*(?=\{)/gc
                              ? $self->parse_block(code => $opt{code})
                              : $self->fatal_error(
-                                                  error    => "este necesar un bloc după expresia: `cand(...)`",
-                                                  expected => "sintaxa este: „cand (...) {...}",
+                                                  error    => "este necesar un bloc dupa expresia: `cand(...)`",
+                                                  expected => "sintaxa este: cand (...) {...}",
                                                   code     => $_,
                                                   pos      => pos($_),
                                                  )
@@ -1647,8 +1647,8 @@ package Corvinus::Parser {
                            );
 
                 $expr // $self->fatal_error(
-                                            error    => "declarare invalidă pentru `caz`",
-                                            expected => "sintaxa este: „caz (...) {...}”",
+                                            error    => "declarare invalida pentru `caz`",
+                                            expected => "sintaxa este: caz (...) {...}",
                                             code     => $_,
                                             pos      => pos($_),
                                            );
@@ -1657,8 +1657,8 @@ package Corvinus::Parser {
                              /\G\h*(?=\{)/gc
                              ? $self->parse_block(code => $opt{code})
                              : $self->fatal_error(
-                                                  error    => "este necesar un bloc după expresia: `caz(...)`",
-                                                  expected => "sintaxa este: „caz (...) {...}",
+                                                  error    => "este necesar un bloc dupa expresia: `caz(...)`",
+                                                  expected => "sintaxa este: caz (...) {...}",
                                                   code     => $_,
                                                   pos      => pos($_),
                                                  )
@@ -1750,7 +1750,7 @@ package Corvinus::Parser {
                 $self->fatal_error(
                                    code  => $_,
                                    pos   => pos($_),
-                                   error => "variabila „_” nu poate fi găsită în scopul curent",
+                                   error => "variabila '_' nu poate fi gasita in scopul curent",
                                   );
             }
 
@@ -1938,8 +1938,8 @@ package Corvinus::Parser {
                 }
                 else {
                     $self->fatal_error(
-                                       error    => "declarare invalidă pentru documentul <<'...'",
-                                       expected => "numele după „<<” este invalid",
+                                       error    => "declarare invalida pentru documentul <<'...'",
+                                       expected => "numele dupa '<<' este invalid",
                                        code     => $_,
                                        pos      => pos($_)
                                       );
@@ -2023,7 +2023,7 @@ package Corvinus::Parser {
 
                             if ($self->{opt}{k}) {
                                 print STDERR "[INFO] `$name` este interpretat ca `self.$name` "
-                                  . "în $self->{file_name} la linia $self->{line}\n";
+                                  . "in $self->{file_name} la linia $self->{line}\n";
                             }
 
                             $var->{count}++;
@@ -2049,8 +2049,8 @@ package Corvinus::Parser {
                     my $var = bless({name => $name, class => $class}, 'Corvinus::Variable::Global');
 
                     if (not $self->{interactive}) {
-                        warn
-"[WARN] Declarare globală implicită a variabilei `$name` în $self->{file_name} la linia $self->{line}\n";
+                        warn "[WARN] Declarare globala implicita a variabilei"
+                          . " `$name` in $self->{file_name} la linia $self->{line}\n";
                     }
 
                     unshift @{$self->{vars}{$class}},
@@ -2105,8 +2105,8 @@ package Corvinus::Parser {
                 if (not $self->{_want_name} and ($class eq $self->{class} or $class eq 'CORE')) {
 
                     if ($self->{opt}{k}) {
-                        print STDERR
-"[INFO] `$name` este interpretat ca metodă de tip prefix în $self->{file_name} la linia $self->{line}\n";
+                        print STDERR "[INFO] `$name` este interpretat ca metoda de tip"
+                          . " prefix in $self->{file_name} la linia $self->{line}\n";
                     }
 
                     my $pos = pos($_);
@@ -2133,7 +2133,7 @@ package Corvinus::Parser {
                             $self->fatal_error(
                                                code  => $_,
                                                pos   => ($pos - length($name)),
-                                               error => "metoda „$name” nu poate fi aplicată pe un obiect nedefinit",
+                                               error => "metoda '$name' nu poate fi aplicata pe un obiect nedefinit",
                                               );
                         }
 
@@ -2169,7 +2169,7 @@ package Corvinus::Parser {
                 $self->fatal_error(
                                    code  => $_,
                                    pos   => (pos($_) - length($name) - 1),
-                                   error => "variabila „$name” nu este declarată în scopul curent",
+                                   error => "variabila '$name' nu este declarata in scopul curent",
                                   );
             }
 
@@ -2178,7 +2178,7 @@ package Corvinus::Parser {
                 $self->fatal_error(
                                    code  => $_,
                                    pos   => (pos($_) - length($1)),
-                                   error => "variabila \$$1 nu este validă",
+                                   error => "variabila \$$1 nu este valida",
                                   );
             }
 
@@ -2385,9 +2385,9 @@ package Corvinus::Parser {
                         }
                         else {
                             $self->fatal_error(
-                                code  => $_,
-                                pos   => pos($_) - 1,
-                                error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
+                                        code  => $_,
+                                        pos   => pos($_) - 1,
+                                        error => "operatorul '$method' necesita specificarea a inca unui obiect in dreapta sa",
                             );
                         }
                     }
@@ -2525,7 +2525,7 @@ package Corvinus::Parser {
                              /\G\h*(?=\{)/gc
                              ? $self->parse_block(code => $opt{code})
                              : $self->fatal_error(
-                                                  error => "sintaxa corectă este: pentru $var_name in { ... }",
+                                                  error => "sintaxa corecta este: pentru $var_name in { ... }",
                                                   code  => $_,
                                                   pos   => pos($_),
                                                  )
@@ -2711,9 +2711,9 @@ package Corvinus::Parser {
                         }
                         else {
                             $self->fatal_error(
-                                code  => $_,
-                                pos   => pos($_) - 1,
-                                error => "operatorul „$method” necesită specificarea a încă unui obiect în dreapta sa",
+                                        code  => $_,
+                                        pos   => pos($_) - 1,
+                                        error => "operatorul '$method' necesita specificarea a inca unui obiect in dreapta sa",
                             );
                         }
                     }
@@ -2750,16 +2750,16 @@ package Corvinus::Parser {
                   /\G($self->{var_name_re})\h*/goc
                   ? $1
                   : $self->fatal_error(
-                                       error    => "declarare invalidă de modul",
-                                       expected => "sintaxa este: „modul Nume {...}”",
+                                       error    => "declarare invalida de modul",
+                                       expected => "sintaxa este: modul Nume {...}",
                                        code     => $_,
                                        pos      => pos($_)
                                       );
 
                 /\G\h*\{\h*/gc
                   || $self->fatal_error(
-                                        error    => "declarare invalidă de modul",
-                                        expected => "sintaxa este: „modul $name {...}”",
+                                        error    => "declarare invalida de modul",
+                                        expected => "sintaxa este: modul $name {...}",
                                         code     => $_,
                                         pos      => pos($_)
                                        );
@@ -2808,9 +2808,9 @@ package Corvinus::Parser {
 
                 @{$var_names}
                   || $self->fatal_error(
-                                 code  => $_,
-                                 pos   => (pos($_)),
-                                 error => "este necesară specificarea a unuia sau mai multor identificatori pentru importare",
+                                  code  => $_,
+                                  pos   => (pos($_)),
+                                  error => "este necesara specificarea a unuia sau mai multor identificatori pentru importare",
                   );
 
                 foreach my $var_name (@{$var_names}) {
@@ -2820,7 +2820,7 @@ package Corvinus::Parser {
                         $self->fatal_error(
                                            code  => $_,
                                            pos   => pos($_),
-                                           error => "nu se poate importa '${class}::${name}' în același modul",
+                                           error => "nu se poate importa '${class}::${name}' in acelasi modul",
                                           );
                     }
 
@@ -2872,11 +2872,11 @@ package Corvinus::Parser {
 
                     @{$var_names}
                       || $self->fatal_error(
-                           code => $_,
-                           pos  => pos($_),
-                           error =>
-                             "modulul pentru includere nu este specificat în mod corect, sintaxa este: „Nume::De::Modul„",
-                      );
+                                            code     => $_,
+                                            pos      => pos($_),
+                                            error    => "modulul pentru includere nu este specificat in mod corect",
+                                            expected => "sintaxa este: Nume::De::Modul",
+                                           );
 
                     foreach my $var_name (@{$var_names}) {
 
@@ -2911,7 +2911,7 @@ package Corvinus::Parser {
                         $found_module // $self->fatal_error(
                                                             code  => $_,
                                                             pos   => pos($_),
-                                                            error => "nu poate fi găsit modulul '${mod_path}' în dosarele ['"
+                                                            error => "nu poate fi gasit modulul '${mod_path}' in dosarele ['"
                                                               . join("', '", @{$self->{inc}}) . "']",
                                                            );
 
@@ -2939,12 +2939,10 @@ package Corvinus::Parser {
 
                         ref($value) ne ''
                           ? $self->fatal_error(
-                                               code  => $_,
-                                               pos   => pos($_),
-                                               error => 'tip invalid pentru includere „'
-                                                 . ref($value)
-                                                 . '” (este necesar un obiect de tip text)',
-                                              )
+                            code  => $_,
+                            pos   => pos($_),
+                            error => 'tip invalid pentru includere "' . ref($value) . '" (este necesar un obiect de tip text)',
+                          )
                           : [$value];
                     } @files;
                 }
@@ -2957,7 +2955,7 @@ package Corvinus::Parser {
                       || $self->fatal_error(
                                             code  => $_,
                                             pos   => pos($_),
-                                            error => "fișierul '$full_path' nu poate fi deschis pentru citire: $!"
+                                            error => "fisierul '$full_path' nu poate fi deschis pentru citire: $!"
                                            );
 
                     my $content = do { local $/; <$fh> };
@@ -3105,7 +3103,7 @@ package Corvinus::Parser {
                         }
                         else {
                             $self->fatal_error(
-                                               error => 'metodă nespecificată',
+                                               error => 'metoda nespecificata',
                                                code  => $_,
                                                pos   => pos($_) - 1,
                                               );
@@ -3154,7 +3152,7 @@ package Corvinus::Parser {
 
                 if (--$self->{right_brackets} < 0) {
                     $self->fatal_error(
-                                       error => 'paranteză dreaptă nebalansată',
+                                       error => 'paranteza dreapta nebalansata',
                                        code  => $_,
                                        pos   => pos($_) - 1,
                                       );
@@ -3167,7 +3165,7 @@ package Corvinus::Parser {
 
                 if (--$self->{curly_brackets} < 0) {
                     $self->fatal_error(
-                                       error => 'acoladă nebalansată',
+                                       error => 'acolada nebalansata',
                                        code  => $_,
                                        pos   => pos($_) - 1,
                                       );
@@ -3181,7 +3179,7 @@ package Corvinus::Parser {
 
                 if (--$self->{parentheses} < 0) {
                     $self->fatal_error(
-                                       error => 'paranteză rotundă nebalansată',
+                                       error => 'paranteza rotunda nebalansata',
                                        code  => $_,
                                        pos   => pos($_) - 1,
                                       );
@@ -3193,8 +3191,8 @@ package Corvinus::Parser {
             $self->fatal_error(
                                code  => $_,
                                pos   => (pos($_)),
-                               error => "au fost găsite două obiecte consecutive în locul în care "
-                                 . "se aștepta o metodă sau un terminator de expresie („;”)",
+                               error => "au fost gasite doua obiecte consecutive in locul in care "
+                                 . "se astepta o metoda sau un terminator de expresie (<<;>>)",
                               );
 
             pos($_) += 1;
