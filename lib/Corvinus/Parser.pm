@@ -444,12 +444,12 @@ package Corvinus::Parser {
                        && $variable->{name} ne ''
                        && chr(ord $variable->{name}) ne '_') {
 
-                    warn '[WARN] '
-                      . "$variable->{type} '$variable->{name}' has been declared, but not used again, at "
-                      . "$self->{file_name}, line $variable->{line}\n";
+                    warn '[ATENTIE] '
+                      . "$variable->{type} '$variable->{name}' a fost declarata, dar nu este folosita, in "
+                      . "$self->{file_name}, la linia $variable->{line}\n";
                 }
                 elsif ($DEBUG) {
-                    warn "[WARN] Variable '$variable->{name}' is used $variable->{count} times!\n";
+                    warn "[ATENTIE] Variabila '$variable->{name}' este folosita de $variable->{count} ori!\n";
                 }
             }
         }
@@ -1309,7 +1309,7 @@ package Corvinus::Parser {
 
                         if (ref($obj) eq 'HASH') {
                             $self->fatal_error(
-                                               error => "can't use an expression inside class declaration",
+                                               error => "o expresie in declararea unei clase nu este permisa",
                                                code  => $_,
                                                pos   => pos($_),
                                               );
@@ -1424,8 +1424,8 @@ package Corvinus::Parser {
                                 }
                                 else {
                                     $self->fatal_error(
-                                                       error    => "this is not a class",
-                                                       expected => "expected a class name",
+                                                       error    => "'$name' nu este o clasa",
+                                                       expected => "este necesara specificarea unei obiect de tip 'clasa'",
                                                        code     => $_,
                                                        pos      => pos($_) - length($name) - 1,
                                                       );
@@ -1439,8 +1439,8 @@ package Corvinus::Parser {
                             }
                             else {
                                 $self->fatal_error(
-                                                   error    => "can't find '$name' class",
-                                                   expected => "expected an existent class name",
+                                                   error    => "nu pot gasi clasa '$name'",
+                                                   expected => "este necesara specificarea unei clase existente",
                                                    code     => $_,
                                                    pos      => pos($_) - length($name) - 1,
                                                   );
@@ -1452,8 +1452,8 @@ package Corvinus::Parser {
 
                     /\G\h*(?=\{)/gc
                       || $self->fatal_error(
-                                            error    => "invalid class declaration",
-                                            expected => "expected: class $name(...){...}",
+                                            error    => "declarare invalida a clasei '$name'",
+                                            expected => "sintaxa este: clasa $name(...){...}",
                                             code     => $_,
                                             pos      => pos($_)
                                            );
@@ -1506,7 +1506,7 @@ package Corvinus::Parser {
                             #}
                             else {
                                 $self->fatal_error(
-                                                   error => "Unknown $type trait: $trait",
+                                                   error => "insusirea '$trait' este invalida",
                                                    code  => $_,
                                                    pos   => pos($_),
                                                   );
@@ -2049,7 +2049,7 @@ package Corvinus::Parser {
                     my $var = bless({name => $name, class => $class}, 'Corvinus::Variable::Global');
 
                     if (not $self->{interactive}) {
-                        warn "[WARN] Declarare globala implicita a variabilei"
+                        warn "[ATENTIE] Declarare globala implicita a variabilei"
                           . " `$name` in $self->{file_name} la linia $self->{line}\n";
                     }
 
@@ -2367,7 +2367,7 @@ package Corvinus::Parser {
                                      /\G(?=\()/ ? $self->parse_arguments(code => \$code)
                                    : ($req_arg || exists($self->{binpost_ops}{$method})) ? $self->parse_obj(code => \$code)
                                    : /\G(?=\{)/ ? $self->parse_block(code => \$code, topic_var => 1)
-                                   :              die "[PARSING ERROR] Something is wrong in the if condition"
+                                   :              die "[PARSING ERROR] Something is wrong in the if-condition above"
                                   );
 
                         if (defined $arg) {
@@ -2567,7 +2567,7 @@ package Corvinus::Parser {
                             $self->fatal_error(
                                                code  => $_,
                                                pos   => pos($_) - 1,
-                                               error => "invalid for-loop: too many arguments",
+                                               error => "un numar invalid de argumente specificate pentru bucla 'for'",
                                               );
                         }
                     }
@@ -2576,10 +2576,10 @@ package Corvinus::Parser {
                 }
                 elsif (ref($obj) ne 'Corvinus::Types::Block::Return') {
                     $self->fatal_error(
-                                       code  => $_,
-                                       error => "expected an argument. Did you mean '$method()' instead?",
-                                       pos   => pos($_) - 1,
-                                      );
+                                      code  => $_,
+                                      error => "este necesar un argument dupa '$method'. Sau incercati '$method()' in schimb.",
+                                      pos   => pos($_) - 1,
+                    );
                 }
             }
 
@@ -2830,7 +2830,7 @@ package Corvinus::Parser {
                         $self->fatal_error(
                                            code  => $_,
                                            pos   => pos($_),
-                                           error => "variable '${class}::${name}' hasn't been declared",
+                                           error => "identificatorul '${class}::${name}' nu poate fi gasit pentru importare",
                                           );
                     }
 
@@ -3008,8 +3008,8 @@ package Corvinus::Parser {
                   || $self->fatal_error(
                                         code     => $_,
                                         pos      => pos($_) - 1,
-                                        error    => "invalid usage of the ternary operator",
-                                        expected => "expected ':'",
+                                        error    => "operatorul ternar nu este balansat",
+                                        expected => "sintaxa este: (expr) ? (expr) : (expr)",
                                        );
 
                 $self->parse_whitespace(code => $opt{code});
