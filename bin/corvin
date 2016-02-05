@@ -287,32 +287,39 @@ sub load_math_backend {
 
 sub execute_struct {
     my ($struct, $return) = @_;
-    my $deparser = Corvinus::Deparse::Perl->new(namespaces => [@Corvinus::NAMESPACES]);
+    state $count = 0;
+
+    my $environment_name = 'Corvinus::Runtime' . CORE::abs(++$count);
+    my $deparser = Corvinus::Deparse::Perl->new(
+                                                opt              => \%args,
+                                                namespaces       => [@Corvinus::NAMESPACES],
+                                                environment_name => $environment_name,
+                                               );
     local $Corvinus::DEPARSER = $deparser;
-    my $code = $deparser->deparse($struct);
+    my $code = "package $environment_name {" . $deparser->deparse($struct) . "}";
     $return ? eval($code) : do { eval($code); $@ && die $@; exit };
 }
 
 sub output_usage {
     my %switches = (
                     '-i'         => 'mod interactiv',
-                    '-c'         => 'compilează într-un program Perl',
-                    '-C'         => 'verifică sintaxa programului',
-                    '-d file'    => 'încarcă un fișier de sintaxă depozitat',
-                    '-D'         => 'depozitează sintaxa unui program',
-                    '-o file'    => 'fișierul de ieșire',
-                    '-O level'   => ['optimizează codul înainte de execuție', 'nivele valide: 0, 1, 2'],
+                    '-c'         => 'compileaza intr-un program Perl',
+                    '-C'         => 'verifica sintaxa programului',
+                    '-d file'    => 'incarca un fisier de sintaxa depozitat',
+                    '-D'         => 'depoziteaza sintaxa unui program',
+                    '-o file'    => 'fisierul de iesire',
+                    '-O level'   => ['optimizeaza codul inainte de executie', 'nivele valide: 0, 1, 2'],
                     '-E program' => 'o linie de program',
                     '-H'         => 'ajutor interactiv',
-                    '-k'         => 'arată transformările nesigure făcute de parser',
-                    '-n type'    => ['încearcă alt backend pentru Math::BigInt', 'tipuri valide: GMP, Pari, FastCalc'],
-                    '-s int'     => 'numărul de spații folosite în indentare',
-                    '-v'         => 'arată numărul de versiune și ieși',
-                    '-t'         => 'tratează toate argumentele ca programe',
-                    '-r'         => 'parsează și deparsează un program',
-                    '-R lang'    => ['parsează și deparsează un program în alt limbaj', 'valori valide: corvinus, perl'],
-                    '-w'         => 'arată avertizări detaliate',
-                    '-W'         => 'tratează avertizările ca erori',
+                    '-k'         => 'arata transformarile nesigure facute de parser',
+                    '-n type'    => ['incearca alt backend pentru Math::BigInt', 'tipuri valide: GMP, Pari, FastCalc'],
+                    '-s int'     => 'numarul de spatii folosite in indentare',
+                    '-v'         => 'arata numarul de versiune si iesi',
+                    '-t'         => 'trateaza toate argumentele ca programe',
+                    '-r'         => 'parseaza si deparseaza un program',
+                    '-R lang'    => ['parseaza si deparseaza un program in alt limbaj', 'valori valide: corvinus, perl'],
+                    '-w'         => 'arata avertizari detaliate',
+                    '-W'         => 'trateaza avertizarile ca erori',
                    );
 
     require File::Basename;
@@ -418,7 +425,7 @@ sub code_interactive {
     require Encode;
     require Term::ReadLine;
 
-    my $term = Term::ReadLine->new("$name $version -- mod interactiv");
+    my $term = Term::ReadLine->new("$name $version -- in mod interactiv");
 
     my $parser = new_parser(name => '-i');
     $parser->{interactive} = 1;
@@ -544,7 +551,7 @@ sub deparse_structure {
     my $pm     = ($module =~ s{::}{/}gr . '.pm');
 
     require $pm;
-    my $deparser = $module->new(namespaces => [@Corvinus::NAMESPACES]);
+    my $deparser = $module->new(namespaces => [@Corvinus::NAMESPACES], opt => \%args);
     my $code = $deparser->deparse($struct);
 
     return $code;
@@ -639,7 +646,7 @@ HEAD
 
                  close $fh;
              }
-         }
+           }
         } => ($path, $INC{'Corvinus.pm'})
     );
 
@@ -656,6 +663,7 @@ sub __load_corvinus_module__ {
             }
             $INC{$module} = 1;
             eval($MODULE{$name});
+            die "[FATAL ERROR] Can't load `$module`: $@" if $@;
         }
         else {
             require $module;

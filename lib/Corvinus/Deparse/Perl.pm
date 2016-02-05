@@ -22,6 +22,8 @@ package Corvinus::Deparse::Perl {
             after       => ";\n",
             namespaces  => [],
 
+            environment_name => 'main',
+
             assignment_ops => {
                                '=' => '=',
                               },
@@ -104,7 +106,7 @@ HEADER
             $self->{before} .= "use constant {\n";
         }
 
-        '(main::' . (
+        '(' . $self->{environment_name} . '::' . (
             (
              $const{$ref, $#args, @args} //= [
                  $name . @args,
@@ -586,7 +588,7 @@ HEADER
         }
         elsif ($ref eq 'Corvinus::Variable::Define') {
             my $name  = $obj->{name} . $refaddr;
-            my $value = '(' . 'main::' . $name . ')';
+            my $value = '(' . $self->{environment_name} . '::' . $name . ')';
             if (not exists $obj->{inited}) {
                 $obj->{inited} = 1;
                 $self->top_add('use constant ' . $name . ' => ' . 'do {' . $self->deparse_script($obj->{expr}) . " };\n");
