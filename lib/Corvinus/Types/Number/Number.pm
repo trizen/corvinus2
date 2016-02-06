@@ -259,6 +259,7 @@ package Corvinus::Types::Number::Number {
     *upto    = \&to;
     *up_to   = \&to;
     *pana_la = \&to;
+    *urca_la = \&to;
 
     sub downto {
         my ($self, $num, $step) = @_;

@@ -160,6 +160,7 @@ package Corvinus::Types::String::String {
     *upto    = \&to;
     *sir     = \&to;
     *pana_la = \&to;
+    *urca_la = \&to;
 
     sub downto {
         my ($self, $string) = @_;
