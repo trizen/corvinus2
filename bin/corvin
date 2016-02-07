@@ -138,7 +138,7 @@ else {
 
     my $code = exists($args{E})
       ? do {
-        defined($args{E}) || die "No code specified for -E.\n";
+        defined($args{E}) || die "Nu ati specificat cod pentru optiunea -E.\n";
         $script_name = '-E';
         require Encode;
         Encode::decode_utf8($args{E});
@@ -158,7 +158,7 @@ else {
     # Code from a dumped parse-tree
     if (defined $args{d}) {
         $struct = do($args{d})
-          || die "Can't load the data structure from file '$args{d}': $!\n";
+          || die "Nu pot incarca structura de sintaxa din fisierul '$args{d}': $!\n";
     }
     else {
 
@@ -442,8 +442,13 @@ sub code_interactive {
                 help_interactive();
                 redo MAINLOOP;
             }
-            elsif ($line eq 'q' or $line eq 'quit') {
-                return;
+            elsif ($line =~ /^#\h*fisier\h+(.+)/) {
+                my $file = unpack('A*', $1);
+                open my $fh, '<:utf8', $file or do {
+                    warn "Can't open file <<$file>> for read: $!\n";
+                    redo MAINLOOP;
+                };
+                $line = do { local $/; <$fh> };
             }
             elsif ($line =~ /\h\z/) {
                 $line .= "\n";
@@ -483,6 +488,10 @@ EOT
         }
 
         my $struct = eval { parse_code($parser, $line) };
+
+        if ($@ and ($line eq 'q' or $line eq 'exit' or $line eq 'quit')) {
+            return;
+        }
 
         $@ && do {
             warn $@;
@@ -633,7 +642,7 @@ HEAD
 
                  close $fh;
              }
-           }
+         }
         } => ($path, $INC{'Corvinus.pm'})
     );
 
