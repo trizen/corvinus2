@@ -321,7 +321,7 @@ package Corvinus::Types::Block::Block {
     *daca = \&if;
 
     sub fork {
-        my ($self) = @_;
+        my ($self, @args) = @_;
 
         state $x = require Storable;
         open(my $fh, '+>', undef);    # an anonymous temporary file
@@ -330,7 +330,7 @@ package Corvinus::Types::Block::Block {
         my $pid = fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
-            my $obj = $self->{code}->();
+            my $obj = $self->call(@args);
             ref($obj) && Storable::store_fd($obj, $fh);
             exit 0;
         }
@@ -343,14 +343,14 @@ package Corvinus::Types::Block::Block {
     *paralel = \&fork;
 
     sub pfork {
-        my ($self) = @_;
+        my ($self, @args) = @_;
 
         my $fork = Corvinus::Types::Block::Fork->new();
 
         my $pid = CORE::fork() // die "[EROARE]: nu pot face fork()";
         if ($pid == 0) {
             srand();
-            $self->{code}->();
+            $self->call(@args);
             exit 0;
         }
 
@@ -359,14 +359,20 @@ package Corvinus::Types::Block::Block {
     }
 
     sub thread {
-        my ($self) = @_;
+        my ($self, @args) = @_;
         state $x = do {
-            require threads;
+            eval { require forks } // do { require threads };
             *threads::get  = \&threads::join;
             *threads::wait = \&threads::join;
             1;
         };
-        threads->create(sub { $self->{code}->() });
+        threads->create(
+                        {
+                         'context' => 'list',
+                         'exit'    => 'thread_only'
+                        },
+                        sub { $self->call(@args) }
+                       );
     }
 
     *thr = \&thread;
