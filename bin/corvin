@@ -100,8 +100,8 @@ if (defined $args{t}) {
         say "\n** Executing: $script_name";
         say "-" x 80;
 
-        splice(@Corvinus::NAMESPACES);
-        %Corvinus::INCLUDED = ();
+        @Corvinus::NAMESPACES = ();
+        %Corvinus::INCLUDED   = ();
 
         my $code   = read_script($script_name);
         my $parser = new_parser(name => $script_name);
@@ -432,6 +432,8 @@ sub code_interactive {
 
     print qq{$name $version pe $^O\n};
 
+    my $valid_lines = '';
+
   MAINLOOP: {
         my $line = '';
 
@@ -442,13 +444,26 @@ sub code_interactive {
                 help_interactive();
                 redo MAINLOOP;
             }
-            elsif ($line =~ /^#\h*fisier\h+(.+)/) {
+            elsif ($line =~ /^#\h*load\h+(.+)/) {
+                @Sidef::NAMESPACES = ();
+                %Sidef::INCLUDED   = ();
                 my $file = unpack('A*', $1);
                 open my $fh, '<:utf8', $file or do {
-                    warn "Can't open file <<$file>> for read: $!\n";
+                    warn "Nu se poate deschide fisierul <<$file>> pentru citire: $!\n";
                     redo MAINLOOP;
                 };
                 $line = do { local $/; <$fh> };
+                close $fh;
+            }
+            elsif ($line =~ /^#\h*save\h+(.+)/) {
+                my $file = unpack('A*', $1);
+                open my $fh, '>:utf8', $file or do {
+                    warn "Nu se poate deschide fisierul <<$file>> pentru scriere: $!\n";
+                    redo MAINLOOP;
+                };
+                print $fh $valid_lines;
+                close $fh;
+                say "** Fisierul <<$file>> a fost actualizat cu succes!";
             }
             elsif ($line =~ /\h\z/) {
                 $line .= "\n";
@@ -489,14 +504,20 @@ EOT
 
         my $struct = eval { parse_code($parser, $line) };
 
-        if ($@ and ($line eq 'q' or $line eq 'exit' or $line eq 'quit')) {
-            return;
-        }
+        if ($@) {
 
-        $@ && do {
+            # Valid keywords for 'exit'
+            if ($line eq 'q' or $line eq 'exit' or $line eq 'quit') {
+                return;
+            }
+
+            # Otherwise a syntax-error
             warn $@;
             redo;
-        };
+        }
+        else {
+            $valid_lines .= "$line\n";    # store valid lines
+        }
 
         if (defined($args{r}) or defined($args{R})) {
             output(deparse_structure($struct, $args{R}));
