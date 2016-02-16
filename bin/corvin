@@ -512,8 +512,9 @@ EOT
             }
 
             if ($line eq 'clear') {
-                code_interactive();
-                return;
+                $parser = new_parser(name => '-i');
+                $parser->{interactive} = 1;
+                redo;
             }
 
             # Otherwise a syntax-error
