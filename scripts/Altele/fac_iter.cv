@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+
+func factorial(n) {
+    var produs = 1;
+
+    cat_timp(n > 1) {
+        produs *= n;
+        n -= 1;
+    }
+
+    return produs;
+}
+
+spune factorial(5);

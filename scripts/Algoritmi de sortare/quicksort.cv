@@ -1,0 +1,27 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Quicksort
+#
+
+func quicksort (lista) {
+
+    spune lista;
+
+    daca (lista.lungime < 2) {
+        return lista
+    }
+
+    var pivot = lista.inlatura_aleatoriu
+
+    var stanga  = lista.filtreaza { _ < pivot }
+    var dreapta = lista.filtreaza { _ >= pivot }
+
+    quicksort(stanga) + [pivot] + quicksort(dreapta)
+}
+
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+spune quicksort(numbers);
+
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune quicksort(strs);

@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+
+struct Punct(x, y)
+
+var a = Punct(x: 1, y: 2)
+var b = Punct(x: 3, y: 4)
+
+spune (a.x + b.x)
+spune (a.y + b.y)

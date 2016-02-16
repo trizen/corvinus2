@@ -1,0 +1,25 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Insertion_sort
+#
+
+func insertion_sort(lista) {
+    { |i|
+        var j = i;
+        var k = lista[i];
+        spune lista;
+        cat_timp ((j > 0) && (k < lista[j - 1])) {
+            lista[j] = lista[j - 1];
+            j--;
+        }
+        lista[j] = k;
+    } * lista.sfarsit;
+    return lista;
+}
+
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+spune insertion_sort(numbers);
+
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune insertion_sort(strs);

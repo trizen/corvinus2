@@ -1,0 +1,30 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Shell_sort
+#
+
+func shell_sort(a) {
+    var h = a.lungime;
+    var s = a.sfarsit;
+
+    cat_timp (h = (h/2 -> intreg)) {
+        range(h, s).fiecare { |i|
+            var k = a[i];
+            var j;
+            pentru (j = i; (j >= h) si (k < a[j - h]); j -= h) {
+                a[j] = a[j - h];
+                spune a;
+            }
+            a[j] = k;
+        }
+    }
+
+    return a;
+}
+
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+spune shell_sort(numbers);
+
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune shell_sort(strs);

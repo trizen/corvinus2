@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+var f = aduna {
+    10.ori { |i|
+        ia func(j){i * j}
+    }
+}
+
+10.ori { |i|
+    spune f[i-1](i)
+}

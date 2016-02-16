@@ -511,6 +511,11 @@ EOT
                 return;
             }
 
+            if ($line eq 'clear') {
+                code_interactive();
+                return;
+            }
+
             # Otherwise a syntax-error
             warn $@;
             redo;

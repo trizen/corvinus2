@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+
+var str = "acesta este un string"
+spune str.caracterul(0)
+spune str.caracterul(1)
+
+spune str.in_litere_mari
+spune str.capitalizeaza
+
+spune str.extrage(0, 6)
+
+daca (str.contine("este")) {
+    spune "Contine <este>"
+}

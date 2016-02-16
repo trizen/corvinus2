@@ -1,0 +1,24 @@
+#!/usr/bin/ruby
+
+include Lingua::RO::Numbers;
+
+var lingua = Lingua::RO::Numbers::nou(
+    separator_mii: ',',
+);
+
+for(var i = -1000000; i <= 1000000; i += 500000.rand.int) {
+
+    # From number to RO
+    var ro = lingua.in_litere(i);
+
+    # From RO to number
+    var num = lingua.in_cifre(ro);
+
+    # Print the results
+    "%-10s%-10s%s\n".printf(i, num, ro);
+
+    # Check the results
+    if (i != num) {
+        "Error: #{num} != #{i}\n".die;
+    }
+}

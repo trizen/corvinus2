@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+var a = citeste("a: ", Numar);
+var b = citeste("b: ", Numar);
+
+func max(a, b) {
+    daca (a > b) {
+        return a;
+    }
+    altfel {
+        return b;
+    }
+}
+
+spune ("Max: ", max(a, b));
+spune ("Sum: ", a + b);

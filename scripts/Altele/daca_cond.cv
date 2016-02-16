@@ -1,0 +1,15 @@
+#!/usr/bin/ruby
+
+var x = 42;
+
+daca (x == 42) {
+    spune x;
+}
+
+daca ((x == 41) sau (x == 42)) {
+    spune x;
+}
+
+daca ((x < 50) si (x > 40)) {
+    spune x;
+}

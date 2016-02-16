@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+func fib(n) e memorat {
+
+    daca (n == 0) { return 0 }
+    daca (n == 1) { return 1 }
+
+    fib(n-1) + fib(n-2)
+}
+
+spune fib(100)

@@ -1,0 +1,14 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Counting_sort
+#
+
+func counting_sort(lista, min=lista.min, max=lista.max) {
+    var cnt = ([0] * (max - min + 1));
+    lista.fiecare { |i| cnt[i-min]++ }
+    cnt.map {|i| min++; [min-1] * i}.suma;
+}
+
+var lista = 20.de {100.rand.int};
+say counting_sort(lista);

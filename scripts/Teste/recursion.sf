@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+
+func f(x) {
+    x <= 0 && (return x);
+    say "Call: #{f(x-1)}";
+    return x;
+}
+
+f(5);

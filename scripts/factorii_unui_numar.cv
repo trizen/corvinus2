@@ -1,0 +1,35 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Count_in_factors
+#
+
+clasa Counter {
+    metoda factors(n, p=2) {
+        var out = [];
+        while (n >= p*p) {
+            while (n %% p) {
+                out.append(p);
+                n /= p;
+            }
+            p = self.next_prime(p);
+        }
+        (n > 1 || out.len.is_zero) && out.append(n);
+        return out;
+    }
+ 
+    metoda e_prim(n) {
+        self.factors(n).len == 1
+    }
+ 
+    metoda next_prime(p) {
+        do {
+            p == 2 ? (p = 3) : (p+=2)
+        } cat_timp (!self.e_prim(p));
+        return p;
+    }
+}
+ 
+{ |i|
+    say "#{i} = #{Counter().factors(i).join(' x ')}";
+} * 30;

@@ -1,0 +1,12 @@
+#!/usr/bin/ruby
+
+func fib({.e_zero}) { 0 }
+func fib({.e_unu})  { 1 }
+
+func fib(n) e memorata {
+    fib(n-1) + fib(n-2)
+}
+
+40.ori { |n|
+    spune ("fib(#{n}) = ", fib(n))
+}

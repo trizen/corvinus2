@@ -1,0 +1,21 @@
+#!/usr/bin/ruby
+
+include Lingua::RO::Numeros;
+
+var lingua = Lingua::RO::Numeros::nou(
+    separator_mii: ',',
+    diacritice: fals,
+);
+
+var limite = [1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9]
+
+10.ori {
+
+    var n = limite.aleatoriu.aleatoriu.intreg
+    var text = lingua.in_litere(n)
+    var cifre = lingua.in_cifre(text)
+
+    afirma(cifre == n);
+
+    spune ("%10s -> %s" % (n, text))
+}

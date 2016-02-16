@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+var ansi = frequire('Term::ANSIColor')
+
+var div  = 3
+var size = 80
+
+func pascal(rows) {
+    SirNum(1, rows-1).fiecare { |n|
+        scrie(' ' * (rows - n))
+        spune SirNum(0, 2*n).map { |i| binomial(2*n, i) }
+                            .map { |i| i %% div ? ansi.colored('.', 'red') : '*' }.join
+    }
+}
+
+pascal(int(size / 2))

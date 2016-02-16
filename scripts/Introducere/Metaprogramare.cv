@@ -1,0 +1,10 @@
+#!/usr/bin/ruby
+
+var metoda = “in_litere_mari”
+spune “Hei”.(metoda)
+
+Text.def_metoda(“fara_vocale”, {|text|
+       text - /[aeiou]/g
+})
+
+spune “trandafir”.fara_vocale

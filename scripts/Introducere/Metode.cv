@@ -1,0 +1,9 @@
+#!/usr/bin/ruby
+
+var nume = “Matei Corvin”
+spune nume.contine(“e”)      # adevarat
+
+var lista = [1, 2, 3, 4]
+spune lista.suma             # 10
+spune lista.contine(6)       # fals
+spune (lista - [1, 2])       # [3, 4]

@@ -1,0 +1,30 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Selection_sort
+#
+
+func selectionsort(lista) {
+
+    sir(0, lista.sfarsit-1).fiecare { |i|
+
+        spune lista;
+
+        var min_idx = i
+        sir(i+1, lista.len-1).fiecare { |j|
+            daca (lista[j] < lista[min_idx]) {
+                min_idx = j
+            }
+        }
+
+        lista[i, min_idx] = lista[min_idx, i];
+    }
+
+    return lista;
+}
+
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+spune selectionsort(numbers);
+
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune selectionsort(strs);

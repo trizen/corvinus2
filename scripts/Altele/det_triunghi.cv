@@ -1,0 +1,40 @@
+#!/usr/bin/ruby
+
+clasa Triunghi(a, b, c) {
+
+    metoda dreptunghic {
+        (a**2 == (b**2 + c**2)) sau
+        (b**2 == (a**2 + c**2)) sau
+        (c**2 == (a**2 + b**2))
+    }
+
+    metoda isoscel {
+        (a == b) sau
+        (a == c) sau
+        (b == c)
+    }
+
+    metoda echilateral {
+        (a == b) si
+        (b == c)
+    }
+}
+
+var a = citeste("a: ", Numar);
+var b = citeste("b: ", Numar);
+var c = citeste("c: ", Numar);
+
+var t = Triunghi(a, b, c);
+
+daca (t.echilateral) {
+    spune "triunghi echilateral";
+}
+sau (t.isoscel) {
+    spune "triunghi isoscel";
+}
+sau (t.dreptunghic) {
+    spune "triunghi dreptunghic";
+}
+altfel {
+    spune "triunghi iregular";
+}
