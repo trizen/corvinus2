@@ -1,0 +1,12 @@
+#!/usr/bin/ruby
+
+include Lingua::RO::Numeros;
+
+var lingua = Lingua::RO::Numeros::nou(
+    separator_mii: ',',
+    diacritice: fals,
+);
+
+40.ori { |i|
+    spune (i, ": ", lingua.in_litere(i))
+}

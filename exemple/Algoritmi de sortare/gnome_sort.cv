@@ -1,0 +1,30 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Gnome_sort
+#
+
+clasa Lista {
+    metoda gnomesort {
+        var (i=1, j=2);
+        var len = self.lungime;
+        cat_timp (i < len) {
+            daca (self[i-1] <= self[i]) {
+                (i, j) = (j, j+1);
+            }
+            altfel {
+                self[i-1, i] = self[i, i-1];
+                daca (--i == 0) {
+                    (i, j) = (j, j+1);
+                }
+            }
+        }
+        return self;
+    }
+}
+ 
+var numere = [7,6,5,9,8,4,3,1,2,0];
+say numere.gnomesort;
+ 
+var nume = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+say nume.gnomesort;

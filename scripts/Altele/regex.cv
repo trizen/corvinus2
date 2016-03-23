@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+var text = citeste("Introduceți un text: ", Text)
+
+daca (text =~ /^(un|de)/i) {
+    spune “Incepe cu <un> sau <de>”
+}
+
+spune (text - /[aeiou]/g)
+spune text.contine(/[0-9]/)
+spune text.gsub(/\w/, “x”)

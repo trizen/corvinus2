@@ -1,0 +1,18 @@
+#!/usr/bin/ruby
+
+var secunde = (ARGV[0] \\ 0);
+
+"*.cv".glob.fiecare { |fisier|
+    spune '';
+    spune "-"*80;
+    var titlu = "#{fisier.uc.gsub('_', ' ') - /\.CV\z/}";
+    spune (" " * ((80 - titlu.len) / 2), titlu);
+    spune "-"*80;
+    #var code = Fisier(fisier).open_r.slurp;
+    #code -= /^(#.*|\s*)+/;
+    #scrie code;
+    #say "-"*80;
+    Sistem.run($^CORVIN, fisier);
+    Num($?) == 0 || break;
+    Sistem.sleep(secunde);
+}

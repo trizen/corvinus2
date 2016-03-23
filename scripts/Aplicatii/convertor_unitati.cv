@@ -1,0 +1,299 @@
+#!/usr/bin/ruby
+
+#`(if running under some shell) {
+    eval 'exec /usr/bin/corvin $0 ${1+"$@"}'
+}
+
+# Author: Daniel "Trizen" Șuteu
+# License: GPLv3
+# Date: 08 December 2015
+
+# Sursa: https://en.wikipedia.org/wiki/Conversion_of_units
+
+func ajutor_extins {
+    scrie <<"AJUTOR";
+Masa:
+    42 kg in livre       : transforma kilograme in livre
+    30 t in grame        : transforma tone in grame
+    10 livre in chintale : transforma livre in chintale
+
+Temperatura:
+    120 F in C          : transforma Fahrenheit in Celsius
+    -15 C in K          : transforma Celsius in Kelvin
+    420 K in F          : transforma Kelvin in Fahrenheit
+
+Lungime:
+    21.1 inch in cm     : transforma inch in centimetri
+    5.6 picioare in m   : transforma picioare in metri
+    4 ani lumina in km  : transforma ani-lumina in km
+
+Viteza:
+    4444 mph in km/s            : transforma mile/h in km/s
+    50 m/s in km/h              : transforma m/s in km/h
+    viteza sunetului in mile/s  : transforma viteza sunetului in mile/s
+
+Timp:
+    2 ore in sec      : transforma ore in secunde
+    3 ani in luni     : transforma ani in luni
+    4 zile in ore     : transforma zile in ore
+
+Informatie:
+    6 octeti in biti   : transforma octeti in biti
+    32MB in KB         : transforma megabytes in kilobytes
+    3 TB in GB         : transforma terabytes in gigabytes
+
+...si altele care sunt lasate utilizatorului sa le descopere. :-)
+AJUTOR
+}
+
+clasa Unitati(Numar precizie = 2) {
+
+    static db = Dict(
+        masa => Dict(  # relativ la 1 kilogram
+            grame     => Dict(re => /^(gram[se]?|gr)$/in,         factor => 1e-3),
+            chintale  => Dict(re => /^(quintals?|chintale?)$/in,  factor => 1e2),
+            tone      => Dict(re => /^(tonn?[ae]s?|(?-i:t))$/in,  factor => 1e3),
+            kilograme => Dict(re => /^(kg|kilogram[se]?)$/in,     factor => 1),
+            livre     => Dict(re => /^(pounds?|lbs|livr[ea])$/in, factor => 0.45359237),
+        ),
+        temperatura => Dict(   # folosind Celsius ca standard
+            celsius    => Dict(re => /^(celsius|(?-i:C))$/in,    code => {|n, _| n} ),
+            kelvin     => Dict(re => /^(kelvin|(?-i:K))$/in,     code => {|n, to| to ? (n + 273.15) : (-273.15 + n)} ),
+            fahrenheit => Dict(re => /^(fahrenheit|(?-i:F))$/in, code => {|n, to| to ? (32 + n*9/5) : ((n - 32) * 5/9)} ),
+            rankine    => Dict(re => /^(rankine|(?-i:R))$/in,    code => {|n, to| to ? ((n + 273.15) * 9/5) : (n*5/9 - 273.15)}),
+        ),
+        timp => Dict(  # relativ la 1 secunda
+            nanosecunde  => Dict(re => /^(nanosec([ou]nd)?[aes]?|(?-i:ns))/in,     factor => 1e-9),
+            microsecunde => Dict(re => /^(microsec([ou]nd)?[aes]?|(?-i:us))/in,    factor => 1e-6),
+            milisecunde  => Dict(re => /^(mill?isec([ou]nd)?[aes]?|(?-i:ms))$/in,  factor => 1e-3),
+            secunde      => Dict(re => /^(sec([ou]nd)?[aes]?|(?-i:s))$/in,         factor => 1),
+            minute       => Dict(re => /^(min(ute?)?s?)$/in,                       factor => 60),
+            momente      => Dict(re => /^(mom(ent)?[se]?)$/in,                     factor => 90),
+            ore          => Dict(re => /^(hours?|or[ea])$/in,                      factor => 3600),
+            zile         => Dict(re => /^(days?|zi(ua|le)?)$/in,                   factor => 86400),
+            milizile     => Dict(re => /^(millidays?|(?-i:md)|milizi(le|ua)?)$/in, factor => 86.4),
+            saptamani    => Dict(re => /^(weeks?|sapt(aman[ai]))$/in,              factor => 604800),
+            luni         => Dict(re => /^(mon(th)?s?|lun[ia])$/in,                 factor => 2629743.83),
+            ani          => Dict(re => /^(years?|ani?)$/in,                        factor => 31556952),
+        ),
+        viteza => Dict( # relativ 1 metru/secunda
+            metri_pe_secunda => Dict(
+                re     => /^ m(et(er|r[ieu])s?)? (\/|\s+per?\s+)  s(ec([ou]nda?)?)? $/inx,
+                factor => 1
+            ),
+            mile_pe_ora => Dict(
+                re     => /^ (mph|mi(l[ea]s?)? (\/|\s+per?\s+) (hour|ora|h)) $/inx,
+                factor => 0.44704
+            ),
+            mile_pe_minut => Dict(
+                re     => /^ mi(l[ea]s?)? (\/|\s+per?\s+) m(in(ute)?)? $/inx,
+                factor => 26.8224
+            ),
+            mile_pe_secunda => Dict(
+                re => /^ mi(l[ea]s?)? (\/|\s+per?\s+)  s(ec([ou]nda?)?)? $/inx,
+                factor => 1609.344
+            ),
+            kilometri_pe_ora => Dict(
+                re     => /^ k(ilo)?m(et(er|r[ieu])s?)? (\/|\s+per?\s+) (hour|ora|h) $/inx,
+                factor => 1/3.6
+            ),
+            metri_pe_ora => Dict(
+                re     => /^ m(et(er|re|r[iu])s?)? (\/|\s+per?\s+) (hour|ora|h) $/inx,
+                factor => 1/3600
+            ),
+            kilometri_pe_secunda => Dict(
+                re     => /^ k(ilo)? m(et(er|r[ieu])s?)? (\/|\s+per?\s+) s(ec([ou]nda?)?)? $/inx,
+                factor => 1e3
+            ),
+            viteza_luminii => Dict(
+                re     => /^ (speed\s+of\s+light|viteza(\s+|-)luminii?|(?-i:c)) $/inx,
+                factor => 299792458
+            ),
+            viteza_sunetului => Dict(
+                re     => /^ (speed\s+of\s+sound|viteza(\s+|-)sunetului) $/inx,
+                factor => 340.29
+            ),
+        ),
+        lungime => Dict(   # relativ la 1 metru
+            kilometri    => Dict(re => /^k(ilo)?m(et(er|r[ieu])s?)?$/in,      factor => 1e3),
+            metri        => Dict(re => /^m(et(er|re|r[iu])s?)?$/in,           factor => 1),
+            centimetri   => Dict(re => /^(centimet(er|r[ieu])s?|cm)$/in,      factor => 1e-2),
+            milimetri    => Dict(re => /^(millimet(er|r[ieu])s?|mm)$/in,      factor => 1e-3),
+            micrometri   => Dict(re => /^(micromet(er|r[ieu])s?|um)$/in,      factor => 1e-6),
+            nanometri    => Dict(re => /^(nanomet(er|r[ieu])s?|nm)$/in,       factor => 1e-9),
+            picometri    => Dict(re => /^(picomet(er|r[ieu])s?|pm)$/in,       factor => 1e-12),
+            femtometri   => Dict(re => /^(femtomet(er|r[ieu])s?|fm)$/in,      factor => 1e-15),
+            picioare     => Dict(re => /^(feet|ft|foot|picior|picioare)$/i,   factor => 0.304799735),
+            inch         => Dict(re => /^(inch(es)?|inci|tol|in|")$/in,       factor => 0.0254),
+            mile         => Dict(re => /^(mil[ea]s?|mi)$/in,                  factor => 1609.344),
+            iarzi        => Dict(re => /^(yards?|iard|iarzi|yd)$/in,          factor => 0.9144),
+            unitati_astronomice => Dict(
+                re     => /^ (astronomic (-|\s+) units? | unitat[ei] (-|\s+) astronomic[ae] | (?-i:AU|UA)) $/inx,
+                factor => 149597870700
+            ),
+            secunde_lumina => Dict(
+                re     => /^ (light (-|\s+) sec(ond)?s? | ls | sec(und[ae])? (-|\s+) lumina) $/inx,
+                factor => 299792458
+            ),
+            minute_lumina => Dict(
+                re     => /^ (light (-|\s+) min(ute)?s? | lm | min(ute?)? (-|\s+) lumina) $/inx,
+                factor => 1.798754748e10
+            ),
+            ore_lumina => Dict(
+                re     => /^ (light (-|\s+) hours? | lh | or[ae] (-|\s+) lumina) $/inx,
+                factor => 1.0792528488e12
+            ),
+            zile_lumina => Dict(
+                re     => /^ (light (-|\s+) days? | ld | zi(le|ua)? (-|\s+) lumina) $/inx,
+                factor => 2.59020683712e13
+            ),
+            ani_lumina => Dict(
+                re     => /^ ( light (-|\s+) years? | ly | ani? (-|\s+) lumina ) $/inx,
+                factor => 9.4607304725808e15
+            ),
+        ),
+        informatie => Dict( # relativ la 1 byte
+            biti         => Dict(re => /^(bit[si]?)$/in,                      factor => 1/8 ),
+            octeti       => Dict(re => /^(bytes?|octeti?)$/in,                factor => 1),
+            kiloocteti   => Dict(re => /^(kilo(bytes?|octeti?)|ki?b|ko)$/in,  factor => 1024 ** 1),
+            megaocteti   => Dict(re => /^(mega(bytes?|octeti?)|mi?b|mo)$/in,  factor => 1024 ** 2),
+            gigaocteti   => Dict(re => /^(giga(bytes?|octeti?)|gi?b|go)$/in,  factor => 1024 ** 3),
+            teraocteti   => Dict(re => /^(tera(bytes?|octeti?)|ti?b|to)$/in,  factor => 1024 ** 4),
+            petaocteti   => Dict(re => /^(peta(bytes?|octeti?)|pi?b|po)$/in,  factor => 1024 ** 5),
+            exaocteti    => Dict(re => /^(exa(bytes?|octeti?)|ei?b|eo)$/in,   factor => 1024 ** 6),
+            zettaocteti  => Dict(re => /^(zetta(bytes?|octeti?)|zi?b|zo)$/in, factor => 1024 ** 7),
+            yottaocteti  => Dict(re => /^(yotta(bytes?|octeti?)|yi?b|yo)$/in, factor => 1024 ** 8),
+        ),
+    );
+
+    metoda transforma(cantitate, from, to) {
+        db.fiecare { |categorie, value|
+            value.fiecare { |from_unit, from_data|
+                daca (from.contine(from_data{:re})) {
+                    value.fiecare { |_, to_data|
+                        daca (to.contine(to_data{:re})) {
+                            var rezultat = 0;
+                            daca (to_data.are_cheie(:code)) {
+                                var std_from = from_data{:code}(cantitate, fals);
+                                rezultat     = to_data{:code}(std_from, adevarat);
+                            }
+                            altfel {
+                                rezultat = (cantitate / to_data{:factor} * from_data{:factor});
+                            }
+                            return (adevarat, rezultat.e_intreg ? rezultat : rezultat.roundf(-precizie));
+                        }
+                    }
+                    return (fals, "#{categorie}: nu stiu sa fac conversie din #{from_unit.gsub('_', ' ')} in #{to}...");
+                }
+            }
+        }
+
+        return(fals, "Nu stiu sa fac conversie din #{from} in #{to}... E '#{from}' o unitate existenta?");
+    }
+}
+
+var precizie = 2;
+var interactiv = fals;
+
+func ajutor {
+    scrie <<"USAGE";
+folosire: #{File.new(__FILE__).basename} [text]
+
+opțiuni:
+    -i     : pornește aplicația în mod interactiv (implicit: #{interactiv})
+    -p int : modifică precizia rezultatelor (implicit: #{precizie})
+
+example:
+    144 F in C
+    10kg in livre
+    50 m/s in km/h
+    21 inch in metri
+USAGE
+    Sistem.iesire(0);
+}
+
+var cmd = [];
+cat_timp (ARGV != []) {
+    dat (var arg = ARGV.inlatura_primul) {
+        cand ('-p') {
+            precizie = Numar(ARGV.inlatura_primul);
+        }
+        cand ('-i') {
+            interactiv = adevarat;
+        }
+        cand ('-h') {
+            ajutor();
+        }
+        altfel {
+            cmd.adauga(arg);
+        }
+    }
+}
+
+daca (cmd.e_gol && STDIN.e_interactiv) {
+    interactiv = adevarat;
+}
+
+var units = Unitati(precizie);
+
+func main(command) {
+    var match = command.match(/^\s*
+
+        # cantitatea
+        ([-+]?\d+(?:\.\d+)?|(?:an?|one|un|o)(?=\s)|)
+
+        # unitatea de intrare
+        \s*(\S+(?:\s+\S+){0,2})
+
+        # separator
+        \s+(?:in|to|into|as)\s+
+
+        # unitatea de iesire
+        (\S+(?:\s+\S+){0,2})
+    \s*$/ix);
+
+    daca (match) {
+        var (cantitate, from, to) = match.cap...;
+
+        daca (cantitate ~~ ['a','an','one','','un','o']) {
+            cantitate = 1;
+        }
+        altfel {
+            cantitate.to_f!;
+        }
+
+        var (ok, mesaj) = units.transforma(cantitate, from, to);
+
+        daca (ok) {
+            spune mesaj;
+        }
+        altfel {
+            STDERR.spune(mesaj);
+        }
+
+        return ok;
+    }
+    altfel {
+        ajutor_extins();
+    }
+
+    return fals;
+}
+
+daca (interactiv) {
+    scrie <<"EOT";
+Introduceti un text pentru conversie
+EOT
+    bucla {
+        var linie = citeste(">> ", String) \\ stop;
+
+        daca (linie ~~ ['q', 'exit']) {
+            stop
+        }
+
+        main(linie)
+    }
+}
+altfel {
+    Sistem.iesire(main(cmd.imbina(' ')) ? 0 : 1);
+}

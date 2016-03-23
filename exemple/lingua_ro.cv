@@ -1,0 +1,25 @@
+#!/usr/bin/ruby
+
+include Lingua::RO::Numeros;
+
+var lingua = Lingua::RO::Numeros::nou(
+    separator_mii: ',',
+    diacritice: fals,
+);
+
+spune "Introduceti un numar pentru transformare"
+
+bucla {
+    var numar = citeste(">> ", String)
+
+    daca(!definit(numar) sau numar=="q") {
+        stop
+    }
+
+    daca (numar.arata_ca_numar) {
+        spune ("=> ", lingua.in_litere(numar))
+    }
+    altfel {
+        spune ("=> ", lingua.in_cifre(numar))
+    }
+}

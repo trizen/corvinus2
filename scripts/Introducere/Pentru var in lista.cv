@@ -1,0 +1,7 @@
+#!/usr/bin/ruby
+
+var lista = [1,2,3,4]
+
+pentru n in lista {
+    spune n
+}

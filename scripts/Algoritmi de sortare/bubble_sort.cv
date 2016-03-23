@@ -1,0 +1,32 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Bubble_sort
+#
+
+func bubble_sort(lista) {
+
+    bucla {
+        var ok = adevarat
+        var n = lista.sfarsit
+
+        spune lista;
+
+        n.ori { |i|
+            daca (lista[i-1] > lista[i]) {
+                lista[i-1, i] = lista[i, i-1]
+                ok = fals
+            }
+        }
+
+        stop daca ok
+    }
+
+    return lista
+}
+
+var numere = [7,6,5,9,8,4,3,1,2,0];
+spune bubble_sort(numere);
+
+var nume = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune bubble_sort(nume);

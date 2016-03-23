@@ -1,0 +1,42 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Cocktail_sort
+#
+
+func cocktailsort(a) {
+    var schimbari = fals;
+
+    func cmpsw(i) {
+        daca (a[i] > a[i+1]) {
+            a[i, i+1] = a[i+1, i];
+            schimbari = adevarat;
+        }
+    }
+
+    var max = a.sfarsit;
+
+    executa {
+
+        max.ori { |i|
+            cmpsw(i-1);
+        }
+
+        daca (schimbari) {
+            schimbari = fals;
+        }
+
+        max.ori { |i|
+            cmpsw(max-i);
+        }
+
+    } cat_timp (schimbari);
+
+    return a;
+}
+
+var numere = [7,6,5,9,8,4,3,1,2,0];
+spune cocktailsort(numere);
+ 
+var nume = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune cocktailsort(nume);

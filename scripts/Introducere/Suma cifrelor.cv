@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+var numar = 1234
+var suma = 0
+
+cat_timp (numar > 0) {
+    suma += (numar % 10)
+    numar = intreg(numar / 10)
+}
+
+spune ("Suma este: ", suma)

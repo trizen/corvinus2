@@ -1,0 +1,37 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Comb_sort
+#
+
+func comb_sort(lista) {
+
+    var sfarsit = lista.sfarsit;
+    var distanta = lista.lungime;
+    var schimbari = adevarat;
+
+    cat_timp (distanta > 1 sau schimbari) {
+
+        spune lista;
+
+        daca (distanta > 1) {
+            distanta = intreg(distanta / 1.25);
+        }
+
+        schimbari = fals;
+        sir(0, sfarsit - distanta).fiecare { |i|
+            daca (lista[i] > lista[i+distanta]) {
+                lista[i, i+distanta] = lista[i+distanta, i];
+                schimbari = adevarat;
+            }
+        }
+    }
+
+    return lista;
+}
+
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+say comb_sort(numbers);
+
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+say comb_sort(strs);

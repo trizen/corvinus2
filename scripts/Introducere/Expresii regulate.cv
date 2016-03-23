@@ -1,0 +1,11 @@
+#!/usr/bin/ruby
+
+var text = "A fi sau a nu fi..."
+
+daca (text =~ /^a/i) {
+    spune “Incepe cu <a>”
+}
+
+spune (text - /[aeiou]/g)
+spune text.contine(/[0-9]/)
+spune text.gsub(/\w/, “x”)

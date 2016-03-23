@@ -1,0 +1,8 @@
+#!/usr/bin/ruby
+
+var numar = 12345;
+
+cat_timp (numar > 0) {
+    spune (numar % 10)
+    numar = intreg(numar / 10)
+}

@@ -1,0 +1,35 @@
+#!/usr/bin/ruby
+
+clasa Automaton(rule, cells) {
+
+    metoda init {
+        rule = sprintf("%08b", rule).split(1).map{.to_i}.inverseaza;
+    }
+
+    metoda urmatorul {
+        var prec = cells.mapeaza{_};
+        var len = prec.lungime;
+        cells = [rule.@[
+                    prec.range.map { |i|
+                        4*prec[i-1 % len] +
+                        2*prec[i]         +
+                        prec[i+1 % len]
+                    }
+                ]];
+    }
+
+    metoda ca_text {
+        cells.mapeaza { _ ? '#' : ' ' }.join('');
+    }
+}
+
+var size = 60;
+var arr = size.de(0);
+arr[size/2] = 1;
+
+var auto = Automaton(90, arr);
+
+(size/2).ori {
+    spune "|#{auto}|";
+    auto.urmatorul;
+}

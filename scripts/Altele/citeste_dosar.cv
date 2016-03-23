@@ -1,0 +1,8 @@
+#!/usr/bin/ruby
+
+var d = Dosar.nou(".");
+var dh = d.deschide;
+
+dh.fiecare { |fisier|
+    spune fisier;
+}

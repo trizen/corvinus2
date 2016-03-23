@@ -1,0 +1,16 @@
+#!/usr/bin/ruby
+
+var a = 42
+var b = 21
+
+func max(a, b) {
+    daca (a > b) {
+        return a
+    }
+    altfel {
+        return b
+    }
+}
+
+spune ("Max: ", max(a, b))
+spune ("Sum: ", a + b)

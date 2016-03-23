@@ -1,0 +1,41 @@
+#!/usr/bin/ruby
+
+#
+## http://rosettacode.org/wiki/Sorting_algorithms/Merge_sort
+#
+
+func merge(stanga, dreapta) {
+    var result = [];
+    cat_timp (!stanga.e_gol si !dreapta.e_gol) {
+        daca (stanga[0] <= dreapta[0]) {
+            result.adauga(stanga.inlatura_primul)
+        }
+        altfel {
+            result.adauga(dreapta.inlatura_primul)
+        }
+    }
+    result + stanga + dreapta;
+}
+ 
+func mergesort(lista) {
+    var lungime = lista.lungime;
+
+    daca (lungime < 2) {
+        return lista;
+    }
+ 
+    var mijloc  = (lungime/2 -> intreg);
+    var stanga  = lista.extrage(0, mijloc-1);
+    var dreapta = lista.extrage(mijloc, lungime);
+ 
+    stanga  = mergesort(stanga);
+    dreapta = mergesort(dreapta);
+ 
+    merge(stanga, dreapta);
+}
+ 
+var numbers = [7,6,5,9,8,4,3,1,2,0];
+spune mergesort(numbers);
+ 
+var strs = ["John", "Kate", "Zerg", "Alice", "Joe", "Jane"];
+spune mergesort(strs);

@@ -1,0 +1,13 @@
+#!/usr/bin/ruby
+
+func factorial((0)) {
+    return 1
+}
+
+func factorial(n) {
+    n * factorial(n-1)
+}
+ 
+25.ori { |n|
+    spune ("%2d! = %s" % (n, factorial(n)));
+}

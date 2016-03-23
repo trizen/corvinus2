@@ -1,0 +1,791 @@
+bin/corvin
+Build.PL
+Changes
+'exemple/Algoritmi de sortare/bubble_sort.cv'
+'exemple/Algoritmi de sortare/cocktail_sort.cv'
+'exemple/Algoritmi de sortare/comb_sort.cv'
+'exemple/Algoritmi de sortare/counting_sort.cv'
+'exemple/Algoritmi de sortare/gnome_sort.cv'
+'exemple/Algoritmi de sortare/heapsort.cv'
+'exemple/Algoritmi de sortare/insertion_sort.cv'
+'exemple/Algoritmi de sortare/merge_sort.cv'
+'exemple/Algoritmi de sortare/quicksort.cv'
+'exemple/Algoritmi de sortare/radix_sort.cv'
+'exemple/Algoritmi de sortare/selection_sort.cv'
+'exemple/Algoritmi de sortare/shell_sort.cv'
+'exemple/Algoritmi de sortare/stooge_sort.cv'
+'exemple/Algoritmi de sortare/strand_sort.cv'
+exemple/Aplicatii/convertor_unitati.cv
+exemple/Lingua/RO/Numeros.cv
+exemple/lingua_ro.cv
+exemple/numara_in_romana.cv
+exemple/turing.cv
+lib/Corvinus.pm
+lib/Corvinus/Convert/Convert.pm
+lib/Corvinus/Deparse/Corvinus.pm
+lib/Corvinus/Deparse/Perl.pm
+lib/Corvinus/Math/Math.pm
+lib/Corvinus/Module/Func.pm
+lib/Corvinus/Module/OO.pm
+lib/Corvinus/Object/Object.pm
+lib/Corvinus/Optimizer.pm
+lib/Corvinus/Parser.pm
+lib/Corvinus/Perl/Perl.pm
+lib/Corvinus/Sys/Sig.pm
+lib/Corvinus/Sys/Sys.pm
+lib/Corvinus/Time/Gmtime.pm
+lib/Corvinus/Time/Localtime.pm
+lib/Corvinus/Time/Time.pm
+lib/Corvinus/Types/Array/Array.pm
+lib/Corvinus/Types/Array/MultiArray.pm
+lib/Corvinus/Types/Array/Pair.pm
+lib/Corvinus/Types/Block/Block.pm
+lib/Corvinus/Types/Block/Fork.pm
+lib/Corvinus/Types/Block/Return.pm
+lib/Corvinus/Types/Block/Try.pm
+lib/Corvinus/Types/Bool/Bool.pm
+lib/Corvinus/Types/Byte/Byte.pm
+lib/Corvinus/Types/Byte/Bytes.pm
+lib/Corvinus/Types/Char/Char.pm
+lib/Corvinus/Types/Char/Chars.pm
+lib/Corvinus/Types/Glob/Backtick.pm
+lib/Corvinus/Types/Glob/Dir.pm
+lib/Corvinus/Types/Glob/DirHandle.pm
+lib/Corvinus/Types/Glob/File.pm
+lib/Corvinus/Types/Glob/FileHandle.pm
+lib/Corvinus/Types/Glob/Pipe.pm
+lib/Corvinus/Types/Glob/Socket.pm
+lib/Corvinus/Types/Glob/SocketHandle.pm
+lib/Corvinus/Types/Glob/Stat.pm
+lib/Corvinus/Types/Grapheme/Grapheme.pm
+lib/Corvinus/Types/Grapheme/Graphemes.pm
+lib/Corvinus/Types/Hash/Hash.pm
+lib/Corvinus/Types/Null/Null.pm
+lib/Corvinus/Types/Number/Complex.pm
+lib/Corvinus/Types/Number/Number.pm
+lib/Corvinus/Types/Range/RangeNumber.pm
+lib/Corvinus/Types/Range/RangeString.pm
+lib/Corvinus/Types/Regex/Match.pm
+lib/Corvinus/Types/Regex/Regex.pm
+lib/Corvinus/Types/String/String.pm
+lib/Corvinus/Variable/LazyMethod.pm
+lib/Corvinus/Variable/NamedParam.pm
+LICENSE
+Makefile.PL
+MANIFEST			This list of files
+META.json
+META.yml
+README.md
+'scripts/Algoritmi de sortare/bubble_sort.cv'
+'scripts/Algoritmi de sortare/cocktail_sort.cv'
+'scripts/Algoritmi de sortare/comb_sort.cv'
+'scripts/Algoritmi de sortare/counting_sort.cv'
+'scripts/Algoritmi de sortare/gnome_sort.cv'
+'scripts/Algoritmi de sortare/heapsort.cv'
+'scripts/Algoritmi de sortare/insertion_sort.cv'
+'scripts/Algoritmi de sortare/merge_sort.cv'
+'scripts/Algoritmi de sortare/quicksort.cv'
+'scripts/Algoritmi de sortare/radix_sort.cv'
+'scripts/Algoritmi de sortare/selection_sort.cv'
+'scripts/Algoritmi de sortare/shell_sort.cv'
+'scripts/Algoritmi de sortare/stooge_sort.cv'
+'scripts/Algoritmi de sortare/strand_sort.cv'
+'scripts/Algoritmi de sortare/toate.sf'
+scripts/Altele/absolute_string.sf
+scripts/Altele/abstract_type.sf
+scripts/Altele/acc.cv
+scripts/Altele/accumulator_factory.sf
+scripts/Altele/accumulator_factory_oo.sf
+scripts/Altele/ackermann_function.sf
+scripts/Altele/add_a_variable_to_a_class_instance_at_runtime.sf
+scripts/Altele/aks_test_for_primes.cv
+scripts/Altele/align_columns.sf
+scripts/Altele/anonymous_recursion.sf
+scripts/Altele/avg.cv
+scripts/Altele/benford_law.cv
+scripts/Altele/bernoulli_numbers.sf
+scripts/Altele/caesar_cipher.sf
+scripts/Altele/chebyshev_coefficients.sf
+scripts/Altele/chinese_remainder_theorem.sf
+scripts/Altele/cifre.cv
+scripts/Altele/citeste_dosar.cv
+scripts/Altele/cocktail_sort.sf
+scripts/Altele/daca_cond.cv
+scripts/Altele/det_triunghi.cv
+scripts/Altele/ethiopian_multiplication.sf
+scripts/Altele/extend_your_language.sf
+scripts/Altele/fac_iter.cv
+scripts/Altele/fib_rec.cv
+scripts/Altele/fibonacci_sequence.sf
+scripts/Altele/fibonacci_word_fractal.sf
+scripts/Altele/first-class_functions.sf
+scripts/Altele/happy_numbers.sf
+scripts/Altele/html.cv
+scripts/Altele/infix_in_postfix.sf
+scripts/Altele/josephus_problem.sf
+scripts/Altele/json.sf
+scripts/Altele/knuth_shuffle.sf
+scripts/Altele/manbrot.cv
+scripts/Altele/max.cv
+scripts/Altele/metaprog.cv
+scripts/Altele/multi_arr.cv
+scripts/Altele/multiple_dispatch.sf
+scripts/Altele/mutual_recursion.sf
+scripts/Altele/paralel.cv
+scripts/Altele/potstix_in_infix.cv
+scripts/Altele/regex.cv
+scripts/Altele/reverse_the_gender_of_a_string.sf
+scripts/Altele/s_carpet.cv
+scripts/Altele/s_triangle.cv
+scripts/Altele/simple_moving_average.sf
+scripts/Altele/simple_moving_average_oo.sf
+scripts/Altele/struct.cv
+scripts/Altele/suma_cifrelor.cv
+scripts/Altele/text.cv
+scripts/Altele/vm.cv
+scripts/ansi_triangle.cv
+scripts/Aplicatii/convertor_unitati.cv
+scripts/Aplicatii/fdf.cv
+scripts/Aplicatii/Lingua/RO/Numeros.cv
+scripts/Aplicatii/numere_ro.cv
+scripts/Aplicatii/pi.cv
+scripts/Aplicatii/smart-units.cv
+'scripts/automaton celular elementar.cv'
+'scripts/automaton celular uni-dimensioanal.cv'
+scripts/calendar.cv
+'scripts/cub 3d.cv'
+scripts/Exemple/Acumulator.cv
+'scripts/Exemple/Bernoulli numbers.cv'
+'scripts/Exemple/Binary search.cv'
+scripts/Exemple/combinations.sf
+scripts/Exemple/combinations_with_repetitions.sf
+scripts/Exemple/continued_fraction.sf
+'scripts/Exemple/cub 3d_.cv'
+scripts/Exemple/currying.sf
+'scripts/Exemple/Elementary celluar automaton.cv'
+'scripts/Exemple/Fibonacci word.cv'
+scripts/Exemple/langton_s_ant.sf
+'scripts/Exemple/Lingua RO.sf'
+'scripts/Exemple/Mandelbrot set.cv'
+scripts/Exemple/numerele_catalan.cv
+scripts/Exemple/permutations_rec.sf
+'scripts/Exemple/Quicksort in paralel.cv'
+'scripts/Exemple/Redeschidere clase.cv'
+scripts/Exemple/Set.cv
+scripts/Exemple/sets.sf
+'scripts/Exemple/Sierpinski carpet.cv'
+'scripts/Exemple/Sierpinski triangle.cv'
+scripts/Exemple/sierpinski_diamant.cv
+scripts/Exemple/triunghiul_lui_pascal.cv
+scripts/Exemple/Unicode.cv
+scripts/Exemple/vector_products.sf
+'scripts/Exemple/Virtual Machine.cv'
+scripts/Exemple/y_combinator.sf
+scripts/Expensive/benford_s_law.sf
+scripts/Expensive/binary_multiplier.sf
+scripts/Expensive/calendar.sf
+scripts/Expensive/closed_form_fibonacci.sf
+scripts/Expensive/coin_change.sf
+scripts/Expensive/dice_game_solver.sf
+scripts/Expensive/factorial_approximations.sf
+scripts/Expensive/Fibonacci_memorat.cv
+scripts/Expensive/fibonacci_validation.sf
+scripts/Expensive/fibonacci_word.sf
+scripts/Expensive/knapsack_problem_0_1.sf
+scripts/Expensive/knapsack_problem_bounded.sf
+scripts/Expensive/knapsack_problem_unbounded.sf
+scripts/Expensive/long_multiplication.sf
+scripts/Expensive/root_of_a_function.sf
+scripts/Expensive/sudoku_solver.sf
+scripts/Expensive/zebra_puzzle.sf
+scripts/factorial.cv
+scripts/factorii_unui_numar.cv
+scripts/functia_gamma.cv
+scripts/Grafic/fractal_tree.sf
+scripts/Grafic/sierpinski_triangle_graphical.sf
+scripts/huffman_coding.cv
+'scripts/Introducere/Cifrele unui numar.cv'
+'scripts/Introducere/Citeste dosar.cv'
+'scripts/Introducere/Conditia daca.cv'
+'scripts/Introducere/Expresii regulate.cv'
+'scripts/Introducere/Factorial iterativ.cv'
+'scripts/Introducere/Fibonacci recursiv.cv'
+scripts/Introducere/Incapsulari.cv
+'scripts/Introducere/Liste multidimensionale.cv'
+scripts/Introducere/Metaprogramare.cv
+scripts/Introducere/Metode.cv
+'scripts/Introducere/Model de potrivire.cv'
+'scripts/Introducere/Pentru var in lista.cv'
+scripts/Introducere/Structura.cv
+'scripts/Introducere/Suma cifrelor.cv'
+scripts/Introducere/Text.cv
+scripts/Introducere/toate.sf
+'scripts/Introducere/Valoarea maxima.cv'
+scripts/Jocuri/asciiplanes.cv
+scripts/Jocuri/conway_s_game_of_life.sf
+scripts/Jocuri/rock-paper-scissors.sf
+scripts/labirint.cv
+scripts/Lingua/RO/Numeros.cv
+scripts/masina_turing_universala.cv
+scripts/masina_virtuala.cv
+scripts/Mate/aks_test_for_primes.sf
+'scripts/Mate/Benford\'s law.cv'
+'scripts/Mate/Brainfuck interpreter.sf'
+scripts/Mate/combinations_and_permutations.sf
+scripts/Mate/complex_numbes.sf
+scripts/Mate/fast_fourier_transform.sf
+scripts/Mate/jensen_s_device.sf
+scripts/Mate/langton_s_ant_2.sf
+scripts/Mate/linear_congruential_generator.sf
+scripts/Mate/mandelbrot_set.sf
+scripts/Mate/matrix_multiplication.sf
+scripts/Mate/nth_root.sf
+scripts/Mate/permutations_iter.sf
+scripts/Mate/pythagorean_means.sf
+scripts/Mate/roman_numerals_decoding.sf
+scripts/Mate/roman_numerals_encoding.sf
+scripts/Mate/space_collisions.sf
+scripts/Mate/stack.sf
+scripts/Mate/stern-brocot_sequence.sf
+scripts/Mate/tree_traversal.sf
+scripts/Mate/unique_prefixes.sf
+scripts/Mate/walk_a_dir_recursively.sf
+scripts/numere_aleatorii_in_romana.cv
+'scripts/numerele bernoulli.cv'
+scripts/numerele_in_romana.cv
+'scripts/Proiectul Euler/0001-multiples_of_3_and_5.sf'
+'scripts/Proiectul Euler/0002-even_fibonacci_numbers.sf'
+'scripts/Proiectul Euler/0003-largest_prime_factor.sf'
+'scripts/Proiectul Euler/0004-largest_palindrome_product.sf'
+'scripts/Proiectul Euler/0005-smallest_multiple.sf'
+'scripts/Proiectul Euler/0006-sum_square_difference.sf'
+'scripts/Proiectul Euler/0007-10001st_prime.sf'
+'scripts/Proiectul Euler/0008-largest_product_in_a_series.sf'
+'scripts/Proiectul Euler/0009-special_pythagorean_triplet.sf'
+'scripts/Proiectul Euler/0010-summation_of_primes.sf'
+'scripts/Proiectul Euler/0011-largest_product_in_a_grid.sf'
+'scripts/Proiectul Euler/0012-highly_divisible_triangular_number.sf'
+'scripts/Proiectul Euler/0013-large_sum.sf'
+'scripts/Proiectul Euler/0014-longest_collatz_sequence.sf'
+'scripts/Proiectul Euler/0015-lattice_paths.sf'
+'scripts/Proiectul Euler/0016-power_digit_sum.sf'
+'scripts/Proiectul Euler/0017-number_letter_counts.sf'
+'scripts/Proiectul Euler/0018-maximum_path_sum_i.sf'
+'scripts/Proiectul Euler/0019-counting_sundays.sf'
+'scripts/Proiectul Euler/0020-factorial_digit_sum.sf'
+'scripts/Proiectul Euler/0021-amicable_numbers.sf'
+'scripts/Proiectul Euler/0022-names.txt'
+'scripts/Proiectul Euler/0022-names_scores.sf'
+'scripts/Proiectul Euler/0024-lexicographic_permutations.sf'
+'scripts/Proiectul Euler/0025-1000-digit_fibonacci_number.sf'
+'scripts/Proiectul Euler/0026-reciprocal_cycles.sf'
+'scripts/Proiectul Euler/0028-number_spiral_diagonals.sf'
+'scripts/Proiectul Euler/0029-distinct_powers.sf'
+'scripts/Proiectul Euler/0031-coin_sums.sf'
+'scripts/Proiectul Euler/0032-pandigital_products.sf'
+'scripts/Proiectul Euler/0033-digit_cancelling_fractions.sf'
+'scripts/Proiectul Euler/0034-digit_factorials.sf'
+'scripts/Proiectul Euler/0035-circular_primes.sf'
+'scripts/Proiectul Euler/0036-double-base_palindromes.sf'
+'scripts/Proiectul Euler/0037-truncatable_primes.sf'
+'scripts/Proiectul Euler/0038-pandigital_multiples.sf'
+'scripts/Proiectul Euler/0040-champernowne_s_constant.sf'
+'scripts/Proiectul Euler/0042-coded_triangle_numbers.sf'
+'scripts/Proiectul Euler/0042-words.txt'
+'scripts/Proiectul Euler/0045-triangular_pentagonal_and_hexagonal.sf'
+'scripts/Proiectul Euler/0046-goldbach_s_other_conjecture.sf'
+'scripts/Proiectul Euler/0048-self_powers.sf'
+'scripts/Proiectul Euler/0050-consecutive_prime_sum.sf'
+'scripts/Proiectul Euler/0052-permuted_multiples.sf'
+'scripts/Proiectul Euler/0053-combinatoric_selections.sf'
+'scripts/Proiectul Euler/0056-powerful_digit_sum.sf'
+'scripts/Proiectul Euler/0058-spiral_primes.sf'
+'scripts/Proiectul Euler/0059-cipher.txt'
+'scripts/Proiectul Euler/0059-xor_decryption.sf'
+'scripts/Proiectul Euler/0065-convergents_of_e.sf'
+'scripts/Proiectul Euler/0067-maximum_path_sum_ii.sf'
+'scripts/Proiectul Euler/0067-triangle.txt'
+'scripts/Proiectul Euler/0071-ordered_fractions.sf'
+'scripts/Proiectul Euler/0076-counting_summations.sf'
+'scripts/Proiectul Euler/0077-prime_summations.sf'
+'scripts/Proiectul Euler/0097-large_non-mersenne_prime.sf'
+'scripts/Proiectul Euler/0120-square_remainders.sf'
+'scripts/Proiectul Euler/0137-fibonacci_golden_nuggets.sf'
+'scripts/Proiectul Euler/0140-modified_fibonacci_golden_nuggets.sf'
+'scripts/Proiectul Euler/0187-semiprimes.sf'
+scripts/RosettaCode/9_billion_names.sf
+scripts/RosettaCode/arithmetic-geometric_mean.sf
+scripts/RosettaCode/arithmetic_complex.sf
+scripts/RosettaCode/averages_arithmetic_mean.sf
+scripts/RosettaCode/averages_mean_time_of_day.sf
+scripts/RosettaCode/averages_mode.sf
+scripts/RosettaCode/averages_mode_1.sf
+scripts/RosettaCode/averages_pythagorean_means.sf
+scripts/RosettaCode/averages_root_mean_square.sf
+scripts/RosettaCode/binary_digits.sf
+scripts/RosettaCode/binary_search.sf
+scripts/RosettaCode/binary_search_1.sf
+scripts/RosettaCode/bitwise_operations.sf
+scripts/RosettaCode/boolean_values.sf
+scripts/RosettaCode/boolean_values_1.sf
+scripts/RosettaCode/case-sensitivity_of_identifiers.sf
+scripts/RosettaCode/catalan_numbers.sf
+scripts/RosettaCode/catalan_numbers_1.sf
+scripts/RosettaCode/catalan_numbers_pascal_triangle.sf
+scripts/RosettaCode/catamorphism.sf
+scripts/RosettaCode/character_codes.sf
+scripts/RosettaCode/check_that_file_exists.sf
+scripts/RosettaCode/classes.sf
+scripts/RosettaCode/closures_value_capture.sf
+scripts/RosettaCode/compare_a_list_of_strings.sf
+scripts/RosettaCode/compare_a_list_of_strings_1.sf
+scripts/RosettaCode/compile-time_calculation.sf
+scripts/RosettaCode/compile-time_calculation_1.sf
+scripts/RosettaCode/compound_data_type.sf
+scripts/RosettaCode/concurrent_computing.sf
+scripts/RosettaCode/constrained_random_points_on_a_circle.sf
+scripts/RosettaCode/convert_decimal_number_to_rational.sf
+scripts/RosettaCode/copy_a_string.sf
+scripts/RosettaCode/count_in_factors.sf
+scripts/RosettaCode/count_occurrences_of_a_substring.sf
+scripts/RosettaCode/date_format.sf
+scripts/RosettaCode/delete_a_file.sf
+scripts/RosettaCode/determine_if_a_string_is_numeric.sf
+scripts/RosettaCode/dinesman_problem_parsing.sf
+scripts/RosettaCode/dinesman_problem_simple.sf
+scripts/RosettaCode/dot_product.sf
+scripts/RosettaCode/empty_directory.sf
+scripts/RosettaCode/empty_directory_1.sf
+scripts/RosettaCode/entropy.sf
+scripts/RosettaCode/enumerations.sf
+scripts/RosettaCode/enumerations_1.sf
+scripts/RosettaCode/equilibrium_index.sf
+scripts/RosettaCode/euler_method.sf
+scripts/RosettaCode/evaluate_binomial_coefficients.sf
+scripts/RosettaCode/factorial.sf
+scripts/RosettaCode/fibonacci_n-step_number_sequence.sf
+scripts/RosettaCode/fibonacci_sequence.sf
+scripts/RosettaCode/fibonacci_sequence_1.sf
+scripts/RosettaCode/fibonacci_sequence_2.sf
+scripts/RosettaCode/fibonacci_sequence_3.sf
+scripts/RosettaCode/file_modification_time.sf
+scripts/RosettaCode/file_size.sf
+scripts/RosettaCode/filter.sf
+scripts/RosettaCode/find_common_directory_path.sf
+scripts/RosettaCode/first-class_functions.sf
+scripts/RosettaCode/five_weekends.sf
+scripts/RosettaCode/flatten_a_list.sf
+scripts/RosettaCode/fork.sf
+scripts/RosettaCode/formatted_numeric_output.sf
+scripts/RosettaCode/formatted_numeric_output_1.sf
+scripts/RosettaCode/function_composition.sf
+scripts/RosettaCode/function_definition.sf
+scripts/RosettaCode/gamma_function.sf
+scripts/RosettaCode/gamma_function_1.sf
+scripts/RosettaCode/general_fizzbuzz.sf
+scripts/RosettaCode/generate_lower_case_ascii_alphabet.sf
+scripts/RosettaCode/generator_exponential.sf
+scripts/RosettaCode/generic_swap.sf
+scripts/RosettaCode/generic_swap_1.sf
+scripts/RosettaCode/get_system_command_output.sf
+scripts/RosettaCode/get_system_command_output_1.sf
+scripts/RosettaCode/greatest_common_divisor.sf
+scripts/RosettaCode/greatest_common_divisor_1.sf
+scripts/RosettaCode/greatest_element_of_a_list.sf
+scripts/RosettaCode/hash_from_two_arrays.sf
+scripts/RosettaCode/hash_join.sf
+scripts/RosettaCode/haversine_formula.sf
+scripts/RosettaCode/hickerson_series_of_almost_integers.sf
+scripts/RosettaCode/higher-order_functions.sf
+scripts/RosettaCode/hostname.sf
+scripts/RosettaCode/identity_matrix.sf
+scripts/RosettaCode/infinity.sf
+scripts/RosettaCode/inheritance_multiple.sf
+scripts/RosettaCode/inheritance_single.sf
+scripts/RosettaCode/knapsack_problem_continuous.sf
+scripts/RosettaCode/largest_int_from_concatenated_ints.sf
+scripts/RosettaCode/last_sunday_of_each_month.sf
+scripts/RosettaCode/left_factorials.sf
+scripts/RosettaCode/left_factorials_1.sf
+scripts/RosettaCode/levenshtein_distance.sf
+scripts/RosettaCode/levenshtein_distance_1.sf
+scripts/RosettaCode/levenshtein_distance_2.sf
+scripts/RosettaCode/literals_floating_point.sf
+scripts/RosettaCode/literals_integer.sf
+scripts/RosettaCode/literals_string.sf
+scripts/RosettaCode/literals_string_1.sf
+scripts/RosettaCode/literals_string_2.sf
+scripts/RosettaCode/logical_operations.sf
+scripts/RosettaCode/long_multiplication.sf
+scripts/RosettaCode/long_multiplication_1.sf
+scripts/RosettaCode/longest_common_prefix.sf
+scripts/RosettaCode/look-and-say_sequence.sf
+scripts/RosettaCode/loop_over_multiple_arrays_simultaneously.sf
+scripts/RosettaCode/loops_break.sf
+scripts/RosettaCode/loops_continue.sf
+scripts/RosettaCode/loops_do-while.sf
+scripts/RosettaCode/loops_downward_for.sf
+scripts/RosettaCode/loops_for.sf
+scripts/RosettaCode/loops_for_1.sf
+scripts/RosettaCode/loops_for_2.sf
+scripts/RosettaCode/loops_for_with_a_specified_step.sf
+scripts/RosettaCode/loops_foreach.sf
+scripts/RosettaCode/loops_foreach_1.sf
+scripts/RosettaCode/loops_n_plus_one_half.sf
+scripts/RosettaCode/loops_nested.sf
+scripts/RosettaCode/loops_while.sf
+scripts/RosettaCode/luhn_test_of_credit_card_numbers.sf
+scripts/RosettaCode/lzw_compression.sf
+scripts/RosettaCode/map_range.sf
+scripts/RosettaCode/matrix_multiplication.sf
+scripts/RosettaCode/matrix_transposition.sf
+scripts/RosettaCode/maze_generation.sf
+scripts/RosettaCode/md5.sf
+scripts/RosettaCode/md5_1.sf
+scripts/RosettaCode/middle_three_digits.sf
+scripts/RosettaCode/multifactorial.sf
+scripts/RosettaCode/multiple_distinct_objects.sf
+scripts/RosettaCode/multiplication_tables.sf
+scripts/RosettaCode/multisplit.sf
+scripts/RosettaCode/natural_sorting.sf
+scripts/RosettaCode/nth.sf
+scripts/RosettaCode/nth_root.sf
+scripts/RosettaCode/order_disjoint_list_items.sf
+scripts/RosettaCode/pangram_checker.sf
+scripts/RosettaCode/partial_function_application.sf
+scripts/RosettaCode/pascal_s_triangle.sf
+scripts/RosettaCode/perfect_shuffle.sf
+scripts/RosettaCode/permutations_by_swapping.sf
+scripts/RosettaCode/phrase_reversals.sf
+scripts/RosettaCode/pick_random_element.sf
+scripts/RosettaCode/playing_cards.sf
+scripts/RosettaCode/pointers_and_references.sf
+scripts/RosettaCode/polymorphic_copy.sf
+scripts/RosettaCode/price_fraction.sf
+scripts/RosettaCode/primality_by_trial_division.sf
+scripts/RosettaCode/probabilistic_choice.sf
+scripts/RosettaCode/problem_of_apollonius.sf
+scripts/RosettaCode/program_name.sf
+scripts/RosettaCode/queue_definition.sf
+scripts/RosettaCode/queue_definition_2.sf
+scripts/RosettaCode/quickselect_algorithm.sf
+scripts/RosettaCode/quine_1.sf
+scripts/RosettaCode/random_number_generator__device_.sf
+scripts/RosettaCode/range_expansion.sf
+scripts/RosettaCode/read_a_file_line_by_line.sf
+scripts/RosettaCode/read_a_file_line_by_line_1.sf
+scripts/RosettaCode/read_a_specific_line_from_a_file.sf
+scripts/RosettaCode/read_entire_file.sf
+scripts/RosettaCode/real_constants_and_functions.sf
+scripts/RosettaCode/regular_expressions.sf
+scripts/RosettaCode/regular_expressions_1.sf
+scripts/RosettaCode/regular_expressions_2.sf
+scripts/RosettaCode/remove_duplicate_elements.sf
+scripts/RosettaCode/rename_a_file.sf
+scripts/RosettaCode/rep-string.sf
+scripts/RosettaCode/repeat.sf
+scripts/RosettaCode/repeat_a_string.sf
+scripts/RosettaCode/respond_to_an_unknown_method_call.sf
+scripts/RosettaCode/return_multiple_values.sf
+scripts/RosettaCode/reverse_a_string.sf
+scripts/RosettaCode/reverse_words_in_a_string.sf
+scripts/RosettaCode/roots_of_a_quadratic_function.sf
+scripts/RosettaCode/rpn_calculator_algorithm.sf
+scripts/RosettaCode/rpn_to_infix_conversion.sf
+scripts/RosettaCode/runge-kutta_method.sf
+scripts/RosettaCode/runtime_evaluation.sf
+scripts/RosettaCode/runtime_evaluation_in_an_environment.sf
+scripts/RosettaCode/search_a_list.sf
+scripts/RosettaCode/search_a_list_1.sf
+scripts/RosettaCode/secure_temporary_file.sf
+scripts/RosettaCode/send_an_unknown_method_call.sf
+scripts/RosettaCode/sequence_of_primes_by_trial_division.sf
+scripts/RosettaCode/sha-1.sf
+scripts/RosettaCode/sha-256.sf
+scripts/RosettaCode/short-circuit_evaluation.sf
+scripts/RosettaCode/show_the_epoch.sf
+scripts/RosettaCode/shunting-yard_algorithm.sf
+scripts/RosettaCode/sidef_3d_ascii.sf
+scripts/RosettaCode/sierpinski_carpet.sf
+scripts/RosettaCode/sierpinski_triangle.sf
+scripts/RosettaCode/singly-linked_list_element_definition.sf
+scripts/RosettaCode/singly-linked_list_element_insertion.sf
+scripts/RosettaCode/sort_an_integer_array.sf
+scripts/RosettaCode/sort_disjoint_sublist.sf
+scripts/RosettaCode/sort_stability.sf
+scripts/RosettaCode/sort_using_a_custom_comparator.sf
+scripts/RosettaCode/sorting_algorithms_sleep_sort.sf
+scripts/RosettaCode/spiral_matrix.sf
+scripts/RosettaCode/stable_marriage_problem.sf
+scripts/RosettaCode/stack.sf
+scripts/RosettaCode/stack_1.sf
+scripts/RosettaCode/standard_deviation.sf
+scripts/RosettaCode/standard_deviation_2.sf
+scripts/RosettaCode/the_isaac_cipher.sf
+scripts/RosettaCode/universal_turing_machine.sf
+scripts/RosettaCode/van_der_corput_sequence.sf
+scripts/RosettaCode/variadic_function.sf
+scripts/RosettaCode/vigenere_cipher.sf
+scripts/RosettaCode/walk_a_dir_non_recursively.sf
+scripts/RosettaCode/word_wrap.sf
+scripts/RosettaCode/xiaolin_wu_s_line_algorithm.sf
+scripts/RosettaCode/zeckendorf_number_representation.sf
+scripts/RosettaCode/zig-zag_matrix.sf
+scripts/seria_fibonacci.cv
+scripts/sierpinski_carpeta.cv
+scripts/sierpinski_pentagon.cv
+scripts/sierpinski_triunghi.cv
+scripts/sierpinski_triunghi_90.cv
+scripts/sierpinski_x.cv
+'scripts/Sorting algorithms/bubble_sort.sf'
+'scripts/Sorting algorithms/cocktail_sort.sf'
+'scripts/Sorting algorithms/comb_sort.sf'
+'scripts/Sorting algorithms/counting_sort.sf'
+'scripts/Sorting algorithms/gnome_sort.sf'
+'scripts/Sorting algorithms/heapsort.sf'
+'scripts/Sorting algorithms/insertion_sort.sf'
+'scripts/Sorting algorithms/merge_sort.sf'
+'scripts/Sorting algorithms/quicksort.sf'
+'scripts/Sorting algorithms/radix_sort.sf'
+'scripts/Sorting algorithms/selection_sort.sf'
+'scripts/Sorting algorithms/shell_sort.sf'
+'scripts/Sorting algorithms/stooge_sort.sf'
+'scripts/Sorting algorithms/strand_sort.sf'
+scripts/tabel_multiplicativ.cv
+scripts/Teste/amb.sf
+scripts/Teste/amb_nested_loops.sf
+scripts/Teste/arithmetic_evaluation.sf
+scripts/Teste/arithmetic_geometric_mean.sf
+scripts/Teste/array_autovivification.sf
+scripts/Teste/array_compare.sf
+scripts/Teste/array_unique.sf
+scripts/Teste/arrays.sf
+scripts/Teste/arrays_intersection.sf
+scripts/Teste/averages_mode.sf
+scripts/Teste/avg_mode.sf
+scripts/Teste/balanced_brakets.sf
+scripts/Teste/bare_multiplication.sf
+scripts/Teste/base64_decoder.sf
+scripts/Teste/beadsort.sf
+scripts/Teste/best_shuffle.sf
+scripts/Teste/binary_search.sf
+scripts/Teste/binary_search_recursive.sf
+scripts/Teste/box_the_compass.sf
+scripts/Teste/break.sf
+scripts/Teste/built_in_classes.sf
+scripts/Teste/cached_func_method.sf
+scripts/Teste/caesar_cipher.sf
+scripts/Teste/calendar.sf
+scripts/Teste/call_an_object_method.sf
+scripts/Teste/catalan_numbers.sf
+scripts/Teste/catalan_numbers_2.sf
+scripts/Teste/class_attributes.sf
+scripts/Teste/class_inheritance.sf
+scripts/Teste/class_redefinition.sf
+scripts/Teste/classes.sf
+scripts/Teste/classes_and_objects.sf
+scripts/Teste/closure_generator.sf
+scripts/Teste/cnp.sf
+scripts/Teste/code_interpolation.sf
+scripts/Teste/count_in_factors.sf
+scripts/Teste/cpp_input_output.sf
+scripts/Teste/cramers_method.sf
+scripts/Teste/cross_and_zip_metaoperators.sf
+scripts/Teste/data_digging.sf
+scripts/Teste/data_handle.sf
+scripts/Teste/def_primitive_type.sf
+scripts/Teste/default_param_values.sf
+scripts/Teste/default_var_values.sf
+scripts/Teste/echo.sf
+scripts/Teste/eq_g2.sf
+scripts/Teste/equal_classes.sf
+scripts/Teste/escape_unescape.sf
+scripts/Teste/eval.sf
+scripts/Teste/execute_system_command.sf
+scripts/Teste/fibonacci_closed_solution.sf
+scripts/Teste/fibonacci_iterative.sf
+scripts/Teste/fibonacci_mystery.sf
+scripts/Teste/find_the_missing_permutation.sf
+scripts/Teste/first_class_functions_analogously.sf
+scripts/Teste/floyds_triangle.sf
+scripts/Teste/for_two_vars.sf
+scripts/Teste/for_var_in_array.sf
+scripts/Teste/forward_difference.sf
+scripts/Teste/function_composition.sf
+scripts/Teste/functional_modules.sf
+scripts/Teste/functional_style.sf
+scripts/Teste/gather_take.sf
+scripts/Teste/gcd.sf
+scripts/Teste/getopt.sf
+scripts/Teste/given_when.sf
+scripts/Teste/greatest_subsequential_sum.sf
+scripts/Teste/group_precedence.sf
+scripts/Teste/hailstone.sf
+scripts/Teste/happy_2_years_old.sf
+scripts/Teste/hash_autovivification.sf
+scripts/Teste/hash_from_array.sf
+scripts/Teste/hash_grep.sf
+scripts/Teste/hash_join.sf
+scripts/Teste/hash_sort.sf
+scripts/Teste/horner_s_rule.sf
+scripts/Teste/http_tiny.sf
+scripts/Teste/i_love_you.sf
+scripts/Teste/iban.sf
+scripts/Teste/implicit_method_call_on_var_.sf
+scripts/Teste/inverted_syntax.sf
+scripts/Teste/is_prime.sf
+scripts/Teste/lazy_methods.sf
+scripts/Teste/leap_year.sf
+scripts/Teste/letter_frequency.sf
+scripts/Teste/lev_fast.sf
+scripts/Teste/levenshtein_distance.sf
+scripts/Teste/levenshtein_distance_cached.sf
+scripts/Teste/Lingua/RO/Numbers.cv
+scripts/Teste/lingua_ro.sf
+scripts/Teste/lingua_ro_numbers.sf
+scripts/Teste/local_vars.sf
+scripts/Teste/logic.sf
+scripts/Teste/long_division.sf
+scripts/Teste/longest_common_prefix.sf
+scripts/Teste/longest_common_subsequence.sf
+scripts/Teste/longest_common_subsequence_2.sf
+scripts/Teste/look_and_say_seq.sf
+scripts/Teste/loops.sf
+scripts/Teste/luhn_test_of_credit_card_numbers.sf
+scripts/Teste/lwp_module.sf
+scripts/Teste/magic_vars.sf
+scripts/Teste/man_or_boy.sf
+scripts/Teste/man_or_boy_2.sf
+scripts/Teste/man_or_boy_3.sf
+scripts/Teste/man_or_boy_cached.sf
+scripts/Teste/matrix_multiplication.sf
+scripts/Teste/median.sf
+scripts/Teste/memoize.sf
+scripts/Teste/merge_sort.sf
+scripts/Teste/merge_sort_2.sf
+scripts/Teste/metaprogramming_2.sf
+scripts/Teste/metaprogramming_method_definition.sf
+scripts/Teste/method_aliases.sf
+scripts/Teste/method_expressions.sf
+scripts/Teste/Module/Bar.cv
+scripts/Teste/Module/Fact.cv
+scripts/Teste/Module/Fib.cv
+scripts/Teste/Module/Foo.cv
+scripts/Teste/Module/YouTube.cv
+scripts/Teste/module_definition.sf
+scripts/Teste/module_loading.sf
+scripts/Teste/module_order_and_redeclaration.sf
+scripts/Teste/multi_file_edit.sf
+scripts/Teste/multi_functions.sf
+scripts/Teste/multi_methods.sf
+scripts/Teste/multi_var_assignment.sf
+scripts/Teste/multiple_dispatch.sf
+scripts/Teste/multisplit.sf
+scripts/Teste/named_block_arguments.sf
+scripts/Teste/named_parameters.sf
+scripts/Teste/names_to_numbers.sf
+scripts/Teste/non_continuous_seq.sf
+scripts/Teste/object_copy.sf
+scripts/Teste/objects_init.sf
+scripts/Teste/one-dimensional_cellular_automata.sf
+scripts/Teste/open.sf
+scripts/Teste/pairs_test.sf
+scripts/Teste/palindrome_recursive.sf
+scripts/Teste/pascal_matrix_generation.sf
+scripts/Teste/perl_eval.sf
+scripts/Teste/permutations.sf
+scripts/Teste/permutations_2.sf
+scripts/Teste/pi_and_e.sf
+scripts/Teste/pi_machin_like_formula.sf
+scripts/Teste/power_numbers.sf
+scripts/Teste/prefix_methods.sf
+scripts/Teste/problem_of_apollonius.sf
+scripts/Teste/pythagorean_means.sf
+scripts/Teste/quicksort.sf
+scripts/Teste/quicksort_in_parallel.sf
+scripts/Teste/quoted_strings.sf
+scripts/Teste/range_objects.sf
+scripts/Teste/read_a_configuration_file.sf
+scripts/Teste/rec_reverse.sf
+scripts/Teste/recursion.sf
+scripts/Teste/regex.sf
+scripts/Teste/regex_bool.sf
+scripts/Teste/regex_global_matching.sf
+scripts/Teste/regex_match_as_array.sf
+scripts/Teste/return.sf
+scripts/Teste/return_types.sf
+scripts/Teste/reverse_recursive_general_solution.sf
+scripts/Teste/reverse_words_in_a_string.sf
+scripts/Teste/roman_numerals_decoding_2.sf
+scripts/Teste/roman_numerals_decoding_3.sf
+scripts/Teste/roman_numerals_encoding_2.sf
+scripts/Teste/root_mean_square.sf
+scripts/Teste/roots_of_a_quadratic_function.sf
+scripts/Teste/run_length_encoding.sf
+scripts/Teste/run_length_encoding_2.sf
+scripts/Teste/run_length_encoding_3.sf
+scripts/Teste/same_fringe.sf
+scripts/Teste/script.sf
+scripts/Teste/selection_sort.sf
+scripts/Teste/sidef_executor.sf
+scripts/Teste/sidef_keywords.sf
+scripts/Teste/sidef_to_json.sf
+scripts/Teste/sierpinski_alphabet.sf
+scripts/Teste/sierpinski_sidef.sf
+scripts/Teste/smart_match_operator.sf
+scripts/Teste/smart_word_wrap.sf
+scripts/Teste/smart_word_wrap_simple.sf
+scripts/Teste/sort_disjoint_sublist.sf
+scripts/Teste/sort_with_custom_cmp.sf
+scripts/Teste/soundex.sf
+scripts/Teste/special_methods.sf
+scripts/Teste/split_collapse.sf
+scripts/Teste/static_const_lazy_init.sf
+scripts/Teste/string_encodings.sf
+scripts/Teste/string_escapes.sf
+scripts/Teste/string_to_number.sf
+scripts/Teste/strip_chars_from_str.sf
+scripts/Teste/strip_non_ascii_chars.sf
+scripts/Teste/structures.sf
+scripts/Teste/subtractive_generator.sf
+scripts/Teste/swap.sf
+scripts/Teste/sylvesters_sequence.sf
+scripts/Teste/symmetric_difference.sf
+scripts/Teste/sysopen_and_sysread.sf
+scripts/Teste/tennis_tournament.sf
+scripts/Teste/token_recursive.sf
+scripts/Teste/top_rank_per_group.sf
+scripts/Teste/topological_sort.sf
+scripts/Teste/triangle_path.sf
+scripts/Teste/trizen_s_pair_numbers.sf
+scripts/Teste/two_dimensional_array.sf
+scripts/Teste/type_comparisons.sf
+scripts/Teste/typed_parameters.sf
+scripts/Teste/unary_inc_dec.sf
+scripts/Teste/unexecuted_arguments.sf
+scripts/Teste/unicode.sf
+scripts/Teste/unicode_support.sf
+scripts/Teste/url_encoding_decoding.sf
+scripts/Teste/var_ref.sf
+scripts/Teste/var_scoping.sf
+scripts/Teste/variable_references.sf
+scripts/Teste/vigenere_cipher.sf
+scripts/Teste/while_loop.sf
+scripts/Teste/wireworld.sf
+scripts/Teste/word_processing.sf
+scripts/Teste/word_roots.sf
+scripts/toate.sf
+scripts/zzz_corvinus_3d_logo_zzz.cv
+share/corvinus/bigint.cv
+share/corvinus/bigrat.cv
+share/corvinus/Memoize.cv
+share/corvinus/ntheory.cv
+share/corvinus/Storable.cv
+t/00-load.t
+t/01-parser.t
+t/manifest.t
+t/pod.t
+utils/auto_perltidy.sh
+utils/bak_cleaner.sh
+utils/grep_errors.sh
+utils/test_deparser.pl
