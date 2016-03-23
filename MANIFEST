@@ -1,6 +1,15 @@
 bin/corvin
 Build.PL
 Changes
+exemple/absolute_string.sf
+exemple/abstract_type.sf
+exemple/acc.cv
+exemple/accumulator_factory.sf
+exemple/accumulator_factory_oo.sf
+exemple/ackermann_function.sf
+exemple/Acumulator.cv
+exemple/add_a_variable_to_a_class_instance_at_runtime.sf
+exemple/aks_test_for_primes.cv
 'exemple/Algoritmi de sortare/bubble_sort.cv'
 'exemple/Algoritmi de sortare/cocktail_sort.cv'
 'exemple/Algoritmi de sortare/comb_sort.cv'
@@ -15,11 +24,81 @@ Changes
 'exemple/Algoritmi de sortare/shell_sort.cv'
 'exemple/Algoritmi de sortare/stooge_sort.cv'
 'exemple/Algoritmi de sortare/strand_sort.cv'
+exemple/align_columns.sf
+exemple/anonymous_recursion.sf
 exemple/Aplicatii/convertor_unitati.cv
+exemple/avg.cv
+exemple/benford_law.cv
+'exemple/Bernoulli numbers.cv'
+exemple/bernoulli_numbers.sf
+'exemple/Binary search.cv'
+exemple/caesar_cipher.sf
+exemple/chebyshev_coefficients.sf
+exemple/chinese_remainder_theorem.sf
+exemple/cifre.cv
+exemple/citeste_dosar.cv
+exemple/cocktail_sort.sf
+exemple/combinations.sf
+exemple/combinations_with_repetitions.sf
+exemple/continued_fraction.sf
+'exemple/cub 3d_.cv'
+exemple/currying.sf
+exemple/daca_cond.cv
+exemple/det_triunghi.cv
+'exemple/Elementary celluar automaton.cv'
+exemple/ethiopian_multiplication.sf
+exemple/extend_your_language.sf
+exemple/fac_iter.cv
+exemple/fib_rec.cv
+'exemple/Fibonacci word.cv'
+exemple/fibonacci_sequence.sf
+exemple/fibonacci_word_fractal.sf
+exemple/first-class_functions.sf
+exemple/happy_numbers.sf
+exemple/html.cv
+exemple/infix_in_postfix.sf
+exemple/josephus_problem.sf
+exemple/json.sf
+exemple/knuth_shuffle.sf
+exemple/langton_s_ant.sf
+'exemple/Lingua RO.sf'
 exemple/Lingua/RO/Numeros.cv
 exemple/lingua_ro.cv
+exemple/manbrot.cv
+'exemple/Mandelbrot set.cv'
+exemple/max.cv
+exemple/metaprog.cv
+exemple/multi_arr.cv
+exemple/multiple_dispatch.sf
+exemple/mutual_recursion.sf
 exemple/numara_in_romana.cv
+exemple/numerele_catalan.cv
+exemple/paralel.cv
+exemple/permutations_rec.sf
+exemple/potstix_in_infix.cv
+'exemple/Quicksort in paralel.cv'
+'exemple/Redeschidere clase.cv'
+exemple/regex.cv
+exemple/reverse_the_gender_of_a_string.sf
+exemple/s_carpet.cv
+exemple/s_triangle.cv
+exemple/Set.cv
+exemple/sets.sf
+'exemple/Sierpinski carpet.cv'
+'exemple/Sierpinski triangle.cv'
+exemple/sierpinski_diamant.cv
+exemple/simple_moving_average.sf
+exemple/simple_moving_average_oo.sf
+exemple/struct.cv
+exemple/suma_cifrelor.cv
+exemple/text.cv
+exemple/triunghiul_lui_pascal.cv
 exemple/turing.cv
+exemple/Unicode.cv
+exemple/vector_products.sf
+'exemple/Virtual Machine.cv'
+exemple/vm.cv
+exemple/y_combinator.sf
 lib/Corvinus.pm
 lib/Corvinus/Convert/Convert.pm
 lib/Corvinus/Deparse/Corvinus.pm
@@ -91,58 +170,6 @@ README.md
 'scripts/Algoritmi de sortare/stooge_sort.cv'
 'scripts/Algoritmi de sortare/strand_sort.cv'
 'scripts/Algoritmi de sortare/toate.sf'
-scripts/Altele/absolute_string.sf
-scripts/Altele/abstract_type.sf
-scripts/Altele/acc.cv
-scripts/Altele/accumulator_factory.sf
-scripts/Altele/accumulator_factory_oo.sf
-scripts/Altele/ackermann_function.sf
-scripts/Altele/add_a_variable_to_a_class_instance_at_runtime.sf
-scripts/Altele/aks_test_for_primes.cv
-scripts/Altele/align_columns.sf
-scripts/Altele/anonymous_recursion.sf
-scripts/Altele/avg.cv
-scripts/Altele/benford_law.cv
-scripts/Altele/bernoulli_numbers.sf
-scripts/Altele/caesar_cipher.sf
-scripts/Altele/chebyshev_coefficients.sf
-scripts/Altele/chinese_remainder_theorem.sf
-scripts/Altele/cifre.cv
-scripts/Altele/citeste_dosar.cv
-scripts/Altele/cocktail_sort.sf
-scripts/Altele/daca_cond.cv
-scripts/Altele/det_triunghi.cv
-scripts/Altele/ethiopian_multiplication.sf
-scripts/Altele/extend_your_language.sf
-scripts/Altele/fac_iter.cv
-scripts/Altele/fib_rec.cv
-scripts/Altele/fibonacci_sequence.sf
-scripts/Altele/fibonacci_word_fractal.sf
-scripts/Altele/first-class_functions.sf
-scripts/Altele/happy_numbers.sf
-scripts/Altele/html.cv
-scripts/Altele/infix_in_postfix.sf
-scripts/Altele/josephus_problem.sf
-scripts/Altele/json.sf
-scripts/Altele/knuth_shuffle.sf
-scripts/Altele/manbrot.cv
-scripts/Altele/max.cv
-scripts/Altele/metaprog.cv
-scripts/Altele/multi_arr.cv
-scripts/Altele/multiple_dispatch.sf
-scripts/Altele/mutual_recursion.sf
-scripts/Altele/paralel.cv
-scripts/Altele/potstix_in_infix.cv
-scripts/Altele/regex.cv
-scripts/Altele/reverse_the_gender_of_a_string.sf
-scripts/Altele/s_carpet.cv
-scripts/Altele/s_triangle.cv
-scripts/Altele/simple_moving_average.sf
-scripts/Altele/simple_moving_average_oo.sf
-scripts/Altele/struct.cv
-scripts/Altele/suma_cifrelor.cv
-scripts/Altele/text.cv
-scripts/Altele/vm.cv
 scripts/ansi_triangle.cv
 scripts/Aplicatii/convertor_unitati.cv
 scripts/Aplicatii/fdf.cv
@@ -154,33 +181,6 @@ scripts/Aplicatii/smart-units.cv
 'scripts/automaton celular uni-dimensioanal.cv'
 scripts/calendar.cv
 'scripts/cub 3d.cv'
-scripts/Exemple/Acumulator.cv
-'scripts/Exemple/Bernoulli numbers.cv'
-'scripts/Exemple/Binary search.cv'
-scripts/Exemple/combinations.sf
-scripts/Exemple/combinations_with_repetitions.sf
-scripts/Exemple/continued_fraction.sf
-'scripts/Exemple/cub 3d_.cv'
-scripts/Exemple/currying.sf
-'scripts/Exemple/Elementary celluar automaton.cv'
-'scripts/Exemple/Fibonacci word.cv'
-scripts/Exemple/langton_s_ant.sf
-'scripts/Exemple/Lingua RO.sf'
-'scripts/Exemple/Mandelbrot set.cv'
-scripts/Exemple/numerele_catalan.cv
-scripts/Exemple/permutations_rec.sf
-'scripts/Exemple/Quicksort in paralel.cv'
-'scripts/Exemple/Redeschidere clase.cv'
-scripts/Exemple/Set.cv
-scripts/Exemple/sets.sf
-'scripts/Exemple/Sierpinski carpet.cv'
-'scripts/Exemple/Sierpinski triangle.cv'
-scripts/Exemple/sierpinski_diamant.cv
-scripts/Exemple/triunghiul_lui_pascal.cv
-scripts/Exemple/Unicode.cv
-scripts/Exemple/vector_products.sf
-'scripts/Exemple/Virtual Machine.cv'
-scripts/Exemple/y_combinator.sf
 scripts/Expensive/benford_s_law.sf
 scripts/Expensive/binary_multiplier.sf
 scripts/Expensive/calendar.sf
